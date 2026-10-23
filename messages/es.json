@@ -313,5 +313,12 @@
       "elevation": "Elevación del terreno: Copernicus DEM GLO-90 (ESA), vía Open-Meteo.",
       "news": "Historial de inundaciones: notas de Plano Informativo, Posta, N+, Excélsior y El Imparcial."
     }
+  },
+  "list": {
+    "open": "Ver como lista",
+    "title": "Reportes en esta zona",
+    "description": "Los reportes visibles en el mapa, del más reciente al más antiguo.",
+    "empty": "No hay reportes visibles con estos filtros.",
+    "more": "Mostrando {shown} de {total}. Acércate en el mapa para ver otros."
   }
 }

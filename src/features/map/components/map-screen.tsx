@@ -38,6 +38,7 @@ import {
   type UserLocation,
 } from "./flood-map";
 import { LegendSheet } from "./legend-sheet";
+import { ReportListSheet } from "./report-list-sheet";
 import { TopBar } from "./top-bar";
 
 const STYLE_URLS = {
@@ -122,6 +123,7 @@ export function MapScreen({
     initialFocus?.kind === "sensor" ? initialFocus.id : null,
   );
   const [legendOpen, setLegendOpen] = useState(false);
+  const [listOpen, setListOpen] = useState(false);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [locating, setLocating] = useState(false);
   const [flowStep, setFlowStep] = useState("closed");
@@ -378,7 +380,10 @@ export function MapScreen({
       {!flowActive ? (
         <>
           <div className="pointer-events-none absolute inset-x-0 top-0 z-10">
-            <TopBar onOpenLegend={() => setLegendOpen(true)} />
+            <TopBar
+              onOpenLegend={() => setLegendOpen(true)}
+              onOpenList={() => setListOpen(true)}
+            />
             <FilterBar filters={filters} onChange={setFilters} />
             <div className="flex flex-col items-start gap-2 px-3">
               {demoMode ? (
@@ -459,6 +464,20 @@ export function MapScreen({
 
       {!flowActive ? <FirstRun enabled={!initialFocus} /> : null}
       <LegendSheet open={legendOpen} onOpenChange={setLegendOpen} />
+      <ReportListSheet
+        open={listOpen}
+        onOpenChange={setListOpen}
+        reports={mapReports.features}
+        onSelect={(report) => {
+          setListOpen(false);
+          setSensorId(null);
+          setSelectedId(report.properties.id);
+          setReportUrl(report.properties.id);
+          mapRef.current?.focusOn(report.geometry.coordinates, {
+            bottomPadding: sheetPadding(),
+          });
+        }}
+      />
       <ReportSheet
         reportId={flowActive ? null : selectedId}
         onClose={closeSheet}

@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleHelp, Menu } from "lucide-react";
+import { CircleHelp, List, Menu } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
@@ -21,7 +21,13 @@ import {
 const floatingButton =
   "size-12 rounded-full bg-card/95 text-foreground shadow-md ring-1 ring-foreground/10 backdrop-blur hover:bg-card";
 
-export function TopBar({ onOpenLegend }: { onOpenLegend: () => void }) {
+export function TopBar({
+  onOpenLegend,
+  onOpenList,
+}: {
+  onOpenLegend: () => void;
+  onOpenList: () => void;
+}) {
   const t = useTranslations();
   const { theme, setTheme } = useTheme();
 
@@ -54,6 +60,13 @@ export function TopBar({ onOpenLegend }: { onOpenLegend: () => void }) {
             <Menu className="size-6" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56 p-1.5">
+            <DropdownMenuItem
+              onClick={onOpenList}
+              className="min-h-11 gap-2 text-base"
+            >
+              <List className="size-4" />
+              {t("list.open")}
+            </DropdownMenuItem>
             <DropdownMenuItem
               render={<Link href="/acerca" />}
               className="min-h-11 text-base"

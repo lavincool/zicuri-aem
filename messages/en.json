@@ -313,5 +313,12 @@
       "elevation": "Terrain elevation: Copernicus DEM GLO-90 (ESA), via Open-Meteo.",
       "news": "Flood history: reporting by Plano Informativo, Posta, N+, Excélsior and El Imparcial."
     }
+  },
+  "list": {
+    "open": "View as list",
+    "title": "Reports in this area",
+    "description": "Reports visible on the map, newest first.",
+    "empty": "No reports visible with these filters.",
+    "more": "Showing {shown} of {total}. Zoom in on the map to see others."
   }
 }
