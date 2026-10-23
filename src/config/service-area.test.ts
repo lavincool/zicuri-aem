@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { isInsideServiceArea } from "./service-area";
+import { fitMexico, isInsideServiceArea } from "./service-area";
 
 test("accepts cities, coasts and islands across Mexico", () => {
   const places: [string, number, number][] = [
@@ -34,4 +34,14 @@ test("rejects places outside Mexico", () => {
   for (const [name, lng, lat] of places) {
     expect([name, isInsideServiceArea(lng, lat)]).toEqual([name, false]);
   }
+});
+
+test("fits Mexico in a phone and zooms closer on a desktop", () => {
+  const phone = fitMexico(375, 812);
+  const desktop = fitMexico(1440, 900);
+  expect(phone.center[0]).toBeCloseTo(-101.9, 1);
+  expect(phone.zoom).toBeGreaterThanOrEqual(2.5);
+  expect(phone.zoom).toBeLessThan(3.2);
+  expect(desktop.zoom).toBeGreaterThan(4);
+  expect(desktop.zoom).toBeLessThanOrEqual(5.5);
 });

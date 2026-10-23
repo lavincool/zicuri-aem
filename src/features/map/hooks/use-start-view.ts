@@ -4,9 +4,9 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import {
   CITY_ZOOM,
+  fitMexico,
   isInsideServiceArea,
   type LngLat,
-  MEXICO_VIEW,
 } from "@/config/service-area";
 import { readFlag, writeFlag } from "@/features/onboarding/storage";
 
@@ -81,7 +81,11 @@ export function useStartView(focus: LngLat | null): StartView | null {
     void fetchApproxCenter(controller.signal).then((center) => {
       window.clearTimeout(timer);
       if (cancelled) return;
-      setView(center ? { center, zoom: CITY_ZOOM } : MEXICO_VIEW);
+      setView(
+        center
+          ? { center, zoom: CITY_ZOOM }
+          : fitMexico(window.innerWidth, window.innerHeight),
+      );
     });
     return () => {
       cancelled = true;

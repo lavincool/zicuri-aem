@@ -1,6 +1,7 @@
 /**
  * Builds Cauce's basemap styles from OpenFreeMap's Positron style.
  * Streets are muted and waterways, canals ("drenes") and lagoons are emphasized.
+ * Labels prefer Spanish names ("México", "Ciudad de México") over English ones.
  * OpenFreeMap requires customized styles to be self-hosted, so the output lives in public/.
  *
  * Usage: bun run map:styles
@@ -129,6 +130,13 @@ function recolor(layer: Layer, p: Palette): Layer {
         : p.label;
     paint["text-halo-color"] = p.halo;
     paint["text-halo-width"] = 1.4;
+    if (layer.layout?.["text-field"]) {
+      const layout = {
+        ...layer.layout,
+        "text-field": ["coalesce", ["get", "name:es"], ["get", "name"]],
+      };
+      return { ...layer, layout, paint };
+    }
   }
 
   return { ...layer, paint };
