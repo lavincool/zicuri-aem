@@ -1,9 +1,17 @@
 import { z } from "zod";
 import {
+  CATEGORY_SEVERITY,
   REPORT_CATEGORIES,
   type ReportCategory,
   type ReportStatus,
+  SEVERITY_DETAILS,
+  WATER_DEPTHS_CM,
 } from "@/config/categories";
+import {
+  MAX_PHOTO_BYTES,
+  MAX_THUMB_BYTES,
+  PHOTO_CONTENT_TYPES,
+} from "@/config/uploads";
 
 export const SINCE_OPTIONS = ["24h", "7d", "30d", "all"] as const;
 export type SinceOption = (typeof SINCE_OPTIONS)[number];
@@ -62,6 +70,8 @@ export type ReportFeatureProps = {
   v: number;
   /** normalized severity 1–3 */
   sev: number | null;
+  /** 1 while the report waits in the offline outbox (local only) */
+  p?: 1;
 };
 
 export type ReportFeature = {
@@ -120,3 +130,88 @@ export const FLAG_REASONS = [
 export type FlagReason = (typeof FLAG_REASONS)[number];
 
 export const flagBodySchema = z.object({ reason: z.enum(FLAG_REASONS) });
+
+export const uploadRequestSchema = z.object({
+  contentType: z.enum(PHOTO_CONTENT_TYPES),
+  bytes: z.number().int().positive().max(MAX_PHOTO_BYTES),
+  thumbBytes: z.number().int().positive().max(MAX_THUMB_BYTES),
+  width: z.number().int().positive().max(10_000),
+  height: z.number().int().positive().max(10_000),
+});
+export type UploadRequest = z.infer<typeof uploadRequestSchema>;
+
+export type UploadTicket = {
+  uploadId: string;
+  full: { key: string; url: string; headers: Record<string, string> };
+  thumb: { key: string; url: string; headers: Record<string, string> };
+  expiresAt: string;
+};
+
+export const LOCATION_SOURCES = ["gps", "exif", "manual"] as const;
+export type LocationSource = (typeof LOCATION_SOURCES)[number];
+
+export const createReportSchema = z
+  .object({
+    clientRequestId: z.uuid(),
+    uploadId: z.string().min(1).max(64),
+    category: z.enum(REPORT_CATEGORIES),
+    severityDetail: z.enum(SEVERITY_DETAILS).nullish(),
+    waterDepthCm: z
+      .number()
+      .refine((v) => (WATER_DEPTHS_CM as readonly number[]).includes(v), {
+        message: "Unsupported water depth",
+      })
+      .nullish(),
+    note: z.string().trim().max(280).nullish(),
+    location: z.object({
+      lat: z.number().min(-90).max(90),
+      lng: z.number().min(-180).max(180),
+      accuracyM: z.number().nonnegative().max(100_000).nullish(),
+      source: z.enum(LOCATION_SOURCES),
+    }),
+    photo: z.object({
+      width: z.number().int().positive().max(10_000),
+      height: z.number().int().positive().max(10_000),
+      color: z
+        .string()
+        .regex(/^#[0-9a-f]{6}$/i)
+        .nullish(),
+    }),
+    aiSuggestionId: z.string().max(64).nullish(),
+  })
+  .superRefine((value, ctx) => {
+    const input = CATEGORY_SEVERITY[value.category];
+    if (value.waterDepthCm != null && input.kind !== "depth") {
+      ctx.addIssue({
+        code: "custom",
+        path: ["waterDepthCm"],
+        message: "Water depth only applies to water categories",
+      });
+    }
+    if (
+      value.severityDetail != null &&
+      (input.kind !== "detail" ||
+        !(input.options as readonly string[]).includes(value.severityDetail))
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["severityDetail"],
+        message: "Severity does not match the category",
+      });
+    }
+  });
+export type CreateReportInput = z.infer<typeof createReportSchema>;
+
+export type CreatedReport = {
+  report: {
+    id: string;
+    category: ReportCategory;
+    status: ReportStatus;
+    lat: number;
+    lng: number;
+    createdAt: string;
+    photoThumbUrl: string;
+  };
+  nearbyCount: number;
+  shareUrl: string;
+};
