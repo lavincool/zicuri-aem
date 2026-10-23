@@ -2,7 +2,7 @@
  * Builds public/data/places-mx.json, the offline index behind the map's place search:
  * Mexico's 32 states plus every town with at least 2,500 people or a municipal seat.
  *
- * Usage: bun scripts/build-places.ts <cities1000.txt> <MX.txt> <admin1CodesASCII.txt>
+ * Usage: bun run data:places -- <cities1000.txt> <MX.txt> <admin1CodesASCII.txt>
  * Source: GeoNames (CC BY 4.0), https://download.geonames.org/export/dump/
  */
 import { mkdir, readFile, writeFile } from "node:fs/promises";

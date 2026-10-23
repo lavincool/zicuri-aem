@@ -3,7 +3,7 @@
  * points on the coast or the border river are never rejected, then simplified so
  * the browser can test points against it on every map move.
  *
- * Usage: bun scripts/build-service-area.ts <ne_10m_admin_0_countries.geojson>
+ * Usage: bun run data:service-area -- <ne_10m_admin_0_countries.geojson>
  * Source: Natural Earth 1:10m Admin 0 – Countries (public domain),
  * https://github.com/nvkelso/natural-earth-vector/tree/master/geojson
  */
