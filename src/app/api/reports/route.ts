@@ -1,4 +1,5 @@
 import { after, type NextRequest, NextResponse } from "next/server";
+import { markSuggestionOutcome } from "@/features/ai/server/suggest";
 import {
   createReportSchema,
   reportsQuerySchema,
@@ -76,6 +77,9 @@ export async function POST(request: Request) {
   try {
     const report = await createReport(parsed.data, browserHash);
     after(async () => {
+      if (report.aiSuggestionId) {
+        await markSuggestionOutcome(report.aiSuggestionId, report.category);
+      }
       const place = await reverseGeocode(report.lat, report.lng);
       if (place) await updateReportPlace(report.id, place);
     });

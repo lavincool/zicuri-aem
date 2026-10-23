@@ -195,7 +195,10 @@
     "pendingBadge": "{count, plural, one {# reporte pendiente de enviar} other {# reportes pendientes de enviar}}",
     "rateLimited": "Has enviado muchos reportes en poco tiempo. Intenta de nuevo en unos minutos.",
     "failed": "No pudimos enviar tu reporte. Intenta de nuevo.",
-    "photoAlt": "Foto que vas a reportar"
+    "photoAlt": "Foto que vas a reportar",
+    "analyzing": "Analizando la foto…",
+    "aiSees": "La foto parece mostrar: “{description}”",
+    "useAsNote": "Usar como nota"
   },
   "sensors": {
     "sheetTitle": "Sensor de nivel de agua",

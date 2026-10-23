@@ -15,6 +15,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
+  // Versioned AI prompts are read from disk at runtime.
+  outputFileTracingIncludes: { "/api/ai/suggest": ["./prompts/**/*.md"] },
   async headers() {
     return [
       { source: "/(.*)", headers: securityHeaders },

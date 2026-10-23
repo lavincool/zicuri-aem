@@ -131,6 +131,7 @@ export type ReportDraft = {
     source: "gps" | "exif" | "manual";
   };
   photo: { width: number; height: number; color: string | null };
+  aiSuggestionId?: string | null;
 };
 
 export function submitReport(

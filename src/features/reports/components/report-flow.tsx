@@ -7,6 +7,7 @@ import {
   ImageIcon,
   LoaderCircle,
   MapPin,
+  Sparkles,
   X,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -23,6 +24,7 @@ import {
   type WaterDepthCm,
 } from "@/config/categories";
 import { isInsidePilot, type LngLat } from "@/config/pilot";
+import type { Suggestion } from "@/features/ai/schema";
 import { haversineMeters } from "@/lib/geo";
 import { cn } from "@/lib/utils";
 import { ApiRequestError } from "../client/api";
@@ -61,14 +63,33 @@ export type FlowMapControls = {
 /** Moving the pin farther than this turns a GPS/EXIF location into a manual one. */
 const MANUAL_THRESHOLD_M = 15;
 
+/** Asks for an AI category suggestion; resolves to null on any failure or timeout. */
+async function fetchSuggestion(uploadId: string): Promise<Suggestion | null> {
+  try {
+    const response = await fetch("/api/ai/suggest", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ uploadId }),
+      signal: AbortSignal.timeout(6000),
+    });
+    return response.status === 200
+      ? ((await response.json()) as Suggestion)
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 export function ReportFlow({
   map,
   viewCenter,
+  aiEnabled,
   onActiveChange,
   onCreated,
   onQueued,
 }: {
   map: FlowMapControls;
+  aiEnabled: boolean;
   /** Latest map center (updates on moveend) for live pilot-area checks. */
   viewCenter: LngLat | null;
   onActiveChange: (step: Step) => void;
@@ -94,6 +115,8 @@ export function ReportFlow({
   const [uploadState, setUploadState] = useState<
     "idle" | "uploading" | "done" | "error"
   >("idle");
+  const [suggestion, setSuggestion] = useState<Suggestion | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
   const clientRequestId = useRef<string>("");
   const upload = useRef<Promise<string> | null>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
@@ -121,6 +144,8 @@ export function ReportFlow({
     setNoteOpen(false);
     setProgress(0);
     setUploadState("idle");
+    setSuggestion(null);
+    setAnalyzing(false);
     upload.current = null;
     map.showAccuracy(null);
   }, [map, photo]);
@@ -163,13 +188,25 @@ export function ReportFlow({
     const promise = uploadPhoto(processed, setProgress);
     upload.current = promise;
     promise.then(
-      () => setUploadState("done"),
+      (uploadId) => {
+        setUploadState("done");
+        if (!aiEnabled) return;
+        setAnalyzing(true);
+        void fetchSuggestion(uploadId).then((result) => {
+          setAnalyzing(false);
+          if (upload.current !== promise || !result) return;
+          setSuggestion(result);
+          // Pre-select only if the person hasn't chosen yet.
+          const suggested = result.category;
+          if (suggested) setCategory((current) => current ?? suggested);
+        });
+      },
       () => {
         setUploadState("error");
         if (upload.current === promise) upload.current = null;
       },
     );
-  }, []);
+  }, [aiEnabled]);
 
   const onFile = useCallback(
     async (file: File | undefined) => {
@@ -268,6 +305,7 @@ export function ReportFlow({
       note: note.trim() ? note.trim() : null,
       location: placement,
       photo: { width: photo.width, height: photo.height, color: photo.color },
+      aiSuggestionId: suggestion?.suggestionId ?? null,
     };
     setStep("sending");
     try {
