@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ModerationQueue } from "@/features/insights/components/moderation-queue";
 import { getModerationQueue } from "@/features/insights/server/panel-data";
+import { currentPanelRole } from "@/features/insights/server/session";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("panel.moderation");
@@ -28,5 +29,9 @@ export default async function ModerationPage() {
 
 async function QueueContent() {
   await connection();
-  return <ModerationQueue items={await getModerationQueue()} />;
+  const [items, role] = await Promise.all([
+    getModerationQueue(),
+    currentPanelRole(),
+  ]);
+  return <ModerationQueue items={items} readOnly={role !== "admin"} />;
 }

@@ -1,6 +1,12 @@
 "use client";
 
-import { CloudRain, FlaskConical, LoaderCircle, RefreshCw } from "lucide-react";
+import {
+  CloudRain,
+  Eye,
+  FlaskConical,
+  LoaderCircle,
+  RefreshCw,
+} from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -20,9 +26,12 @@ const CARD_PADDING_PX = { narrow: 340, wide: 220 };
 export function PanelDashboard({
   data,
   demoMode,
+  readOnly,
 }: {
   data: PanelData;
   demoMode: boolean;
+  /** Demo viewers can look around but not change shared state. */
+  readOnly: boolean;
 }) {
   const t = useTranslations("panel");
   const format = useFormatter();
@@ -90,35 +99,42 @@ export function PanelDashboard({
           <h1 className="text-3xl font-semibold sm:text-4xl">{t("title")}</h1>
           <p className="max-w-2xl text-muted-foreground">{t("subtitle")}</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {demoMode ? (
+        {readOnly ? (
+          <p className="flex items-center gap-2 rounded-full bg-card px-4 py-2.5 text-sm font-semibold shadow-xs">
+            <Eye className="size-4" />
+            {t("readOnly")}
+          </p>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {demoMode ? (
+              <Button
+                variant="outline"
+                disabled={pending}
+                onClick={data.scenario ? refresh : scenario}
+                className="h-11 rounded-full border-transparent bg-card px-4 font-semibold shadow-xs dark:bg-card"
+              >
+                {data.scenario ? (
+                  <CloudRain className="size-4" />
+                ) : (
+                  <FlaskConical className="size-4" />
+                )}
+                {data.scenario ? t("scenario.real") : t("scenario.run")}
+              </Button>
+            ) : null}
             <Button
-              variant="outline"
               disabled={pending}
-              onClick={data.scenario ? refresh : scenario}
-              className="h-11 rounded-full border-transparent bg-card px-4 font-semibold shadow-xs dark:bg-card"
+              onClick={refresh}
+              className="h-11 rounded-full bg-foreground px-5 font-semibold text-background hover:bg-foreground/85"
             >
-              {data.scenario ? (
-                <CloudRain className="size-4" />
+              {pending ? (
+                <LoaderCircle className="size-4 animate-spin" />
               ) : (
-                <FlaskConical className="size-4" />
+                <RefreshCw className="size-4" />
               )}
-              {data.scenario ? t("scenario.real") : t("scenario.run")}
+              {pending ? t("refreshing") : t("refresh")}
             </Button>
-          ) : null}
-          <Button
-            disabled={pending}
-            onClick={refresh}
-            className="h-11 rounded-full bg-foreground px-5 font-semibold text-background hover:bg-foreground/85"
-          >
-            {pending ? (
-              <LoaderCircle className="size-4 animate-spin" />
-            ) : (
-              <RefreshCw className="size-4" />
-            )}
-            {pending ? t("refreshing") : t("refresh")}
-          </Button>
-        </div>
+          </div>
+        )}
       </header>
 
       {data.scenario ? (

@@ -20,7 +20,14 @@ type Item = {
   createdAt: string;
 };
 
-export function ModerationQueue({ items }: { items: Item[] }) {
+export function ModerationQueue({
+  items,
+  readOnly,
+}: {
+  items: Item[];
+  /** Demo viewers see the queue but cannot hide or restore reports. */
+  readOnly: boolean;
+}) {
   const t = useTranslations("panel");
   const tc = useTranslations("categories");
   const tr = useTranslations("report");
@@ -74,27 +81,29 @@ export function ModerationQueue({ items }: { items: Item[] }) {
                 <p className="line-clamp-2 text-sm">{item.note}</p>
               ) : null}
               <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  disabled={pending}
-                  onClick={() =>
-                    startTransition(() =>
-                      setReportHiddenAction(item.id, !hidden),
-                    )
-                  }
-                  className={cn(
-                    "h-10 rounded-full px-4 font-semibold",
-                    hidden &&
-                      "border-transparent bg-foreground text-background hover:bg-foreground/85 hover:text-background dark:bg-foreground dark:hover:bg-foreground/85",
-                  )}
-                >
-                  {hidden ? (
-                    <Eye className="size-4" />
-                  ) : (
-                    <EyeOff className="size-4" />
-                  )}
-                  {hidden ? t("moderation.restore") : t("moderation.hide")}
-                </Button>
+                {readOnly ? null : (
+                  <Button
+                    variant="outline"
+                    disabled={pending}
+                    onClick={() =>
+                      startTransition(() =>
+                        setReportHiddenAction(item.id, !hidden),
+                      )
+                    }
+                    className={cn(
+                      "h-10 rounded-full px-4 font-semibold",
+                      hidden &&
+                        "border-transparent bg-foreground text-background hover:bg-foreground/85 hover:text-background dark:bg-foreground dark:hover:bg-foreground/85",
+                    )}
+                  >
+                    {hidden ? (
+                      <Eye className="size-4" />
+                    ) : (
+                      <EyeOff className="size-4" />
+                    )}
+                    {hidden ? t("moderation.restore") : t("moderation.hide")}
+                  </Button>
+                )}
                 {!hidden ? (
                   <Link
                     href={`/r/${item.id}`}

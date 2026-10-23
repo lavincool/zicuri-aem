@@ -536,7 +536,11 @@
       "submit": "Sign in",
       "invalid": "Wrong password.",
       "rateLimited": "Too many attempts. Please wait a few minutes.",
-      "disabled": "The dashboard isn't configured (PANEL_PASSWORD is missing)."
+      "disabled": "The dashboard isn't configured (PANEL_PASSWORD is missing).",
+      "or": "or",
+      "demo": "Enter as a demo",
+      "demoHint": "Read-only: explore the risk, drains and moderation without changing anything.",
+      "demoDisabled": "The demo is not available."
     },
     "updated": "Risk computed {time}",
     "notComputed": "No risk computation yet.",
@@ -544,6 +548,7 @@
     "refreshing": "Refreshing…",
     "refreshed": "Forecast and risk updated.",
     "refreshFailed": "We couldn't refresh the forecast.",
+    "readOnly": "Demo · read-only",
     "scenario": {
       "run": "Simulate rain like October 4",
       "real": "Use real forecast",

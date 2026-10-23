@@ -536,7 +536,11 @@
       "submit": "Entrar",
       "invalid": "Contraseña incorrecta.",
       "rateLimited": "Demasiados intentos. Espera unos minutos.",
-      "disabled": "El panel no está configurado (falta PANEL_PASSWORD)."
+      "disabled": "El panel no está configurado (falta PANEL_PASSWORD).",
+      "or": "o",
+      "demo": "Entrar como demostración",
+      "demoHint": "Solo lectura: explora el riesgo, los drenes y la moderación sin cambiar nada.",
+      "demoDisabled": "La demostración no está disponible."
     },
     "updated": "Riesgo calculado {time}",
     "notComputed": "Aún no hay un cálculo de riesgo.",
@@ -544,6 +548,7 @@
     "refreshing": "Actualizando…",
     "refreshed": "Pronóstico y riesgo actualizados.",
     "refreshFailed": "No pudimos actualizar el pronóstico.",
+    "readOnly": "Demostración · solo lectura",
     "scenario": {
       "run": "Simular lluvia como el 4 de octubre",
       "real": "Usar pronóstico real",

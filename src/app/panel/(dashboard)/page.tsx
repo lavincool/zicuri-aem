@@ -13,6 +13,7 @@ import {
   computeRiskScores,
   latestRunId,
 } from "@/features/insights/server/risk";
+import { currentPanelRole } from "@/features/insights/server/session";
 import { env } from "@/lib/env";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -39,7 +40,13 @@ async function PanelContent() {
   if (now.getTime() - fetchedAt > FORECAST_STALE_MS && !data.scenario) {
     after(() => refreshInsights());
   }
-  return <PanelDashboard data={data} demoMode={env().DEMO_MODE} />;
+  return (
+    <PanelDashboard
+      data={data}
+      demoMode={env().DEMO_MODE}
+      readOnly={(await currentPanelRole()) !== "admin"}
+    />
+  );
 }
 
 function PanelSkeleton() {

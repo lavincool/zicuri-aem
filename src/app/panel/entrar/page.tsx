@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { useTranslations } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
 import { Logo } from "@/components/brand/logo";
+import { Skeleton } from "@/components/ui/skeleton";
 import { LoginForm } from "@/features/insights/components/login-form";
+import { env } from "@/lib/env";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("panel.login");
@@ -19,8 +23,16 @@ export default function PanelLoginPage() {
           <h1 className="text-2xl font-semibold">{t("title")}</h1>
           <p className="text-muted-foreground">{t("body")}</p>
         </div>
-        <LoginForm />
+        <Suspense fallback={<Skeleton className="h-40 rounded-xl" />}>
+          <LoginFormWithFlags />
+        </Suspense>
       </div>
     </main>
   );
+}
+
+/** DEMO_MODE is a runtime flag, so it is read at request time. */
+async function LoginFormWithFlags() {
+  await connection();
+  return <LoginForm demoMode={env().DEMO_MODE} />;
 }
