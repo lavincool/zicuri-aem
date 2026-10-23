@@ -338,6 +338,8 @@
     "credits": {
       "osm": "Base map: © OpenStreetMap contributors, © OpenMapTiles, served by OpenFreeMap.",
       "geocoding": "Addresses: Nominatim (OpenStreetMap).",
+      "places": "Place search: GeoNames (CC BY 4.0).",
+      "boundary": "Outline of Mexico: Natural Earth (public domain).",
       "weather": "Forecast: Open-Meteo and Mexico's National Weather Service (SMN, CONAGUA).",
       "elevation": "Terrain elevation: Copernicus DEM GLO-90 (ESA), via Open-Meteo.",
       "news": "Flood history: reporting by Plano Informativo, Posta, N+, Excélsior and El Imparcial."

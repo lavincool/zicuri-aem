@@ -25,7 +25,15 @@ const STEPS = [
   { key: "anticipate", icon: Satellite },
 ] as const;
 
-const CREDITS = ["osm", "geocoding", "weather", "elevation", "news"] as const;
+const CREDITS = [
+  "osm",
+  "geocoding",
+  "places",
+  "boundary",
+  "weather",
+  "elevation",
+  "news",
+] as const;
 
 export default function AboutPage() {
   const t = useTranslations("about");

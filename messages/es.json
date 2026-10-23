@@ -338,6 +338,8 @@
     "credits": {
       "osm": "Mapa base: © colaboradores de OpenStreetMap, © OpenMapTiles, servido por OpenFreeMap.",
       "geocoding": "Direcciones: Nominatim (OpenStreetMap).",
+      "places": "Búsqueda de lugares: GeoNames (CC BY 4.0).",
+      "boundary": "Contorno de México: Natural Earth (dominio público).",
       "weather": "Pronóstico: Open-Meteo y Servicio Meteorológico Nacional (CONAGUA).",
       "elevation": "Elevación del terreno: Copernicus DEM GLO-90 (ESA), vía Open-Meteo.",
       "news": "Historial de inundaciones: notas de Plano Informativo, Posta, N+, Excélsior y El Imparcial."
