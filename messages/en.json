@@ -1,0 +1,317 @@
+{
+  "common": {
+    "appName": "Cauce",
+    "tagline": "Report what floods your street.",
+    "description": "Report what floods your street in Matamoros.",
+    "report": "Report",
+    "retry": "Try again",
+    "close": "Close",
+    "demoData": "Demo data",
+    "offline": "Offline: showing the last data we loaded."
+  },
+  "categories": {
+    "blocked_drain": "Blocked drain",
+    "broken_cover": "Broken or missing cover",
+    "flooded_street": "Flooded street",
+    "overflowing_canal": "Overflowing canal",
+    "sewage_backflow": "Sewage backflow",
+    "other": "Other problem"
+  },
+  "categoryHelp": {
+    "blocked_drain": "Trash or mud is blocking the drain inlet",
+    "broken_cover": "Danger: open manhole or drain",
+    "flooded_street": "Water blocks people or cars",
+    "overflowing_canal": "Water is spilling out of a canal",
+    "sewage_backflow": "Sewage coming up from manholes",
+    "other": "Something else that causes or signals flooding"
+  },
+  "statuses": {
+    "open": "Active",
+    "resolved": "Resolved",
+    "expired": "No longer active",
+    "hidden": "Under review"
+  },
+  "map": {
+    "ariaLabel": "Map of flood reports in Matamoros",
+    "loading": "Loading the map…",
+    "error": "We couldn't load the map. Check your connection.",
+    "emptyTitle": "No reports around here yet.",
+    "emptyBody": "If you see a problem, be the first to report it.",
+    "truncated": "There are many reports in this area. Zoom in to see them all.",
+    "nearMe": "Near me",
+    "locating": "Finding your location…",
+    "locationDenied": "Turn on location to see what's happening near you.",
+    "locationUnavailable": "We couldn't get your location. Please try again.",
+    "outsidePilot": "For now, Cauce works in Matamoros.",
+    "updating": "Updating reports…",
+    "loadError": "We couldn't update the reports."
+  },
+  "filters": {
+    "label": "Filters",
+    "status": "Status",
+    "statusOptions": {
+      "open": "Active",
+      "resolved": "Resolved",
+      "all": "All"
+    },
+    "since": "Period",
+    "sinceOptions": {
+      "24h": "24 h",
+      "7d": "7 days",
+      "30d": "30 days",
+      "all": "All time"
+    },
+    "categories": "Problem types",
+    "allCategories": "All types"
+  },
+  "legend": {
+    "open": "Legend",
+    "title": "What does each color mean?",
+    "categories": "Problem types",
+    "states": "Report status",
+    "stateOpen": "Active: still pending",
+    "stateResolved": "Resolved: neighbors confirmed it was fixed",
+    "stateExpired": "No longer active: nobody confirmed it's still there",
+    "clusters": "Groups",
+    "clustersBody": "The number shows how many reports are in the area. Tap it to zoom in.",
+    "signals": "Still there / Fixed",
+    "signalsBody": "Confirm what you see. After two “Fixed” answers, the report is marked as resolved.",
+    "sensors": "Water-level sensors",
+    "sensorsBody": "The color shows how high the water is compared with each site's limits."
+  },
+  "menu": {
+    "open": "Menu",
+    "about": "About Cauce",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "Automatic"
+  },
+  "report": {
+    "sheetTitle": "Report details",
+    "photoAlt": "Report photo: {category}",
+    "illustrationNote": "Illustration · demo data",
+    "openPhoto": "View full photo",
+    "reportedAgo": "Reported {time}",
+    "location": "Location",
+    "unknownPlace": "Matamoros",
+    "note": "Note",
+    "stillThereCount": "{count, plural, =0 {Nobody has confirmed yet} one {# neighbor says it's still there} other {# neighbors say it's still there}}",
+    "fixedCount": "{count, plural, =0 {} one {# says it's fixed} other {# say it's fixed}}",
+    "stillThere": "Still there",
+    "fixed": "Fixed",
+    "yourAnswer": "Your answer",
+    "signalQuestion": "Is this problem still there?",
+    "thanksStillThere": "Thanks for confirming.",
+    "thanksFixed": "Thanks. If another neighbor confirms, it will be marked as resolved.",
+    "nowResolved": "Done! The report was marked as resolved.",
+    "signalError": "We couldn't save your answer. Please try again.",
+    "resolvedBanner": "Marked as resolved {date}.",
+    "expiredBanner": "This report is no longer active: more than 24 hours passed without anyone confirming it's still there.",
+    "hiddenBanner": "This report is under review.",
+    "notFound": "We couldn't find this report.",
+    "loadError": "We couldn't load the report.",
+    "share": "Share",
+    "shareText": "{category} in {place}. See the report on Cauce:",
+    "linkCopied": "Link copied.",
+    "more": "More options",
+    "flag": "Report content",
+    "flagReasons": {
+      "inappropriate": "It's inappropriate",
+      "not_a_problem": "It's not a real problem",
+      "duplicate": "It's a duplicate",
+      "other": "Another reason"
+    },
+    "flagThanks": "Thanks. We'll review this report.",
+    "flagged": "You already reported it",
+    "severity": {
+      "partial": "Partly blocked",
+      "full": "Fully blocked",
+      "damaged": "Damaged cover",
+      "missing": "No cover (open hole)"
+    },
+    "depth": {
+      "5": "Puddle (under 5 cm)",
+      "15": "Ankle-deep (~15 cm)",
+      "45": "Knee-deep (~45 cm)",
+      "80": "Waist-deep or more (80+ cm)"
+    },
+    "metaTitle": "{category} in {place}",
+    "metaDescription": "Community report on Cauce, the Matamoros flood map."
+  },
+  "notFound": {
+    "title": "We couldn't find this page.",
+    "body": "The link may be incomplete, or the report is no longer available.",
+    "back": "Go to the map"
+  },
+  "og": {
+    "kicker": "Community report · Matamoros",
+    "cta": "See it on the Cauce map"
+  },
+  "flow": {
+    "open": "Report a problem",
+    "close": "Cancel report",
+    "back": "Back",
+    "photoTitle": "Take a photo of the problem",
+    "photoBody": "Just one photo that clearly shows what's happening.",
+    "takePhoto": "Take photo",
+    "pickPhoto": "Choose from gallery",
+    "photoTip": "Avoid faces and license plates.",
+    "processing": "Preparing the photo…",
+    "photoTooLarge": "The photo is too large. Take another one or choose a smaller file.",
+    "photoUnsupported": "This format isn't supported. Retake the photo or choose another.",
+    "photoFailed": "We couldn't prepare the photo. Try another one.",
+    "cameraUnavailable": "We couldn't open the camera. You can choose a photo from your gallery.",
+    "locationTitle": "Where is the problem?",
+    "locationGps": "Using your location (±{meters} m). Move the map if the problem is somewhere else.",
+    "locationGpsNoAccuracy": "Using your location. Move the map if the problem is somewhere else.",
+    "locationExif": "Using the location saved in the photo. Adjust the map if needed.",
+    "locationManual": "Move the map to place the pin at the exact spot.",
+    "locationDenied": "We don't have permission to use your location. Move the map to mark the spot.",
+    "locating": "Finding your location…",
+    "outsidePilot": "For now, Cauce works in Matamoros. Move the pin inside the city.",
+    "confirmLocation": "Confirm location",
+    "pinLabel": "Problem location",
+    "detailsTitle": "What's happening?",
+    "chooseCategory": "Choose the type of problem",
+    "suggested": "Suggested",
+    "depthQuestion": "How deep is the water?",
+    "drainQuestion": "How blocked is it?",
+    "coverQuestion": "What's wrong with the cover?",
+    "optional": "Optional",
+    "addNote": "Add a note",
+    "notePlaceholder": "Anything else we should know (optional)",
+    "noteCounter": "{count}/280",
+    "changePhoto": "Change photo",
+    "submit": "Send report",
+    "uploading": "Uploading photo… {percent}%",
+    "sending": "Sending…",
+    "success": "Thanks! Your report is on the map.",
+    "nearby": "{count, plural, =0 {} one {Another neighbor reported problems near here this week.} other {# other neighbors reported problems near here this week.}}",
+    "viewReport": "View",
+    "queued": "You're offline. We saved your report and will send it when you're back online.",
+    "queuedSent": "{count, plural, one {We sent your pending report.} other {We sent # pending reports.}}",
+    "queuedFailed": "We couldn't send a saved report.",
+    "pendingBadge": "{count, plural, one {# report waiting to be sent} other {# reports waiting to be sent}}",
+    "rateLimited": "You've sent many reports in a short time. Please try again in a few minutes.",
+    "failed": "We couldn't send your report. Please try again.",
+    "photoAlt": "Photo you're about to report"
+  },
+  "sensors": {
+    "sheetTitle": "Water-level sensor",
+    "levels": {
+      "normal": "Normal",
+      "warning": "Warning",
+      "critical": "Critical",
+      "offline": "No signal"
+    },
+    "sites": {
+      "street_drain": "Street drain",
+      "canal": "Drainage canal",
+      "river": "River",
+      "other": "Other site"
+    },
+    "current": "Current level",
+    "updatedAgo": "Updated {time}",
+    "neverReported": "This sensor hasn't sent readings yet.",
+    "thresholds": "Warning from {warning} cm · Critical from {critical} cm",
+    "offlineNote": "No data since {time}: it may have lost power or signal.",
+    "ranges": {
+      "1h": "1 h",
+      "24h": "24 h",
+      "7d": "7 days"
+    },
+    "chartLabel": "Water level over {range}: peak {max} cm",
+    "chartEmpty": "No readings in this period yet.",
+    "battery": "Battery {percent}%",
+    "signal": "Signal {quality}",
+    "signalQuality": {
+      "good": "good",
+      "fair": "fair",
+      "weak": "weak"
+    },
+    "interval": "Reports every {minutes} min",
+    "warningLine": "Warning",
+    "criticalLine": "Critical",
+    "loadError": "We couldn't load the sensor.",
+    "notFound": "We couldn't find this sensor.",
+    "metaTitle": "Sensor {name}",
+    "metaDescription": "Live water level, on Cauce."
+  },
+  "offlinePage": {
+    "title": "You're offline",
+    "body": "We couldn't load this page. Check your signal; saved reports will be sent automatically when you're back online.",
+    "retry": "Try again"
+  },
+  "onboarding": {
+    "label": "Welcome to Cauce",
+    "slides": {
+      "report": {
+        "title": "Report what floods your street in seconds.",
+        "body": "One photo, the location, done. No account needed."
+      },
+      "map": {
+        "title": "See what's happening in your neighborhood.",
+        "body": "Blocked drains, flooded streets and water-level sensors on one map."
+      },
+      "signals": {
+        "title": "Confirm, or say when it's fixed.",
+        "body": "Your answers keep the map up to date and help decide what to clean first."
+      }
+    },
+    "next": "Next",
+    "start": "Get started",
+    "skip": "Skip",
+    "step": "Step {current} of {total}",
+    "coachmark": "Tap here to report",
+    "installTitle": "Install Cauce on your phone",
+    "installBody": "Tap Share, then “Add to Home Screen”.",
+    "dismiss": "Close"
+  },
+  "about": {
+    "metaTitle": "About",
+    "metaDescription": "What Cauce is, how it works and who made it.",
+    "back": "Back to the map",
+    "hackathon": "Project for the Mexican Space Agency (AEM) Hackathon",
+    "heroTitle": "A live map of what floods Matamoros.",
+    "heroBody": "Cauce brings together neighbors' reports, water-level sensor readings and the rain forecast in one place, so action happens before the next storm.",
+    "problemTitle": "The problem",
+    "problemBody": "On October 4, 2026, cold front No. 1 dropped 215.9 mm of rain on Matamoros. Neighborhoods like Buenavista, San Francisco and Los Sauces were cut off. Many floods start with something small: a drain clogged with trash that nobody reported in time.",
+    "howTitle": "How it works",
+    "how": {
+      "report": {
+        "title": "Report",
+        "body": "Take a photo, confirm the location and choose what's happening. It takes under 30 seconds, with no account."
+      },
+      "confirm": {
+        "title": "Confirm",
+        "body": "Neighbors say whether the problem is still there or fixed, so the map stays current without moderators."
+      },
+      "measure": {
+        "title": "Measure",
+        "body": "Water-level sensors in drains and canals warn in real time when water rises."
+      },
+      "anticipate": {
+        "title": "Anticipate",
+        "body": "With the rain forecast, history and satellite terrain data, authorities know which drains to clean first."
+      }
+    },
+    "sensorsTitle": "Sensors",
+    "sensorsBody": "We designed low-cost sensors (ESP32 with an ultrasonic sensor) that measure water height and send it every few minutes. Above the warning level, they report every minute.",
+    "authoritiesTitle": "For authorities",
+    "authoritiesBody": "The water utility (JAD) and Civil Protection get a dashboard with risk by area, the reasons behind each score, and the list of drains to clean before the rain.",
+    "authoritiesLink": "Go to the dashboard",
+    "privacyTitle": "Privacy",
+    "privacyBody": "We don't ask for an account or personal data. Photos are compressed on your phone and their metadata is removed before upload. Please avoid faces and license plates.",
+    "demoTitle": "Demo data",
+    "demoBody": "For this presentation, the map includes reports and sensors simulated from real floods in Matamoros between 2024 and 2026. Illustrations are labeled.",
+    "creditsTitle": "Data and credits",
+    "credits": {
+      "osm": "Base map: © OpenStreetMap contributors, © OpenMapTiles, served by OpenFreeMap.",
+      "geocoding": "Addresses: Nominatim (OpenStreetMap).",
+      "weather": "Forecast: Open-Meteo and Mexico's National Weather Service (SMN, CONAGUA).",
+      "elevation": "Terrain elevation: Copernicus DEM GLO-90 (ESA), via Open-Meteo.",
+      "news": "Flood history: reporting by Plano Informativo, Posta, N+, Excélsior and El Imparcial."
+    }
+  }
+}
