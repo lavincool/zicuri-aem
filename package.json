@@ -33,6 +33,7 @@
     "idb-keyval": "6.3.0",
     "lucide-react": "^1.61.0",
     "maplibre-gl": "6.15.0",
+    "motion": "14.6.0",
     "nanoid": "6.0.2",
     "next": "16.4.2",
     "next-intl": "4.14.9",

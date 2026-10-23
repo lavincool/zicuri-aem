@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <title>Cauce</title>
+  <rect x="2" y="2" width="28" height="28" rx="8" fill="#0b1f33"/>
+  <g fill="none" stroke="#ffb000" stroke-width="2.6" stroke-linecap="round">
+    <path d="M8 11c2.7-2 5.3 2 8 0s5.3-2 8 0"/>
+    <path d="M8 16.5c2.7-2 5.3 2 8 0s5.3-2 8 0"/>
+    <path d="M8 22c2.7-2 5.3 2 8 0s5.3-2 8 0"/>
+  </g>
+</svg>

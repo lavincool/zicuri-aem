@@ -237,5 +237,10 @@
     "notFound": "No encontramos este sensor.",
     "metaTitle": "Sensor {name}",
     "metaDescription": "Nivel del agua en tiempo real, en Cauce."
+  },
+  "offlinePage": {
+    "title": "Sin conexión",
+    "body": "No pudimos cargar esta página. Revisa tu señal; tus reportes guardados se enviarán solos cuando vuelva la conexión.",
+    "retry": "Reintentar"
   }
 }
