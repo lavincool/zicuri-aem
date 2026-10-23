@@ -1332,6 +1332,8 @@ The score for each H3 r8 cell is 0–100. It is a **weighted sum of normalized f
 
 ### M8: Operator portal
 
+**Status:** implemented 2026-10-23, except the AI weekly summary (stretch).
+
 Companies and agencies that own sensors see and manage their fleet. Notifications (SMS, WhatsApp, email alerts, push) are out of scope; `device_alerts` keeps recording state changes so they stay cheap later.
 - Accounts: `users`, `memberships`, `login_tokens`, `sessions` (§4.2); magic-link sign-in with an email driver (`console` locally, a provider in production); the demo sign-in under `DEMO_MODE`.
 - `bun run operator:invite -- --org org_… --email … --role admin` creates the user and membership and sends (or prints) the first link. `--create-org "Nombre" --kind operator` creates the organization too.
@@ -1537,7 +1539,14 @@ Small decisions made during implementation, recorded here as the brief asks.
 - **M6:** Risk runs are grouped by `run_id`; the latest run is the current map. Open blockages count fully in their cell and at 50% in the six neighbors; recorded flood events weigh like two reports.
 - **M6:** With `DEMO_MODE`, the panel can apply a clearly labeled **storm scenario** ("Simular lluvia como el 4 de octubre"), stored as a synthetic forecast snapshot (`model = scenario:frente-frio-1`). "Usar pronóstico real" or the daily cron replaces it.
 - **M6:** Relative-time labels use `useLiveNow` (initialized from the server render time) instead of next-intl's `useNow`, whose initial value came from the prerendered layout and could show times "in the future".
-- **M8 (planned):** Operator accounts are **invite-only** (`bun run operator:invite`) rather than self sign-up, so only verified sensor owners get in. Demo access is a one-click seeded account ("Operador demo") behind `DEMO_MODE`, so judges and prospects can try the portal without an email round trip.
-- **M8 (planned):** Sessions are stored server-side (hashed ID in a 30-day cookie) instead of a stateless signed cookie, so signing out or removing a member takes effect immediately. The authorities `/panel` keeps its shared password until accounts replace it.
-- **M8 (planned):** Private sensors are hidden from the public map, deep links and share cards, but still feed the risk model and the authorities panel: flood safety outweighs the owner's preference for aggregated risk. Visibility defaults to public.
-- **M8 (planned):** Editing thresholds re-evaluates the current level at once and opens or closes the `device_alerts` episode, instead of waiting for the next reading. Rotating a key invalidates the old one immediately (no grace period); the UI warns about it.
+- **M8:** Operator accounts are **invite-only** (`bun run operator:invite`) rather than self sign-up, so only verified sensor owners get in. Demo access is a one-click seeded account ("Operador demo") behind `DEMO_MODE`, so judges and prospects can try the portal without an email round trip.
+- **M8:** Sessions are stored server-side (hashed ID in a 30-day cookie) instead of a stateless signed cookie, so signing out or removing a member takes effect immediately. The authorities `/panel` keeps its shared password until accounts replace it.
+- **M8:** Private sensors are hidden from the public map, deep links and share cards, but still feed the risk model and the authorities panel: flood safety outweighs the owner's preference for aggregated risk. Visibility defaults to public.
+- **M8:** Editing thresholds re-evaluates the current level at once and opens or closes the `device_alerts` episode, instead of waiting for the next reading. Rotating a key invalidates the old one immediately (no grace period); the UI warns about it.
+- **M8:** The magic-link email is built with `use-intl/core`'s translator (a direct dependency, same version as next-intl's) so the invite script can send it outside a request.
+- **M8:** A user in several organizations sees the first one they joined; an organization switcher can come later without schema changes. Signing in on a device replaces that device's previous session.
+- **M8:** Offline episodes are **derived**, not stored: gaps longer than the offline rule (3 × the reporting interval) between consecutive readings, plus the current silence. `device_alerts` keeps only normal/warning/critical periods, written by ingestion and by threshold edits.
+- **M8:** Fleet health rules (`src/features/devices/health.ts`): battery below 20 %; silent past the offline rule; a level that moves less than 0.3 cm over ≥ 72 h with ≥ 24 readings ("¿sensor obstruido?"); and spike-and-return readings in the last 24 h, where the jump is at least half the critical level (min 10 cm). Maintenance and retired sensors are never flagged.
+- **M8:** The authorities panel map asks for private sensors with `GET /api/devices?scope=panel` (checked against the panel cookie, `Cache-Control: private, no-store`), so a CDN-cached public response is never served in its place.
+- **M8:** The demo organization is now "Operador demo"; it owns every seeded sensor, so `bun run simulate` changes are visible in the portal too. The seed adds a private pumping-station canal, a low-battery drain, a stuck (flat) drain and one glitch reading in Los Sauces. Rotating a seeded key from the portal breaks that sensor in the simulator until `bun run seed` runs again.
+- **M8:** A sensor of another organization renders the portal's "not found" message (HTTP 200 under Cache Components, as noted for M2). The CSV export uses local Matamoros time, a BOM for Excel, and Spanish headers.

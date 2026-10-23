@@ -35,3 +35,17 @@ A clear, relevant result pre-selects a category with a **Sugerido** badge. The r
 `ai_suggestions` records the model, prompt version, confidence, latency and classification. Submitting a report records `accepted` in the same database transaction, only for a suggestion belonging to that report's upload. Re-uploading an offline report safely discards a stale suggestion reference.
 
 Run `bun test`, `bun run lint`, `bun run typecheck` and `bun run build` to validate. AI tests use a temporary in-memory database and simulated provider responses; they make no paid OpenAI calls. To check real model quality after enabling your key, try a clear clogged-drain photo, an unrelated photo and a manually changed category.
+
+## Operator portal (M8)
+
+`/operador` is for companies and agencies that own sensors: fleet overview, sensor list with health checks, sensor detail (chart up to 30 days, events, nearby reports, area risk), editing (name, site, state, visibility, location, thresholds, interval) with a change history, key rotation, and an event timeline with CSV export.
+
+Apply the migrations (`0004_accounts.sql`, `0005_device_visibility.sql`) with `bun run db:migrate`, then `bun run seed`. With `DEMO_MODE=true`, the sign-in page offers **Entrar con cuenta de demostración** for the seeded "Operador demo".
+
+Access is invite-only:
+
+```bash
+bun run operator:invite -- --org org_demo --email ana@empresa.mx --name "Ana López" --role admin
+```
+
+`--create-org "Agua del Norte" --kind utility` creates the organization instead of `--org`. Roles: `owner` and `admin` edit sensors and rotate keys; `viewer` only reads. Sign-in links are single use and expire in 15 minutes. With `EMAIL_DRIVER=console` (the only driver for now) the link is printed by the script and in the server log; a real email provider is chosen before launch.
