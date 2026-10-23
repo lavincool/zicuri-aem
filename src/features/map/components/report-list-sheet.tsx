@@ -1,6 +1,6 @@
 "use client";
 
-import { useFormatter, useNow, useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import {
   Drawer,
   DrawerContent,
@@ -11,6 +11,7 @@ import {
 import { CATEGORY_COLORS } from "@/config/categories";
 import { CategoryIcon } from "@/features/reports/components/category-icon";
 import type { ReportFeature } from "@/features/reports/schema";
+import { useLiveNow } from "@/hooks/use-live-now";
 
 const MAX_ITEMS = 50;
 
@@ -51,7 +52,7 @@ function ListBody({
 }) {
   const t = useTranslations();
   const format = useFormatter();
-  const now = useNow({ updateInterval: 60_000 });
+  const now = useLiveNow(60_000);
   const sorted = [...reports]
     .filter((r) => !r.properties.p)
     .sort((a, b) => b.properties.t - a.properties.t);

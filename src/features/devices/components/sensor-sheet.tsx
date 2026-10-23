@@ -1,7 +1,7 @@
 "use client";
 
 import { BatteryMedium, Clock, Signal, WifiOff } from "lucide-react";
-import { useFormatter, useNow, useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/drawer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LEVEL_COLORS } from "@/config/devices";
+import { useLiveNow } from "@/hooks/use-live-now";
 import { cn } from "@/lib/utils";
 import {
   type DeviceDetail,
@@ -170,7 +171,7 @@ function SensorBody({
 }) {
   const t = useTranslations();
   const format = useFormatter();
-  const now = useNow({ updateInterval: 15_000 });
+  const now = useLiveNow(15_000);
   return (
     <>
       <header className="space-y-1">

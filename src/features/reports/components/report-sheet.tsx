@@ -10,7 +10,7 @@ import {
   Share2,
   ShieldAlert,
 } from "lucide-react";
-import { useFormatter, useNow, useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CATEGORY_COLORS } from "@/config/categories";
+import { useLiveNow } from "@/hooks/use-live-now";
 import { cn } from "@/lib/utils";
 import {
   ApiRequestError,
@@ -169,7 +170,7 @@ function ReportBody({
 }) {
   const t = useTranslations();
   const format = useFormatter();
-  const now = useNow({ updateInterval: 60_000 });
+  const now = useLiveNow(60_000);
   const [photoOpen, setPhotoOpen] = useState(false);
   const [pending, setPending] = useState<SignalKind | null>(null);
   const [thumbLoaded, setThumbLoaded] = useState(false);

@@ -11,6 +11,7 @@ export default function NotFound() {
       <h1 className="max-w-sm text-3xl font-extrabold">{t("title")}</h1>
       <p className="max-w-sm text-muted-foreground">{t("body")}</p>
       <Button
+        nativeButton={false}
         render={<Link href="/" />}
         className="h-12 rounded-full px-6 text-base font-bold"
       >

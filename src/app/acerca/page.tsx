@@ -34,6 +34,7 @@ export default function AboutPage() {
       <nav className="flex items-center justify-between py-3">
         <Button
           variant="ghost"
+          nativeButton={false}
           render={<Link href="/" />}
           className="h-11 gap-2 rounded-full px-3 text-base font-semibold"
         >
@@ -93,6 +94,7 @@ export default function AboutPage() {
         <p className="text-base leading-relaxed">{t("authoritiesBody")}</p>
         <Button
           variant="outline"
+          nativeButton={false}
           render={<Link href="/panel" />}
           className="h-11 rounded-full px-5 font-bold"
         >
