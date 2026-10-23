@@ -1361,3 +1361,6 @@ The score for each H3 r8 cell is 0–100. It is a **weighted sum of normalized f
 
 Small decisions made during implementation, recorded here as the brief asks.
 - **M0:** `create-next-app` 16.4.2 now uses the `@tailwindcss/turbopack` loader instead of PostCSS, so `@tailwindcss/postcss` is not installed. Biome 2.6 also formats Markdown, so docs are formatted by `bun run format` too.
+- **M0:** The locale is resolved **statically** (`es`) in `src/i18n/request.ts` instead of from a cookie. Reading a cookie in the root layout would make every page dynamic under Cache Components and lose the static shell that keeps first paint fast. Spanish is the product language for the pilot; `messages/en.json` is completed in M5, and a language switch can be added later by changing only `src/i18n/request.ts`.
+- **M0:** Theme switching uses `next-themes` (pulled in by the shadcn Sonner component) with the `class` strategy, following the system by default.
+- **M0:** Port 3000 was taken by another local Next.js app during development, so `next dev` fell back to 3001. Nothing in the code depends on the port.

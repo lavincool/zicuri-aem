@@ -3,6 +3,8 @@ import {
   Atkinson_Hyperlegible_Next,
   Bricolage_Grotesque,
 } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
@@ -16,16 +18,19 @@ const body = Atkinson_Hyperlegible_Next({
   variable: "--font-body",
   subsets: ["latin", "latin-ext"],
   display: "swap",
+  // next/font has no fallback metrics for this family yet.
+  adjustFontFallback: false,
+  fallback: ["system-ui", "sans-serif"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Cauce",
-    template: "%s · Cauce",
-  },
-  description: "Reporta lo que inunda tu calle en Matamoros.",
-  applicationName: "Cauce",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("common");
+  return {
+    title: { default: t("appName"), template: `%s · ${t("appName")}` },
+    description: t("description"),
+    applicationName: t("appName"),
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -45,7 +50,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${display.variable} ${body.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <Providers>{children}</Providers>
+        <NextIntlClientProvider>
+          <Providers>{children}</Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
