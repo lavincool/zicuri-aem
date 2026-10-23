@@ -14,7 +14,12 @@ import { toast } from "sonner";
 import { DESKTOP_SHEET_QUERY } from "@/components/detail-sheet";
 import { Button } from "@/components/ui/button";
 import { CATEGORY_COLORS, type ReportCategory } from "@/config/categories";
-import { isInsidePilot, type LngLat, PILOT } from "@/config/pilot";
+import {
+  isInsideServiceArea,
+  type LngLat,
+  MAP_ZOOM,
+  MEXICO_VIEW,
+} from "@/config/service-area";
 import { SensorSheet } from "@/features/devices/components/sensor-sheet";
 import { FirstRun } from "@/features/onboarding/first-run";
 import {
@@ -265,8 +270,8 @@ export function MapScreen({
       (position) => {
         setLocating(false);
         const { latitude: lat, longitude: lng, accuracy } = position.coords;
-        if (!isInsidePilot(lng, lat)) {
-          toast.info(t("map.outsidePilot"));
+        if (!isInsideServiceArea(lng, lat)) {
+          toast.info(t("map.outsideArea"));
           return;
         }
         setUserLocation({ lat, lng, accuracyM: accuracy });
@@ -323,10 +328,10 @@ export function MapScreen({
           className="absolute inset-0"
           styleUrl={STYLE_URLS[theme]}
           theme={theme}
-          initialCenter={initialFocus?.center ?? PILOT.center}
-          initialZoom={initialFocus ? 16 : PILOT.zoom}
-          minZoom={PILOT.minZoom}
-          maxZoom={PILOT.maxZoom}
+          initialCenter={initialFocus?.center ?? MEXICO_VIEW.center}
+          initialZoom={initialFocus ? 16 : MEXICO_VIEW.zoom}
+          minZoom={MAP_ZOOM.min}
+          maxZoom={MAP_ZOOM.max}
           reports={mapReports}
           selectedReportId={selectedId}
           sensors={sensors}

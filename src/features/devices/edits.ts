@@ -10,7 +10,7 @@ import {
   EDITABLE_DEVICE_STATUSES,
 } from "@/config/devices";
 import type { AuditAction } from "@/config/operators";
-import { isInsidePilot } from "@/config/pilot";
+import { isInsideServiceArea } from "@/config/service-area";
 import { LEVEL_RANGE_CM } from "./rules";
 
 export const deviceUpdateSchema = z
@@ -34,11 +34,11 @@ export const deviceUpdateSchema = z
         message: "critical must be above warning",
       });
     }
-    if (!isInsidePilot(input.lng, input.lat)) {
+    if (!isInsideServiceArea(input.lng, input.lat)) {
       ctx.addIssue({
         code: "custom",
         path: ["lat"],
-        message: "outside the pilot area",
+        message: "outside Mexico",
       });
     }
   });

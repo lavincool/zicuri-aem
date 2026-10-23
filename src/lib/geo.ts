@@ -43,3 +43,49 @@ export function snapBbox(bbox: Bbox, zoom: number): Bbox {
     round(up(bbox[3])),
   ];
 }
+
+/** Polygons as GeoJSON coordinates: each polygon is an outer ring plus holes, in [lng, lat]. */
+export type Polygons = number[][][][];
+
+function insideRing(lng: number, lat: number, ring: number[][]): boolean {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i] as [number, number];
+    const [xj, yj] = ring[j] as [number, number];
+    if (
+      yi > lat !== yj > lat &&
+      lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi
+    ) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
+/** Ray-casting point-in-polygon over several polygons with holes. */
+export function insidePolygons(
+  lng: number,
+  lat: number,
+  polygons: Polygons,
+): boolean {
+  return polygons.some(
+    ([outer, ...holes]) =>
+      outer !== undefined &&
+      insideRing(lng, lat, outer) &&
+      !holes.some((hole) => insideRing(lng, lat, hole)),
+  );
+}
+
+/** Bounding box of polygons (west, south, east, north). */
+export function polygonsBbox(polygons: Polygons): Bbox {
+  const bbox: Bbox = [180, 90, -180, -90];
+  for (const [outer] of polygons) {
+    for (const [lng, lat] of outer ?? []) {
+      bbox[0] = Math.min(bbox[0], lng as number);
+      bbox[1] = Math.min(bbox[1], lat as number);
+      bbox[2] = Math.max(bbox[2], lng as number);
+      bbox[3] = Math.max(bbox[3], lat as number);
+    }
+  }
+  return bbox;
+}

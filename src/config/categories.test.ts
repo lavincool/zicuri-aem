@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
 import { isTransientCategory, normalizeSeverity } from "./categories";
-import { isInsidePilot } from "./pilot";
 
 describe("normalizeSeverity", () => {
   test("maps water depth to 1–3", () => {
@@ -23,9 +22,4 @@ describe("normalizeSeverity", () => {
 test("only water categories are transient", () => {
   expect(isTransientCategory("flooded_street")).toBe(true);
   expect(isTransientCategory("blocked_drain")).toBe(false);
-});
-
-test("pilot bounds contain Buenavista and exclude Monterrey", () => {
-  expect(isInsidePilot(-97.562, 25.8226)).toBe(true);
-  expect(isInsidePilot(-100.31, 25.67)).toBe(false);
 });

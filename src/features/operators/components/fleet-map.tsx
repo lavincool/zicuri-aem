@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
-import { type LngLat, PILOT } from "@/config/pilot";
+import { type LngLat, MAP_ZOOM, MEXICO_VIEW } from "@/config/service-area";
 import type { DeviceFeatureCollection } from "@/features/devices/schema";
 import { FloodMap } from "@/features/map/components/flood-map";
 
@@ -33,10 +33,9 @@ export function FleetMap({ sensors }: { sensors: DeviceFeatureCollection }) {
       className="absolute inset-0"
       styleUrl={`/map/styles/cauce-${theme}.json`}
       theme={theme}
-      initialCenter={fleetCenter(sensors)}
-      initialZoom={12.2}
-      minZoom={PILOT.minZoom}
-      maxZoom={PILOT.maxZoom}
+      {...fleetView(sensors)}
+      minZoom={MAP_ZOOM.min}
+      maxZoom={MAP_ZOOM.max}
       reports={EMPTY_REPORTS}
       sensors={sensors}
       onSensorClick={(id) => router.push(`/operador/sensores/${id}`)}
@@ -45,12 +44,20 @@ export function FleetMap({ sensors }: { sensors: DeviceFeatureCollection }) {
   );
 }
 
-function fleetCenter(sensors: DeviceFeatureCollection): LngLat {
+function fleetView(sensors: DeviceFeatureCollection) {
   const points = sensors.features.map((f) => f.geometry.coordinates);
-  if (points.length === 0) return PILOT.center;
+  if (points.length === 0) {
+    return {
+      initialCenter: MEXICO_VIEW.center,
+      initialZoom: MEXICO_VIEW.zoom,
+    };
+  }
   const [lng, lat] = points.reduce(
     ([x, y], [px, py]) => [x + px, y + py],
     [0, 0],
   );
-  return [lng / points.length, lat / points.length];
+  return {
+    initialCenter: [lng / points.length, lat / points.length] as LngLat,
+    initialZoom: 12.2,
+  };
 }

@@ -24,7 +24,11 @@ import {
   type EditableDeviceStatus,
   LEVEL_COLORS,
 } from "@/config/devices";
-import { isInsidePilot, PILOT } from "@/config/pilot";
+import {
+  isInsideServiceArea,
+  MAP_ZOOM,
+  MEXICO_VIEW,
+} from "@/config/service-area";
 import type { DeviceUpdate, EditField } from "@/features/devices/edits";
 import { levelFor } from "@/features/devices/rules";
 import { FloodMap } from "@/features/map/components/flood-map";
@@ -67,8 +71,8 @@ export function DeviceEditForm({ device }: { device: EditableDevice }) {
   );
   const [visibility, setVisibility] = useState(device.visibility);
   const [location, setLocation] = useState({
-    lat: device.lat ?? PILOT.center[1],
-    lng: device.lng ?? PILOT.center[0],
+    lat: device.lat ?? MEXICO_VIEW.center[1],
+    lng: device.lng ?? MEXICO_VIEW.center[0],
   });
   const [pickingLocation, setPickingLocation] = useState(false);
   const [warning, setWarning] = useState(String(device.warningCm));
@@ -200,6 +204,7 @@ export function DeviceEditForm({ device }: { device: EditableDevice }) {
         {pickingLocation ? (
           <LocationPicker
             initial={location}
+            initialZoom={device.lat === null ? MEXICO_VIEW.zoom : 17}
             onChange={setLocation}
             onDone={() => setPickingLocation(false)}
           />
@@ -414,10 +419,12 @@ function ChoiceGroup<T extends string>({
 /** The map moves under a fixed pin, like the report flow's location step. */
 function LocationPicker({
   initial,
+  initialZoom,
   onChange,
   onDone,
 }: {
   initial: { lat: number; lng: number };
+  initialZoom: number;
   onChange: (location: { lat: number; lng: number }) => void;
   onDone: () => void;
 }) {
@@ -440,13 +447,13 @@ function LocationPicker({
             styleUrl={`/map/styles/cauce-${theme}.json`}
             theme={theme}
             initialCenter={[initial.lng, initial.lat]}
-            initialZoom={17}
-            minZoom={PILOT.minZoom}
-            maxZoom={PILOT.maxZoom}
+            initialZoom={initialZoom}
+            minZoom={MAP_ZOOM.min}
+            maxZoom={MAP_ZOOM.max}
             reports={EMPTY_REPORTS}
             onViewChange={(view) => {
               const [lng, lat] = view.center;
-              setOutside(!isInsidePilot(lng, lat));
+              setOutside(!isInsideServiceArea(lng, lat));
               onChange({ lat: round(lat, 6), lng: round(lng, 6) });
             }}
             ariaLabel={t("locationAriaLabel")}

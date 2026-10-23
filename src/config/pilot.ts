@@ -1,21 +1,20 @@
 /**
- * Pilot area: Matamoros, Tamaulipas.
+ * Pilot city: Matamoros, Tamaulipas. Reports are accepted anywhere in Mexico
+ * (config/service-area.ts); the pilot frames the authorities panel, the insights
+ * area and the demo data.
  * Colonia centroids are approximate (OSM coverage of colonias is thin); see PLAN.md §1.
  */
-
-export type LngLat = [lng: number, lat: number];
+import type { LngLat } from "./service-area";
 
 export const PILOT = {
   city: "Matamoros",
   state: "Tamaulipas",
   timeZone: "America/Matamoros",
-  /** Default map view: the west/southwest flood belt plus downtown. */
+  /** The west/southwest flood belt plus downtown. */
   center: [-97.54, 25.84] as LngLat,
   zoom: 13,
   minZoom: 10,
   maxZoom: 19,
-  /** Reports outside these bounds are rejected (west, south, east, north). */
-  bounds: [-97.68, 25.74, -97.36, 25.98] as [number, number, number, number],
 } as const;
 
 export type Colonia = {
@@ -73,8 +72,3 @@ export const COLONIAS: Colonia[] = [
   },
   { name: "Centro", center: [-97.5047, 25.8797], radiusM: 700, focus: false },
 ];
-
-export function isInsidePilot(lng: number, lat: number): boolean {
-  const [west, south, east, north] = PILOT.bounds;
-  return lng >= west && lng <= east && lat >= south && lat <= north;
-}

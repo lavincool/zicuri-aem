@@ -7,7 +7,7 @@ import type {
   Map as MapLibreMap,
 } from "maplibre-gl";
 import { type Ref, useEffect, useImperativeHandle, useRef } from "react";
-import type { LngLat } from "@/config/pilot";
+import type { LngLat } from "@/config/service-area";
 import type { DeviceFeatureCollection } from "@/features/devices/schema";
 import type { ReportFeatureCollection } from "@/features/reports/schema";
 import type { Bbox } from "@/lib/geo";

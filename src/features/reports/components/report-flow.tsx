@@ -23,7 +23,7 @@ import {
   type SeverityDetail,
   type WaterDepthCm,
 } from "@/config/categories";
-import { isInsidePilot, type LngLat } from "@/config/pilot";
+import { isInsideServiceArea, type LngLat } from "@/config/service-area";
 import { fetchSuggestion } from "@/features/ai/client/suggest";
 import type { Suggestion } from "@/features/ai/schema";
 import { haversineMeters } from "@/lib/geo";
@@ -283,7 +283,7 @@ export function ReportFlow({
   useEffect(() => {
     if (step !== "location") return;
     let start: Placement | null = null;
-    if (gps.status === "ready" && isInsidePilot(gps.lng, gps.lat)) {
+    if (gps.status === "ready" && isInsideServiceArea(gps.lng, gps.lat)) {
       start = {
         lat: gps.lat,
         lng: gps.lng,
@@ -295,7 +295,7 @@ export function ReportFlow({
         lng: gps.lng,
         accuracyM: gps.accuracyM,
       });
-    } else if (exif && isInsidePilot(exif.lng, exif.lat)) {
+    } else if (exif && isInsideServiceArea(exif.lng, exif.lat)) {
       start = { lat: exif.lat, lng: exif.lng, source: "exif", accuracyM: null };
     }
     if (start && (!anchor || anchor.source === "manual")) {
@@ -315,11 +315,11 @@ export function ReportFlow({
   }, [anchor, exif, gps, map, step]);
 
   const center = viewCenter;
-  const outside = center ? !isInsidePilot(center[0], center[1]) : false;
+  const outside = center ? !isInsideServiceArea(center[0], center[1]) : false;
 
   const confirmLocation = () => {
     const current = map.getCenter();
-    if (!current || !isInsidePilot(current[0], current[1])) return;
+    if (!current || !isInsideServiceArea(current[0], current[1])) return;
     const [lng, lat] = current;
     const moved = anchor
       ? haversineMeters(anchor, { lat, lng }) > MANUAL_THRESHOLD_M
@@ -383,8 +383,8 @@ export function ReportFlow({
         return;
       }
       if (code === "RATE_LIMITED") toast.error(t("flow.rateLimited"));
-      else if (code === "OUTSIDE_PILOT_AREA") {
-        toast.error(t("flow.outsidePilot"));
+      else if (code === "OUTSIDE_SERVICE_AREA") {
+        toast.error(t("flow.outsideArea"));
         setStep("location");
         return;
       } else toast.error(t("flow.failed"));
@@ -543,7 +543,7 @@ export function ReportFlow({
                 </h2>
                 <p className="text-sm text-muted-foreground" aria-live="polite">
                   {outside
-                    ? t("flow.outsidePilot")
+                    ? t("flow.outsideArea")
                     : anchor?.source === "gps"
                       ? anchor.accuracyM
                         ? t("flow.locationGps", { meters: anchor.accuracyM })

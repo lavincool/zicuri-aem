@@ -35,11 +35,15 @@ describe("deviceUpdateSchema", () => {
       expect(invalidFields(result.error)).toEqual(["criticalCm"]);
   });
 
-  test("the sensor must stay in the pilot area", () => {
+  test("the sensor must stay in Mexico", () => {
+    expect(
+      deviceUpdateSchema.safeParse({ ...input, lat: 19.43, lng: -99.13 })
+        .success,
+    ).toBe(true);
     const result = deviceUpdateSchema.safeParse({
       ...input,
-      lat: 19.43,
-      lng: -99.13,
+      lat: 29.76,
+      lng: -95.37,
     });
     expect(result.success).toBe(false);
     if (!result.success)

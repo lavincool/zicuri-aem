@@ -2,7 +2,7 @@ import "server-only";
 import { and, countDistinct, eq, gte, inArray, ne } from "drizzle-orm";
 import { gridDisk } from "h3-js";
 import { normalizeSeverity } from "@/config/categories";
-import { isInsidePilot } from "@/config/pilot";
+import { isInsideServiceArea } from "@/config/service-area";
 import { MAX_PHOTO_BYTES, UPLOAD_MAX_AGE_MS } from "@/config/uploads";
 import { db } from "@/lib/db/client";
 import {
@@ -79,11 +79,11 @@ export async function createReport(
   now = new Date(),
 ): Promise<Report> {
   const { lat, lng } = input.location;
-  if (!isInsidePilot(lng, lat)) {
+  if (!isInsideServiceArea(lng, lat)) {
     throw new DomainError(
-      "OUTSIDE_PILOT_AREA",
+      "OUTSIDE_SERVICE_AREA",
       422,
-      "Location is outside the pilot area",
+      "Location is outside Mexico",
     );
   }
 
