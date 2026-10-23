@@ -35,6 +35,7 @@ import {
   writeIllustrations,
 } from "./lib/illustrations";
 import { seedDevices } from "./lib/seed-devices";
+import { seedInsights } from "./lib/seed-insights";
 
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
@@ -431,6 +432,11 @@ async function main() {
   const sensors = await seedDevices();
   console.log(
     `Seeded ${sensors} sensors with 7 days of readings; keys saved to .simulator-devices.json`,
+  );
+
+  const insights = await seedInsights();
+  console.log(
+    `Seeded ${insights.events} flood events, ${insights.cells} H3 cells with satellite elevation, and ${insights.risk} risk scores`,
   );
 }
 
