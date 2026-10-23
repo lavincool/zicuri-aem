@@ -3,6 +3,86 @@
     "appName": "Cauce",
     "tagline": "Reporta lo que inunda tu calle.",
     "description": "Reporta lo que inunda tu calle en Matamoros.",
-    "report": "Reportar"
+    "report": "Reportar",
+    "retry": "Reintentar",
+    "close": "Cerrar",
+    "demoData": "Datos de demostración",
+    "offline": "Sin conexión: mostrando lo último que cargamos."
+  },
+  "categories": {
+    "blocked_drain": "Alcantarilla tapada",
+    "broken_cover": "Tapa rota o faltante",
+    "flooded_street": "Calle inundada",
+    "overflowing_canal": "Dren o canal desbordado",
+    "sewage_backflow": "Brota el drenaje",
+    "other": "Otro problema"
+  },
+  "categoryHelp": {
+    "blocked_drain": "Basura o lodo tapan la entrada del agua",
+    "broken_cover": "Peligro: registro o alcantarilla abierta",
+    "flooded_street": "El agua no deja pasar a peatones o autos",
+    "overflowing_canal": "El agua se sale del dren o canal",
+    "sewage_backflow": "Aguas negras saliendo de registros",
+    "other": "Algo más que causa o indica inundación"
+  },
+  "statuses": {
+    "open": "Activo",
+    "resolved": "Resuelto",
+    "expired": "Ya no activo",
+    "hidden": "En revisión"
+  },
+  "map": {
+    "ariaLabel": "Mapa de reportes de inundación en Matamoros",
+    "loading": "Cargando el mapa…",
+    "error": "No pudimos cargar el mapa. Revisa tu conexión.",
+    "emptyTitle": "Aún no hay reportes por aquí.",
+    "emptyBody": "Si ves un problema, sé la primera persona en reportarlo.",
+    "truncated": "Hay muchos reportes en esta zona. Acércate para verlos todos.",
+    "nearMe": "Cerca de mí",
+    "locating": "Buscando tu ubicación…",
+    "locationDenied": "Activa tu ubicación para ver lo que pasa cerca de ti.",
+    "locationUnavailable": "No pudimos obtener tu ubicación. Intenta de nuevo.",
+    "outsidePilot": "Por ahora Cauce funciona en Matamoros.",
+    "updating": "Actualizando reportes…",
+    "loadError": "No pudimos actualizar los reportes."
+  },
+  "filters": {
+    "label": "Filtros",
+    "status": "Estado",
+    "statusOptions": {
+      "open": "Activos",
+      "resolved": "Resueltos",
+      "all": "Todos"
+    },
+    "since": "Periodo",
+    "sinceOptions": {
+      "24h": "24 h",
+      "7d": "7 días",
+      "30d": "30 días",
+      "all": "Todo"
+    },
+    "categories": "Tipos de problema",
+    "allCategories": "Todos los tipos"
+  },
+  "legend": {
+    "open": "Leyenda",
+    "title": "¿Qué significa cada color?",
+    "categories": "Tipos de problema",
+    "states": "Estado del reporte",
+    "stateOpen": "Activo: sigue pendiente",
+    "stateResolved": "Resuelto: los vecinos confirmaron que se arregló",
+    "stateExpired": "Ya no activo: nadie confirmó que siga",
+    "clusters": "Grupos",
+    "clustersBody": "El número indica cuántos reportes hay en la zona. Tócalo para acercarte.",
+    "signals": "Sigue ahí / Ya se arregló",
+    "signalsBody": "Confirma lo que ves. Con dos avisos de “Ya se arregló” el reporte se marca como resuelto."
+  },
+  "menu": {
+    "open": "Menú",
+    "about": "Acerca de Cauce",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
+    "themeSystem": "Automático"
   }
 }
