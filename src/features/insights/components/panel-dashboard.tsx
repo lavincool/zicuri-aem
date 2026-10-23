@@ -432,7 +432,7 @@ function RiskMap({
     () => false,
   );
   const [view, setView] = useState<MapView | null>(null);
-  const sensors = useSensorsFeed(view);
+  const sensors = useSensorsFeed(view, { scope: "panel" });
   const riskCells = useMemo(
     () => cells.map(({ h3r8, level, score }) => ({ h3r8, level, score })),
     [cells],

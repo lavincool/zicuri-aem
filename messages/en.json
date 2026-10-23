@@ -222,7 +222,8 @@
     "ranges": {
       "1h": "1 h",
       "24h": "24 h",
-      "7d": "7 days"
+      "7d": "7 days",
+      "30d": "30 days"
     },
     "chartLabel": "Water level over {range}: peak {max} cm",
     "chartEmpty": "No readings in this period yet.",

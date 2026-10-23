@@ -222,7 +222,8 @@
     "ranges": {
       "1h": "1 h",
       "24h": "24 h",
-      "7d": "7 días"
+      "7d": "7 días",
+      "30d": "30 días"
     },
     "chartLabel": "Nivel del agua en {range}: máximo {max} cm",
     "chartEmpty": "Aún no hay lecturas en este periodo.",

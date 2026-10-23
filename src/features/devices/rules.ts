@@ -54,6 +54,13 @@ export function deviceLevel(
   return levelFor(device.lastLevelCm, device);
 }
 
+/** Wi-Fi signal buckets residents and operators can read. */
+export function signalQuality(rssiDbm: number): "good" | "fair" | "weak" {
+  if (rssiDbm >= -67) return "good";
+  if (rssiDbm >= -80) return "fair";
+  return "weak";
+}
+
 /** Server-driven interval: faster while water is above warning. */
 export function nextIntervalSeconds(
   level: DeviceLevel,

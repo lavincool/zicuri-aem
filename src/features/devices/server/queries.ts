@@ -2,7 +2,7 @@ import "server-only";
 import { and, asc, between, eq, gte, ne, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import { db } from "@/lib/db/client";
-import { devices, sensorReadings } from "@/lib/db/schema";
+import { type Device, devices, sensorReadings } from "@/lib/db/schema";
 import type { Bbox } from "@/lib/geo";
 import { deviceLevel } from "../rules";
 import type {
@@ -12,22 +12,14 @@ import type {
   ReadingSeries,
 } from "../schema";
 
-export async function listDeviceFeatures(
-  bbox: Bbox,
-  now = new Date(),
-): Promise<DeviceFeatureCollection> {
-  const [west, south, east, north] = bbox;
-  const rows = await db()
-    .select()
-    .from(devices)
-    .where(
-      and(
-        ne(devices.status, "retired"),
-        between(devices.lat, south, north),
-        between(devices.lng, west, east),
-      ),
-    )
-    .limit(2000);
+/** Public reads never expose private sensors; the authorities panel may opt in. */
+const visibleTo = (includePrivate: boolean) =>
+  includePrivate ? undefined : eq(devices.visibility, "public");
+
+export function toDeviceFeatures(
+  rows: Device[],
+  now: Date,
+): DeviceFeatureCollection {
   return {
     type: "FeatureCollection",
     features: rows
@@ -49,6 +41,26 @@ export async function listDeviceFeatures(
   };
 }
 
+export async function listDeviceFeatures(
+  bbox: Bbox,
+  { includePrivate = false, now = new Date() } = {},
+): Promise<DeviceFeatureCollection> {
+  const [west, south, east, north] = bbox;
+  const rows = await db()
+    .select()
+    .from(devices)
+    .where(
+      and(
+        ne(devices.status, "retired"),
+        visibleTo(includePrivate),
+        between(devices.lat, south, north),
+        between(devices.lng, west, east),
+      ),
+    )
+    .limit(2000);
+  return toDeviceFeatures(rows, now);
+}
+
 export async function getDeviceDetail(
   id: string,
   now = new Date(),
@@ -56,7 +68,7 @@ export async function getDeviceDetail(
   const [d] = await db()
     .select()
     .from(devices)
-    .where(eq(devices.id, id))
+    .where(and(eq(devices.id, id), visibleTo(false)))
     .limit(1);
   if (!d || d.status === "retired" || d.lat === null || d.lng === null) {
     return null;
@@ -82,6 +94,7 @@ const RANGE_MS: Record<ReadingRange, number> = {
   "1h": 3_600_000,
   "24h": 24 * 3_600_000,
   "7d": 7 * 24 * 3_600_000,
+  "30d": 30 * 24 * 3_600_000,
 };
 /** ≤ 288 points per chart; each bucket keeps its peak level (what matters for floods). */
 const MAX_POINTS = 288;
@@ -89,12 +102,12 @@ const MAX_POINTS = 288;
 export async function getReadingSeries(
   id: string,
   range: ReadingRange,
-  now = new Date(),
+  { includePrivate = false, now = new Date() } = {},
 ): Promise<ReadingSeries | null> {
   const [d] = await db()
     .select({ warningCm: devices.warningCm, criticalCm: devices.criticalCm })
     .from(devices)
-    .where(eq(devices.id, id))
+    .where(and(eq(devices.id, id), visibleTo(includePrivate)))
     .limit(1);
   if (!d) return null;
   const bucketMs = Math.ceil(RANGE_MS[range] / MAX_POINTS);
@@ -128,7 +141,7 @@ export type DeviceSummary = {
   lng: number;
 };
 
-/** Cacheable identity and position, for deep links and metadata. */
+/** Cacheable identity and position, for deep links and metadata. Edits call `updateTag`. */
 export async function getDeviceSummary(
   id: string,
 ): Promise<DeviceSummary | null> {
@@ -142,11 +155,19 @@ export async function getDeviceSummary(
       lat: devices.lat,
       lng: devices.lng,
       status: devices.status,
+      visibility: devices.visibility,
     })
     .from(devices)
     .where(eq(devices.id, id))
     .limit(1);
-  if (!d || d.status === "retired" || d.lat === null || d.lng === null)
+  if (
+    !d ||
+    d.status === "retired" ||
+    d.visibility === "private" ||
+    d.lat === null ||
+    d.lng === null
+  ) {
     return null;
+  }
   return { id: d.id, name: d.name, lat: d.lat, lng: d.lng };
 }

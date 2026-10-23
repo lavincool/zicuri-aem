@@ -12,10 +12,14 @@ const EMPTY: DeviceFeatureCollection = {
 /** Sensors change faster than reports, so they refresh more often. */
 const REFRESH_MS = 5_000;
 
-export function useSensorsFeed(view: MapView | null) {
+/** `scope: "panel"` includes private sensors when the authorities panel session is valid. */
+export function useSensorsFeed(
+  view: MapView | null,
+  { scope }: { scope?: "panel" } = {},
+) {
   const [data, setData] = useState<DeviceFeatureCollection>(EMPTY);
   const url = view
-    ? `/api/devices?bbox=${snapBbox(view.bbox, Math.min(view.zoom, 12)).join(",")}`
+    ? `/api/devices?bbox=${snapBbox(view.bbox, Math.min(view.zoom, 12)).join(",")}${scope ? `&scope=${scope}` : ""}`
     : null;
 
   useEffect(() => {

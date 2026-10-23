@@ -8,6 +8,25 @@ export const DEVICE_SITE_TYPES = [
 ] as const;
 export type DeviceSiteType = (typeof DEVICE_SITE_TYPES)[number];
 
+export const DEVICE_STATUSES = [
+  "pending",
+  "active",
+  "maintenance",
+  "retired",
+] as const;
+export type DeviceStatus = (typeof DEVICE_STATUSES)[number];
+/** States an operator can set; `pending` only ends with the first reading. */
+export const EDITABLE_DEVICE_STATUSES = [
+  "active",
+  "maintenance",
+  "retired",
+] as const;
+export type EditableDeviceStatus = (typeof EDITABLE_DEVICE_STATUSES)[number];
+
+/** Private sensors stay off the public map but still feed the risk model and the panel. */
+export const DEVICE_VISIBILITIES = ["public", "private"] as const;
+export type DeviceVisibility = (typeof DEVICE_VISIBILITIES)[number];
+
 /** Threshold level of a reading. `offline` is derived from silence, not from a reading. */
 export const DEVICE_LEVELS = [
   "normal",

@@ -1,12 +1,7 @@
 import "server-only";
-import { and, desc, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "@/lib/db/client";
-import {
-  type Device,
-  deviceAlerts,
-  devices,
-  sensorReadings,
-} from "@/lib/db/schema";
+import { type Device, devices, sensorReadings } from "@/lib/db/schema";
 import { prefixedId } from "@/lib/ids";
 import {
   checkReading,
@@ -15,6 +10,7 @@ import {
   nextIntervalSeconds,
 } from "../rules";
 import type { IngestResponse, ReadingPayload } from "../schema";
+import { recordLevelChange } from "./alerts";
 
 export type Transport = "http" | "ttn" | "mqtt" | "simulator" | "seed";
 
@@ -112,7 +108,15 @@ export async function ingestReadings(
       .where(eq(devices.id, device.id));
   }
 
-  if (isNewest && latest) await recordLevelChange(updated, latest, now);
+  if (isNewest && latest) {
+    await recordLevelChange(db(), {
+      deviceId: device.id,
+      level: levelFor(latest.levelCm, updated),
+      levelCm: latest.levelCm,
+      startedAt: latest.measuredAt,
+      now,
+    });
+  }
 
   const level = deviceLevel(updated, now);
   return {
@@ -123,37 +127,4 @@ export async function ingestReadings(
     next_interval_s: nextIntervalSeconds(level, device.reportingIntervalS),
     server_time: now.toISOString(),
   };
-}
-
-/** Opens a new alert period when the threshold level changes (normal ↔ warning ↔ critical). */
-async function recordLevelChange(
-  device: Device,
-  latest: { measuredAt: Date; levelCm: number },
-  now: Date,
-) {
-  const level = levelFor(latest.levelCm, device);
-  const [open] = await db()
-    .select()
-    .from(deviceAlerts)
-    .where(
-      and(eq(deviceAlerts.deviceId, device.id), isNull(deviceAlerts.endedAt)),
-    )
-    .orderBy(desc(deviceAlerts.startedAt))
-    .limit(1);
-  if (open?.level === level) return;
-  if (open) {
-    await db()
-      .update(deviceAlerts)
-      .set({ endedAt: now })
-      .where(eq(deviceAlerts.id, open.id));
-  }
-  await db()
-    .insert(deviceAlerts)
-    .values({
-      id: prefixedId("alt"),
-      deviceId: device.id,
-      level,
-      levelCm: latest.levelCm,
-      startedAt: latest.measuredAt,
-    });
 }

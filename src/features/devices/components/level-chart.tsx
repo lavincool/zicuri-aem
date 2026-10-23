@@ -8,11 +8,13 @@ const RANGE_MS: Record<ReadingRange, number> = {
   "1h": 3_600_000,
   "24h": 24 * 3_600_000,
   "7d": 7 * 24 * 3_600_000,
+  "30d": 30 * 24 * 3_600_000,
 };
 const TICKS: Record<ReadingRange, number> = {
   "1h": 15 * 60_000,
   "24h": 6 * 3_600_000,
   "7d": 24 * 3_600_000,
+  "30d": 7 * 24 * 3_600_000,
 };
 
 const WIDTH = 320;
@@ -69,9 +71,14 @@ export function LevelChart({
     ticks.push(tick);
   }
   const tickLabel = (time: number) =>
-    range === "7d"
-      ? format.dateTime(new Date(time), { weekday: "short" })
-      : format.dateTime(new Date(time), { hour: "2-digit", minute: "2-digit" });
+    range === "30d"
+      ? format.dateTime(new Date(time), { day: "numeric", month: "short" })
+      : range === "7d"
+        ? format.dateTime(new Date(time), { weekday: "short" })
+        : format.dateTime(new Date(time), {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
 
   return (
     <svg

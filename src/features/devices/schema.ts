@@ -53,8 +53,11 @@ export type DeviceFeatureCollection = {
   features: DeviceFeature[];
 };
 
+/** Ranges on the public sensor sheet. */
 export const READING_RANGES = ["1h", "24h", "7d"] as const;
-export type ReadingRange = (typeof READING_RANGES)[number];
+/** The operator portal adds a month, for maintenance and reporting. */
+export const OPERATOR_READING_RANGES = ["1h", "24h", "7d", "30d"] as const;
+export type ReadingRange = (typeof OPERATOR_READING_RANGES)[number];
 
 export type DeviceDetail = {
   id: string;

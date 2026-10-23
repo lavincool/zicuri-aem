@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LEVEL_COLORS } from "@/config/devices";
 import { useLiveNow } from "@/hooks/use-live-now";
 import { cn } from "@/lib/utils";
+import { signalQuality } from "../rules";
 import {
   type DeviceDetail,
   READING_RANGES,
@@ -30,12 +31,6 @@ type State =
   | { kind: "ready"; device: DeviceDetail; series: ReadingSeries | null }
   | { kind: "not_found" }
   | { kind: "error" };
-
-function signalQuality(rssi: number): "good" | "fair" | "weak" {
-  if (rssi >= -67) return "good";
-  if (rssi >= -80) return "fair";
-  return "weak";
-}
 
 export function SensorSheet({
   sensorId,

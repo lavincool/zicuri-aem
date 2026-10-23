@@ -1,12 +1,18 @@
 /**
- * Demo sensors with 7 days of readings: five reporting normally (one rain bump a week
- * ago) and one that went silent three hours ago, so every map state is visible.
+ * Demo sensors with 7 days of readings: most report normally (one rain bump a week
+ * ago), one went silent three hours ago, and three show what the operator portal
+ * flags: a private one, a low battery and a stuck (flat) reading.
  */
 import { eq, inArray, sql } from "drizzle-orm";
-import type { DeviceSiteType } from "@/config/devices";
+import type { DeviceSiteType, DeviceVisibility } from "@/config/devices";
 import { levelFor } from "@/features/devices/rules";
 import { db } from "@/lib/db/client";
-import { deviceAlerts, devices, sensorReadings } from "@/lib/db/schema";
+import {
+  auditEvents,
+  deviceAlerts,
+  devices,
+  sensorReadings,
+} from "@/lib/db/schema";
 import { prefixedId } from "@/lib/ids";
 import {
   ensureDemoOrganization,
@@ -27,6 +33,13 @@ type DemoSensor = {
   base: number;
   bump: number;
   silentForMs?: number;
+  visibility?: DeviceVisibility;
+  /** Battery at the start and the end of the week, in percent. */
+  battery?: [start: number, end: number];
+  /** A stuck sensor repeats this level with millimetric noise. */
+  flatCm?: number;
+  /** One glitchy reading (an echo) this long ago, then back to normal. */
+  spikeAgoMs?: number;
 };
 
 const SENSORS: DemoSensor[] = [
@@ -53,6 +66,7 @@ const SENSORS: DemoSensor[] = [
     site: "street_drain",
     base: 2,
     bump: 9,
+    spikeAgoMs: 5 * HOUR,
   },
   {
     name: "Dren · Rinconada de las Brisas",
@@ -79,9 +93,39 @@ const SENSORS: DemoSensor[] = [
     bump: 8,
     silentForMs: 3 * HOUR,
   },
+  {
+    name: "Cárcamo de bombeo · Valle Alto",
+    lng: -97.5131,
+    lat: 25.8499,
+    site: "canal",
+    base: 64,
+    bump: 118,
+    visibility: "private",
+  },
+  {
+    name: "Residencial Misiones · Calle San Juan",
+    lng: -97.5502,
+    lat: 25.8301,
+    site: "street_drain",
+    base: 2.2,
+    bump: 11,
+    battery: [31, 14],
+  },
+  {
+    name: "Los Palmares · Av. Palmas",
+    lng: -97.5529,
+    lat: 25.8446,
+    site: "street_drain",
+    base: 3.2,
+    bump: 0,
+    flatCm: 3.2,
+  },
 ];
 
 function levelAt(sensor: DemoSensor, t: number, now: number): number {
+  if (sensor.flatCm !== undefined) {
+    return Number((sensor.flatCm + Math.sin(t / 3_600_000) * 0.05).toFixed(1));
+  }
   const diurnal = Math.sin((t / (24 * HOUR)) * 2 * Math.PI) * 0.6;
   const noise = Math.sin(t / 7_919_000 + sensor.lng * 1000) * 0.4;
   // Rain bump a week ago: ~6 h rise and fall.
@@ -108,6 +152,9 @@ export async function seedDevices(now = Date.now()): Promise<number> {
     await database
       .delete(deviceAlerts)
       .where(inArray(deviceAlerts.deviceId, oldIds));
+    await database
+      .delete(auditEvents)
+      .where(inArray(auditEvents.entityId, oldIds));
     await database.delete(devices).where(inArray(devices.id, oldIds));
   }
 
@@ -136,9 +183,15 @@ export async function seedDevices(now = Date.now()): Promise<number> {
     const alerts: (typeof deviceAlerts.$inferInsert)[] = [];
     let previous: string | null = null;
     for (let t = now - 7 * 24 * HOUR; t <= end; t += STEP) {
-      const levelCm = levelAt(sensor, t, now);
+      const spike =
+        sensor.spikeAgoMs !== undefined &&
+        Math.abs(t - (now - sensor.spikeAgoMs)) < STEP / 2;
+      const levelCm = spike ? 38.5 : levelAt(sensor, t, now);
+      const [batteryStart, batteryEnd] = sensor.battery ?? [98, 89];
       const battery = Math.round(
-        98 - ((t - (now - 7 * 24 * HOUR)) / (7 * 24 * HOUR)) * 9,
+        batteryStart -
+          ((t - (now - 7 * 24 * HOUR)) / (7 * 24 * HOUR)) *
+            (batteryStart - batteryEnd),
       );
       readings.push({
         id: prefixedId("rdg"),
@@ -176,6 +229,7 @@ export async function seedDevices(now = Date.now()): Promise<number> {
       .update(devices)
       .set({
         status: "active",
+        visibility: sensor.visibility ?? "public",
         lastSeenAt: last?.receivedAt,
         lastMeasuredAt: last?.measuredAt,
         lastLevelCm: last?.levelCm,

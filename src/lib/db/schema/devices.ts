@@ -6,7 +6,12 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
-import { DEVICE_LEVELS, DEVICE_SITE_TYPES } from "@/config/devices";
+import {
+  DEVICE_LEVELS,
+  DEVICE_SITE_TYPES,
+  DEVICE_STATUSES,
+  DEVICE_VISIBILITIES,
+} from "@/config/devices";
 import { createdAt, timestamp, updatedAt } from "./_shared";
 import { organizations } from "./reports";
 
@@ -20,11 +25,12 @@ export const devices = sqliteTable(
     name: text("name").notNull(),
     type: text("type", { enum: ["ultrasonic_level"] }).notNull(),
     siteType: text("site_type", { enum: DEVICE_SITE_TYPES }).notNull(),
-    status: text("status", {
-      enum: ["pending", "active", "maintenance", "retired"],
-    })
+    status: text("status", { enum: DEVICE_STATUSES })
       .notNull()
       .default("pending"),
+    visibility: text("visibility", { enum: DEVICE_VISIBILITIES })
+      .notNull()
+      .default("public"),
     lat: real("lat"),
     lng: real("lng"),
     h3r8: text("h3_r8"),
@@ -54,6 +60,7 @@ export const devices = sqliteTable(
   (t) => [
     index("devices_lat_lng_idx").on(t.lat, t.lng),
     index("devices_h3_r8_idx").on(t.h3r8),
+    index("devices_org_idx").on(t.orgId),
   ],
 );
 
