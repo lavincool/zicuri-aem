@@ -94,9 +94,11 @@ function localFeature(
 
 export function MapScreen({
   demoMode,
+  aiEnabled,
   initialFocus,
 }: {
   demoMode: boolean;
+  aiEnabled: boolean;
   initialFocus?: InitialFocus;
 }) {
   const t = useTranslations();
@@ -452,6 +454,7 @@ export function MapScreen({
 
       <ReportFlow
         map={flowMap}
+        aiEnabled={aiEnabled}
         viewCenter={view?.center ?? null}
         onActiveChange={(step) => {
           setFlowStep(step);

@@ -24,6 +24,7 @@ import {
   type WaterDepthCm,
 } from "@/config/categories";
 import { isInsidePilot, type LngLat } from "@/config/pilot";
+import { fetchSuggestion } from "@/features/ai/client/suggest";
 import type { Suggestion } from "@/features/ai/schema";
 import { haversineMeters } from "@/lib/geo";
 import { cn } from "@/lib/utils";
@@ -62,23 +63,6 @@ export type FlowMapControls = {
 
 /** Moving the pin farther than this turns a GPS/EXIF location into a manual one. */
 const MANUAL_THRESHOLD_M = 15;
-
-/** Asks for an AI category suggestion; resolves to null on any failure or timeout. */
-async function fetchSuggestion(uploadId: string): Promise<Suggestion | null> {
-  try {
-    const response = await fetch("/api/ai/suggest", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ uploadId }),
-      signal: AbortSignal.timeout(6000),
-    });
-    return response.status === 200
-      ? ((await response.json()) as Suggestion)
-      : null;
-  } catch {
-    return null;
-  }
-}
 
 export function ReportFlow({
   map,
@@ -119,11 +103,16 @@ export function ReportFlow({
   const [analyzing, setAnalyzing] = useState(false);
   const clientRequestId = useRef<string>("");
   const upload = useRef<Promise<string> | null>(null);
+  const suggestionRequest = useRef<AbortController | null>(null);
+  const categoryChosen = useRef(false);
+  const fileVersion = useRef(0);
+  const stepRef = useRef<Step>("closed");
   const cameraInput = useRef<HTMLInputElement>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
 
   const setStep = useCallback(
     (next: Step) => {
+      stepRef.current = next;
       setStepState(next);
       onActiveChange(next);
     },
@@ -131,8 +120,14 @@ export function ReportFlow({
   );
 
   const reset = useCallback(() => {
+    suggestionRequest.current?.abort();
+    suggestionRequest.current = null;
+    categoryChosen.current = false;
+    fileVersion.current += 1;
+    clientRequestId.current = "";
     if (photo) URL.revokeObjectURL(photo.previewUrl);
     setPhoto(null);
+    setProcessing(false);
     setExif(null);
     setGps({ status: "idle" });
     setAnchor(null);
@@ -158,6 +153,7 @@ export function ReportFlow({
   const open = useCallback(() => {
     reset();
     clientRequestId.current = crypto.randomUUID();
+    const session = clientRequestId.current;
     setStep("photo");
     // Ask for location right away, in parallel with taking the photo.
     if (!("geolocation" in navigator)) {
@@ -166,63 +162,103 @@ export function ReportFlow({
     }
     setGps({ status: "locating" });
     navigator.geolocation.getCurrentPosition(
-      (position) =>
+      (position) => {
+        if (clientRequestId.current !== session) return;
         setGps({
           status: "ready",
           lat: position.coords.latitude,
           lng: position.coords.longitude,
           accuracyM: Math.round(position.coords.accuracy),
-        }),
-      (error) =>
+        });
+      },
+      (error) => {
+        if (clientRequestId.current !== session) return;
         setGps({
           status:
             error.code === error.PERMISSION_DENIED ? "denied" : "unavailable",
-        }),
+        });
+      },
       { enableHighAccuracy: true, timeout: 10_000, maximumAge: 10_000 },
     );
   }, [reset, setStep]);
 
-  const startUpload = useCallback((processed: ProcessedPhoto) => {
-    setUploadState("uploading");
-    setProgress(0);
-    const promise = uploadPhoto(processed, setProgress);
-    upload.current = promise;
-    promise.then(
-      (uploadId) => {
-        setUploadState("done");
-        if (!aiEnabled) return;
-        setAnalyzing(true);
-        void fetchSuggestion(uploadId).then((result) => {
-          setAnalyzing(false);
-          if (upload.current !== promise || !result) return;
-          setSuggestion(result);
-          // Pre-select only if the person hasn't chosen yet.
-          const suggested = result.category;
-          if (suggested) setCategory((current) => current ?? suggested);
-        });
-      },
-      () => {
-        setUploadState("error");
-        if (upload.current === promise) upload.current = null;
-      },
-    );
-  }, [aiEnabled]);
+  const startUpload = useCallback(
+    (processed: ProcessedPhoto) => {
+      setUploadState("uploading");
+      setProgress(0);
+      const promise = uploadPhoto(processed, (fraction) => {
+        if (upload.current === promise) setProgress(fraction);
+      });
+      upload.current = promise;
+      promise.then(
+        (uploadId) => {
+          if (upload.current !== promise) return;
+          setUploadState("done");
+          if (!aiEnabled || stepRef.current === "sending") return;
+          const controller = new AbortController();
+          suggestionRequest.current = controller;
+          setAnalyzing(true);
+          void fetchSuggestion(uploadId, controller.signal).then((result) => {
+            if (upload.current !== promise || controller.signal.aborted) return;
+            suggestionRequest.current = null;
+            setAnalyzing(false);
+            if (!result) return;
+            setSuggestion(result);
+            // A manual choice always takes precedence over a late suggestion.
+            if (result.category && !categoryChosen.current) {
+              setCategory(result.category);
+            }
+          });
+        },
+        () => {
+          if (upload.current !== promise) return;
+          setUploadState("error");
+          upload.current = null;
+        },
+      );
+    },
+    [aiEnabled],
+  );
+
+  useEffect(
+    () => () => {
+      suggestionRequest.current?.abort();
+      upload.current = null;
+      fileVersion.current += 1;
+    },
+    [],
+  );
 
   const onFile = useCallback(
     async (file: File | undefined) => {
-      if (!file) return;
+      if (!file || stepRef.current === "sending") return;
+      const version = ++fileVersion.current;
       setProcessing(true);
       try {
         const [location, processed] = await Promise.all([
           readExifLocation(file),
           processPhoto(file),
         ]);
+        if (version !== fileVersion.current) {
+          URL.revokeObjectURL(processed.previewUrl);
+          return;
+        }
+        suggestionRequest.current?.abort();
+        suggestionRequest.current = null;
+        setSuggestion(null);
+        setAnalyzing(false);
+        if (!categoryChosen.current) {
+          setCategory(null);
+          setSeverityDetail(null);
+          setWaterDepthCm(null);
+        }
         if (photo) URL.revokeObjectURL(photo.previewUrl);
         setPhoto(processed);
         setExif(location);
         startUpload(processed);
         setStep(placement ? "details" : "location");
       } catch (error) {
+        if (version !== fileVersion.current) return;
         const code = error instanceof PhotoError ? error.code : "FAILED";
         toast.error(
           code === "TOO_LARGE"
@@ -232,9 +268,11 @@ export function ReportFlow({
               : t("flow.photoFailed"),
         );
       } finally {
-        setProcessing(false);
-        if (cameraInput.current) cameraInput.current.value = "";
-        if (galleryInput.current) galleryInput.current.value = "";
+        if (version === fileVersion.current) {
+          setProcessing(false);
+          if (cameraInput.current) cameraInput.current.value = "";
+          if (galleryInput.current) galleryInput.current.value = "";
+        }
       }
     },
     [photo, placement, setStep, startUpload, t],
@@ -296,7 +334,10 @@ export function ReportFlow({
   };
 
   const submit = async () => {
-    if (!photo || !placement || !category) return;
+    if (!photo || !placement || !category || processing) return;
+    suggestionRequest.current?.abort();
+    suggestionRequest.current = null;
+    setAnalyzing(false);
     const draft: ReportDraft = {
       clientRequestId: clientRequestId.current,
       category,
@@ -517,6 +558,18 @@ export function ReportFlow({
                 </p>
               </div>
             </div>
+            {aiEnabled && analyzing ? (
+              <p
+                role="status"
+                className="flex items-center gap-2 text-sm text-muted-foreground"
+              >
+                <LoaderCircle
+                  aria-hidden="true"
+                  className="size-4 animate-spin"
+                />
+                {t("flow.analyzing")}
+              </p>
+            ) : null}
             <Button
               disabled={outside}
               onClick={confirmLocation}
@@ -576,12 +629,12 @@ export function ReportFlow({
                 />
                 <Button
                   variant="outline"
-                  disabled={step === "sending"}
+                  disabled={step === "sending" || processing}
                   onClick={() => galleryInput.current?.click()}
                   className="h-11 rounded-full px-4 font-semibold"
                 >
                   <ImageIcon className="size-4" />
-                  {t("flow.changePhoto")}
+                  {processing ? t("flow.processing") : t("flow.changePhoto")}
                 </Button>
               </div>
             ) : null}
@@ -590,6 +643,41 @@ export function ReportFlow({
               <legend className="mb-2 text-base font-bold">
                 {t("flow.chooseCategory")}
               </legend>
+              {aiEnabled && analyzing ? (
+                <p
+                  role="status"
+                  className="flex items-center gap-2 text-sm text-muted-foreground"
+                >
+                  <LoaderCircle
+                    aria-hidden="true"
+                    className="size-4 animate-spin"
+                  />
+                  {t("flow.analyzing")}
+                </p>
+              ) : null}
+              {suggestion?.category && suggestion.description ? (
+                <div
+                  role="status"
+                  className="space-y-2 rounded-xl bg-muted p-3 text-sm"
+                >
+                  <p>
+                    {t("flow.aiSees", { description: suggestion.description })}
+                  </p>
+                  {!note.trim() ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={step === "sending"}
+                      onClick={() => {
+                        setNote(suggestion.description ?? "");
+                        setNoteOpen(true);
+                      }}
+                    >
+                      {t("flow.useAsNote")}
+                    </Button>
+                  ) : null}
+                </div>
+              ) : null}
               <div className="grid grid-cols-2 gap-3">
                 {REPORT_CATEGORIES.map((option) => {
                   const selected = category === option;
@@ -600,6 +688,7 @@ export function ReportFlow({
                       aria-pressed={selected}
                       disabled={step === "sending"}
                       onClick={() => {
+                        categoryChosen.current = true;
                         setCategory(option);
                         setSeverityDetail(null);
                         setWaterDepthCm(null);
@@ -620,6 +709,12 @@ export function ReportFlow({
                       <span className="text-base leading-tight font-bold">
                         {t(`categories.${option}`)}
                       </span>
+                      {suggestion?.category === option ? (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-1 text-xs font-bold">
+                          <Sparkles aria-hidden="true" className="size-3" />
+                          {t("flow.suggested")}
+                        </span>
+                      ) : null}
                       {selected ? (
                         <Check className="absolute top-3 right-3 size-5 text-foreground" />
                       ) : null}
@@ -721,7 +816,7 @@ export function ReportFlow({
               </div>
             ) : null}
             <Button
-              disabled={!category || step === "sending"}
+              disabled={!category || step === "sending" || processing}
               onClick={() => void submit()}
               className="h-14 w-full rounded-2xl text-lg font-extrabold"
             >

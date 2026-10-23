@@ -3,7 +3,7 @@ import { suggestRequestSchema } from "@/features/ai/schema";
 import { aiEnabled, suggestCategory } from "@/features/ai/server/suggest";
 import { DomainError } from "@/lib/errors";
 import { jsonError } from "@/lib/http";
-import { getBrowserHash } from "@/lib/identity";
+import { getBrowserHash, getIpHash } from "@/lib/identity";
 import { rateLimit } from "@/lib/rate-limit";
 
 const SUGGESTIONS_PER_HOUR = 20;
@@ -24,22 +24,24 @@ export async function POST(request: Request) {
   if (!parsed.success) {
     return jsonError(400, "INVALID_PAYLOAD", "uploadId is required");
   }
-  const limit = await rateLimit(
-    [`ai:browser:${browserHash}`],
-    SUGGESTIONS_PER_HOUR,
-    3600,
-  );
-  if (!limit.allowed) return new NextResponse(null, { status: 204 });
-
   try {
+    const limit = await rateLimit(
+      [`ai:browser:${browserHash}`, `ai:ip:${await getIpHash()}`],
+      SUGGESTIONS_PER_HOUR,
+      3600,
+    );
+    if (!limit.allowed) return new NextResponse(null, { status: 204 });
     return NextResponse.json(
-      await suggestCategory(parsed.data.uploadId, browserHash),
+      await suggestCategory(parsed.data.uploadId, browserHash, request.signal),
     );
   } catch (error) {
-    if (error instanceof DomainError && error.status === 404) {
+    if (error instanceof DomainError) {
       return jsonError(error.status, error.code, error.message);
     }
-    console.error("AI suggestion failed", error);
+    // Avoid logging SDK error bodies, which can include the uploaded image.
+    console.warn("AI suggestion unavailable", {
+      name: error instanceof Error ? error.name : "UnknownError",
+    });
     return new NextResponse(null, { status: 204 });
   }
 }

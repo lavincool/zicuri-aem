@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { aiEnabled } from "@/features/ai/server/suggest";
 import { getDeviceSummary } from "@/features/devices/server/queries";
 import { MapScreen } from "@/features/map/components/map-screen";
 import { env } from "@/lib/env";
@@ -41,6 +42,7 @@ async function SensorDeepLink({
   return (
     <MapScreen
       demoMode={env().DEMO_MODE}
+      aiEnabled={aiEnabled()}
       initialFocus={{
         kind: "sensor",
         id: device.id,

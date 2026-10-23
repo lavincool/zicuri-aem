@@ -3,9 +3,10 @@ import { and, countDistinct, eq, gte, inArray, ne } from "drizzle-orm";
 import { gridDisk } from "h3-js";
 import { normalizeSeverity } from "@/config/categories";
 import { isInsidePilot } from "@/config/pilot";
-import { MAX_PHOTO_BYTES } from "@/config/uploads";
+import { MAX_PHOTO_BYTES, UPLOAD_MAX_AGE_MS } from "@/config/uploads";
 import { db } from "@/lib/db/client";
 import {
+  aiSuggestions,
   type Report,
   reportStatusEvents,
   reports,
@@ -20,7 +21,6 @@ import { photoUrl } from "@/lib/storage/urls";
 import { expiryFrom } from "../rules";
 import type { CreatedReport, CreateReportInput } from "../schema";
 
-const UPLOAD_MAX_AGE_MS = 60 * 60 * 1000;
 const NEARBY_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
 
 export async function findReportByClientRequestId(
@@ -142,7 +142,6 @@ export async function createReport(
     expiresAt: expiryFrom(input.category, now),
     reporterHash: browserHash,
     clientRequestId: input.clientRequestId,
-    aiSuggestionId: input.aiSuggestionId ?? null,
     source: "web" as const,
     createdAt: now,
     updatedAt: now,
@@ -150,7 +149,24 @@ export async function createReport(
 
   try {
     return await db().transaction(async (tx) => {
-      const [created] = await tx.insert(reports).values(values).returning();
+      // Only this photo's suggestion may affect its acceptance record. A stale
+      // outbox suggestion is optional, so a re-upload still creates the report.
+      const [suggestion] = input.aiSuggestionId
+        ? await tx
+            .select({ id: aiSuggestions.id, category: aiSuggestions.category })
+            .from(aiSuggestions)
+            .where(
+              and(
+                eq(aiSuggestions.id, input.aiSuggestionId),
+                eq(aiSuggestions.uploadId, upload.id),
+              ),
+            )
+            .limit(1)
+        : [];
+      const [created] = await tx
+        .insert(reports)
+        .values({ ...values, aiSuggestionId: suggestion?.id ?? null })
+        .returning();
       await tx.insert(reportStatusEvents).values({
         id: prefixedId("evt"),
         reportId: values.id,
@@ -164,6 +180,12 @@ export async function createReport(
         .update(uploads)
         .set({ consumedAt: now })
         .where(eq(uploads.id, upload.id));
+      if (suggestion?.category) {
+        await tx
+          .update(aiSuggestions)
+          .set({ accepted: suggestion.category === input.category })
+          .where(eq(aiSuggestions.id, suggestion.id));
+      }
       if (!created) throw new Error("Insert returned no row");
       return created;
     });

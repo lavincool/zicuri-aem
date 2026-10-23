@@ -620,8 +620,84 @@ export const aiSuggestions = sqliteTable("ai_suggestions", {
 });
 ```
 
+**Operator portal tables (M8):**
+
+```ts
+// src/lib/db/schema/accounts.ts
+export const users = sqliteTable("users", {
+  id: text("id").primaryKey(), // usr_…
+  email: text("email").notNull().unique(), // stored lowercased
+  name: text("name"),
+  lastLoginAt: integer("last_login_at", { mode: "timestamp_ms" }),
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
+});
+
+/** A user belongs to one or more organizations; every portal query is scoped by org. */
+export const memberships = sqliteTable(
+  "memberships",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    orgId: text("org_id")
+      .notNull()
+      .references(() => organizations.id),
+    role: text("role", { enum: ["owner", "admin", "viewer"] }).notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.orgId] })],
+);
+
+/** Magic-link tokens: single use, 15 minutes, only the hash is stored. */
+export const loginTokens = sqliteTable("login_tokens", {
+  tokenHash: text("token_hash").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+  usedAt: integer("used_at", { mode: "timestamp_ms" }),
+  createdAt: createdAt(),
+});
+
+/** Server-side sessions so a sign-out or a removed member takes effect at once. */
+export const sessions = sqliteTable("sessions", {
+  idHash: text("id_hash").primaryKey(), // sha256 of the cookie value
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  expiresAt: integer("expires_at", { mode: "timestamp_ms" }).notNull(),
+  createdAt: createdAt(),
+});
+
+/** Who changed what on a device; shown in the device history. */
+export const auditEvents = sqliteTable(
+  "audit_events",
+  {
+    id: text("id").primaryKey(),
+    orgId: text("org_id")
+      .notNull()
+      .references(() => organizations.id),
+    userId: text("user_id").references(() => users.id),
+    entity: text("entity", { enum: ["device"] }).notNull(),
+    entityId: text("entity_id").notNull(),
+    action: text("action", {
+      enum: ["update", "status_change", "visibility_change", "key_rotation"],
+    }).notNull(),
+    changes: text("changes", { mode: "json" }).$type<
+      Record<string, { from: unknown; to: unknown }>
+    >(),
+    createdAt: createdAt(),
+  },
+  (t) => [index("audit_events_entity_idx").on(t.entityId, t.createdAt)],
+);
+
+// devices gains:
+//   visibility: text("visibility", { enum: ["public", "private"] }).notNull().default("public")
+```
+
 **Future tables (designed now, not migrated):**
-- `users`: optional sign-in; `reports.user_id` already exists.
+- `users` for residents: optional sign-in; `reports.user_id` already exists. Operators get `users` in M8.
 - `push_subscriptions`: browser hash, endpoint, keys, watched `h3_r8` cells or colonia.
 - `alert_rules`, `alert_deliveries`: who gets notified of which threshold, through which channel.
 - `device_claims`: claim code → device, installer, pinned location.
@@ -655,11 +731,18 @@ Page paths are Spanish because users see and share them. Folder and component na
 | `/panel/entrar`                              | Shared-password login                                                                                                              | Server Action.                                |
 | `/panel`                                     | Authorities dashboard (M6)                                                                                                         | Dynamic, guarded in `proxy.ts`.               |
 | `/panel/moderacion`                          | Flagged reports: hide/restore (M6)                                                                                                 | Dynamic, guarded.                             |
+| `/operador/entrar`                           | Operator sign-in: email for a magic link, plus "Entrar con cuenta de demostración" when `DEMO_MODE` is on (M8)                     | Server Action.                                |
+| `/operador/entrar/[token]`                   | Magic-link landing: a "Continuar" button consumes the token (M8)                                                                   | Server Action.                                |
+| `/operador`                                  | Fleet overview for the signed-in organization (M8)                                                                                 | Dynamic, guarded in `proxy.ts`.               |
+| `/operador/sensores`                         | Device list with status filters (M8)                                                                                               | Dynamic, guarded.                             |
+| `/operador/sensores/[id]`                    | Device detail: chart, events, health, nearby context, edit form, change history (M8)                                               | Dynamic, guarded.                             |
+| `/operador/eventos`                          | Alert-event timeline across the fleet, CSV export (M8)                                                                             | Dynamic, guarded.                             |
 | `manifest.webmanifest`, `icon`, `apple-icon` | PWA                                                                                                                                | Metadata routes.                              |
 
 **Route Handlers vs Server Actions:**
 - Report creation and signals are **Route Handlers**, because the offline outbox replays plain `fetch` calls with an idempotency key.
 - Panel login and moderation are **Server Actions**.
+- Operator sign-in and device edits are **Server Actions**. The CSV export is a Route Handler (`GET /api/operator/events.csv`) behind the same session.
 
 ---
 
@@ -979,6 +1062,33 @@ Page paths are Spanish because users see and share them. Folder and component na
   4. The installer sets the site type and mount height, which pre-fills the thresholds.
   5. The device turns `active`, and its first reading confirms it works ("¡Listo! Primera lectura: 4 cm").
 
+### 7.6 Operator portal (M8): `/operador`
+
+For companies and agencies that own sensors linked to Cauce. Same visual identity as the rest of the app, mobile-first, every string in `messages/es.json`.
+1. **`/operador/entrar`**
+   - One email field: "Recibe un enlace para entrar". The answer is always "Si tu correo está registrado, te enviamos un enlace", so the form never reveals who has an account.
+   - Rate-limited to 5 requests per 15 minutes per email and per IP.
+   - With `DEMO_MODE`, a second button: "Entrar con cuenta de demostración". It signs in the seeded demo user of "Operador demo" without email.
+   - The link opens `/operador/entrar/[token]`, which shows "Continuar" instead of signing in on GET, so email scanners that prefetch links don't burn the token. Success sets a 30-day session cookie.
+   - There is no self sign-up: operators are created by `bun run operator:invite` (see M8). An organization can be verified before it gets access.
+2. **Overview (`/operador`)**
+   - KPI tiles: sensors by state (Normal · Alerta · Crítico · Sin señal), "Requieren atención" (low battery, silent, suspicious), events in 7 days.
+   - A map with only the organization's sensors, colored by state. Private sensors are included.
+   - "Requieren atención": a short list with the reason per row, e.g. "Batería 14 %", "Sin lecturas desde hace 3 h", "Nivel sin cambios en 4 días (¿sensor obstruido?)".
+   - Forecast strip for the organization's area (reuses the panel's snapshot): "Próximas 48 h: hasta 38 mm".
+3. **Sensors (`/operador/sensores`)**
+   - Rows: name, site type, state badge, last level, last seen, battery, signal, visibility ("Público" / "Privado"). Filters by state; sensors needing attention sort first.
+4. **Sensor detail (`/operador/sensores/[id]`)**
+   - Level chart with 1 h · 24 h · 7 d · 30 d and the thresholds (reuses `level-chart.tsx`).
+   - Events from `device_alerts`: start, duration, peak level.
+   - Health: battery and signal trends, reporting gaps vs. `reporting_interval_s`, firmware.
+   - Context: open reports in the same H3 r9 cell and its ring, and the cell's current risk with its reasons.
+   - **"Editar sensor"** (admins and owners): name, site type, location (draggable pin, reusing the map's center-pin pattern), mount height, warning/critical thresholds, reporting interval, state (Activo · Mantenimiento · Retirado) and visibility. Each field explains its effect; threshold changes preview the new state ("Con estos umbrales, el nivel actual (18 cm) quedaría en Alerta").
+   - **"Generar nueva llave"**: confirmation dialog, the new key shown once with a copy button, and a warning that the device stops reporting until it is updated.
+   - History: "Ana cambió el umbral crítico de 25 a 30 cm · hace 2 días" (from `audit_events`).
+5. **Events (`/operador/eventos`)**: a timeline of warning, critical and offline episodes across the fleet, filterable by sensor and level, with "Descargar CSV".
+6. **Weekly summary (stretch)**: a generated, sourced summary at the top of the overview ("Esta semana: 3 episodios de alerta, el sensor de Calle 1 subió 2 cm/h con 20 mm de lluvia; cambia la batería de…"). Facts come from SQL queries; the model only writes the prose, and each sentence links to its sensor.
+
 ### 7.5 Accessibility and performance bar
 
 - **Accessibility:**
@@ -1200,6 +1310,7 @@ The score for each H3 r8 cell is 0–100. It is a **weighted sum of normalized f
 
 ### M7: AI suggestions (stretch)
 
+**Status:** implemented 2026-10-23.
 - `prompts/report-triage/v1.md`, the OpenAI client (Responses API, `zodTextFormat`), `POST /api/ai/suggest` with a 4 s timeout, the "Sugerido" badge, `ai_suggestions` logging, and the accepted flag on submit.
 - Off unless `AI_SUGGESTIONS_ENABLED=true` and `OPENAI_API_KEY` are set.
 
@@ -1208,9 +1319,44 @@ The score for each H3 r8 cell is 0–100. It is a **weighted sum of normalized f
 - With the key unset, the flow is unchanged.
 - An irrelevant photo (a selfie) gets no suggestion.
 
+**Implementation notes:**
+- The server flag is passed to every map entry point (`/`, `/r/[id]`, `/s/[id]`); disabled clients make no suggestion requests.
+- Suggestions never block submission or replace a manual category choice. Replacing the photo, cancelling the flow or submitting cancels the pending analysis, and stale upload callbacks are ignored.
+- The four-second deadline covers storage, model parsing and logging. Provider refusals, incomplete responses and failures return 204; uploads are checked for ownership, age, consumption and thumbnail size before calling OpenAI.
+- Acceptance is saved atomically with the report and is restricted to the same upload. Stale offline references do not prevent report creation.
+- Automated coverage exercises the real SDK parser with simulated provider responses, local/R2 image inputs, disabled/missing-key behavior, irrelevant photos, deadlines, rate limits and acceptance. Browser verification uses a separate temporary database and local model fixture.
+
 **Commits:**
 1. `feat(ai): add versioned report triage prompt and OpenAI client`
 2. `feat(reports): show AI category suggestion in report flow`
+
+### M8: Operator portal
+
+Companies and agencies that own sensors see and manage their fleet. Notifications (SMS, WhatsApp, email alerts, push) are out of scope; `device_alerts` keeps recording state changes so they stay cheap later.
+- Accounts: `users`, `memberships`, `login_tokens`, `sessions` (§4.2); magic-link sign-in with an email driver (`console` locally, a provider in production); the demo sign-in under `DEMO_MODE`.
+- `bun run operator:invite -- --org org_… --email … --role admin` creates the user and membership and sends (or prints) the first link. `--create-org "Nombre" --kind operator` creates the organization too.
+- The seed adds "Operador demo" with a demo admin and several Matamoros sensors, at least one private, one with low battery and one silent.
+- `src/features/operators/server/`: `getSession()` (the only way pages learn the user and org), org-scoped queries, and device commands (update, change state, change visibility, rotate key) that write `audit_events` in the same transaction.
+- Pure rules with `bun test`: device health (low battery, silent vs. interval, flat-line and impossible-jump detection), role permissions, and the state preview for new thresholds.
+- `devices.visibility`: private sensors are left out of `/api/devices`, `/s/[id]` (404) and Open Graph cards. They still count in the risk model and appear in the authorities panel. Edits revalidate the public device cache tags.
+- Pages and UI from §7.6.
+
+**Acceptance:**
+- A user only ever sees their organization's devices: requesting another org's `/operador/sensores/[id]` returns 404, and tests cover the scoped queries.
+- A magic link works once, expires in 15 minutes, and the sign-in form gives the same answer for unknown emails.
+- "Entrar con cuenta de demostración" works with `DEMO_MODE` and does not exist without it.
+- Raising the warning threshold above the current level turns the sensor to Normal on the public map without waiting for a new reading; making it private removes it from the public map.
+- A rotated key rejects the old key with 401 and accepts the new one.
+- Viewers see no edit controls, and the Server Actions reject their edits.
+- Checked at 375×812 in light and dark.
+
+**Commits:**
+1. `feat(accounts): add operator users, memberships and magic-link sessions`
+2. `feat(devices): add visibility and audited device commands`
+3. `feat(operator): add fleet overview and device list`
+4. `feat(operator): add device detail with editing and history`
+5. `feat(operator): add event timeline and CSV export`
+6. `feat(operator): add AI weekly summary` (stretch)
 
 ---
 
@@ -1223,7 +1369,7 @@ The score for each H3 r8 cell is 0–100. It is a **weighted sum of normalized f
 | **Space data** (AEM) | NASA **GPM IMERG** observed rainfall, Copernicus **Sentinel-1** SAR flood extents after events, **INEGI CEM 15 m** elevation, NASA SMAP soil moisture    | Forecast and terrain factors are pluggable in the risk model, `provider` columns on snapshots, `flood_history.source` includes `official`.                                     |
 | **AI**               | Moderation (nudity/violence), duplicate detection (same r9 cell + similar photo), water-depth estimation from the photo, auto-descriptions for the panel | Prompts versioned in files, `ai_suggestions` with `accepted` to measure quality, provider and model in env.                                                                    |
 | **Notifications**    | Web push for "my colonia", alerts to JAD and Protección Civil by email or WhatsApp when a sensor goes critical or the risk turns "muy alto"              | `device_alerts` state changes, risk levels stored over time, `push_subscriptions` / `alert_rules` / `alert_deliveries` designed, the service worker already registered.        |
-| **Accounts**         | Optional sign-in for residents, roles for agencies                                                                                                       | `reports.user_id`, panel auth isolated in `proxy.ts`.                                                                                                                          |
+| **Accounts**         | Optional sign-in for residents, roles for agencies, member management in the operator portal, moving `/panel` from the shared password to accounts       | `reports.user_id`, panel auth isolated in `proxy.ts`, operator `users` / `memberships` / `sessions` (M8).                                                                      |
 
 ---
 
@@ -1297,6 +1443,7 @@ The score for each H3 r8 cell is 0–100. It is a **weighted sum of normalized f
 | `SMN_ENABLED`                                                            | `true`                                                        | M6          |
 | `AI_SUGGESTIONS_ENABLED`, `OPENAI_API_KEY`, `OPENAI_MODEL`               | `false`, —, `gpt-6-luna`                                      | M7          |
 | `SIMULATOR_BASE_URL`                                                     | `http://localhost:3000`                                       | M4          |
+| `EMAIL_DRIVER`, `EMAIL_FROM`                                             | `console` (prints the magic link) → provider, `Cauce <…>`     | M8          |
 
 **R2 CORS rule** (dashboard → bucket → Settings → CORS policy):
 ```json
@@ -1332,6 +1479,7 @@ The score for each H3 r8 cell is 0–100. It is a **weighted sum of normalized f
 4. **Seed photos.** Whenever you have the 15–20 photos, drop them in `seed/photos/`. Until then, illustrations are used.
 5. **Name.** "Cauce" is the default. Renaming is one constant plus the logo.
 6. **Demo badge.** A "Datos de demostración" pill while seeded data is shown. Default: on.
+7. **Email provider for magic links (M8).** Needed only for real sign-ins in production; locally the link is printed to the console and the demo account needs no email. Chosen when deploying M8.
 
 ---
 
@@ -1389,3 +1537,7 @@ Small decisions made during implementation, recorded here as the brief asks.
 - **M6:** Risk runs are grouped by `run_id`; the latest run is the current map. Open blockages count fully in their cell and at 50% in the six neighbors; recorded flood events weigh like two reports.
 - **M6:** With `DEMO_MODE`, the panel can apply a clearly labeled **storm scenario** ("Simular lluvia como el 4 de octubre"), stored as a synthetic forecast snapshot (`model = scenario:frente-frio-1`). "Usar pronóstico real" or the daily cron replaces it.
 - **M6:** Relative-time labels use `useLiveNow` (initialized from the server render time) instead of next-intl's `useNow`, whose initial value came from the prerendered layout and could show times "in the future".
+- **M8 (planned):** Operator accounts are **invite-only** (`bun run operator:invite`) rather than self sign-up, so only verified sensor owners get in. Demo access is a one-click seeded account ("Operador demo") behind `DEMO_MODE`, so judges and prospects can try the portal without an email round trip.
+- **M8 (planned):** Sessions are stored server-side (hashed ID in a 30-day cookie) instead of a stateless signed cookie, so signing out or removing a member takes effect immediately. The authorities `/panel` keeps its shared password until accounts replace it.
+- **M8 (planned):** Private sensors are hidden from the public map, deep links and share cards, but still feed the risk model and the authorities panel: flood safety outweighs the owner's preference for aggregated risk. Visibility defaults to public.
+- **M8 (planned):** Editing thresholds re-evaluates the current level at once and opens or closes the `device_alerts` episode, instead of waiting for the next reading. Rotating a key invalidates the old one immediately (no grace period); the UI warns about it.

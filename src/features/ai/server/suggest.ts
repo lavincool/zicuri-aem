@@ -4,6 +4,7 @@ import path from "node:path";
 import { eq } from "drizzle-orm";
 import OpenAI from "openai";
 import { zodTextFormat } from "openai/helpers/zod";
+import { MAX_THUMB_BYTES, UPLOAD_MAX_AGE_MS } from "@/config/uploads";
 import { db } from "@/lib/db/client";
 import { aiSuggestions, uploads } from "@/lib/db/schema";
 import { env } from "@/lib/env";
@@ -33,7 +34,11 @@ function loadPrompt(): Promise<string> {
 
 let client: OpenAI | null = null;
 function openai(): OpenAI {
-  client ??= new OpenAI({ apiKey: env().OPENAI_API_KEY, maxRetries: 0 });
+  client ??= new OpenAI({
+    apiKey: env().OPENAI_API_KEY,
+    maxRetries: 0,
+    timeout: SUGGEST_TIMEOUT_MS,
+  });
   return client;
 }
 
@@ -55,25 +60,73 @@ async function imageInput(thumbKey: string): Promise<string> {
 export async function suggestCategory(
   uploadId: string,
   browserHash: string,
+  requestSignal?: AbortSignal,
 ): Promise<Suggestion> {
+  const deadline = AbortSignal.timeout(SUGGEST_TIMEOUT_MS);
+  const signal = requestSignal
+    ? AbortSignal.any([requestSignal, deadline])
+    : deadline;
+  signal.throwIfAborted();
+  let onAbort = () => {};
+  const aborted = new Promise<never>((_, reject) => {
+    onAbort = () => reject(signal.reason);
+    signal.addEventListener("abort", onAbort, { once: true });
+  });
+  try {
+    // Bound the entire operation, including storage reads and database writes.
+    return await Promise.race([
+      generateSuggestion(uploadId, browserHash, signal),
+      aborted,
+    ]);
+  } finally {
+    signal.removeEventListener("abort", onAbort);
+  }
+}
+
+async function generateSuggestion(
+  uploadId: string,
+  browserHash: string,
+  signal: AbortSignal,
+): Promise<Suggestion> {
+  const started = Date.now();
   const [upload] = await db()
     .select()
     .from(uploads)
     .where(eq(uploads.id, uploadId))
     .limit(1);
-  if (!upload || upload.browserHash !== browserHash) {
+  if (
+    !upload ||
+    upload.browserHash !== browserHash ||
+    started - upload.createdAt.getTime() > UPLOAD_MAX_AGE_MS
+  ) {
     throw new DomainError("UPLOAD_NOT_FOUND", 404, "Upload not found");
   }
-  if (!(await storage().head(upload.thumbKey))) {
+  if (upload.consumedAt) {
+    throw new DomainError("UPLOAD_ALREADY_USED", 409, "Upload already used");
+  }
+  const thumb = await storage().head(upload.thumbKey);
+  if (!thumb) {
     throw new DomainError("PHOTO_MISSING", 422, "Photo not uploaded yet");
   }
+  if (thumb.bytes > MAX_THUMB_BYTES) {
+    throw new DomainError("FILE_TOO_LARGE", 413, "Thumbnail is too large");
+  }
 
-  const started = Date.now();
+  const [instructions, imageUrl] = await Promise.all([
+    loadPrompt(),
+    imageInput(upload.thumbKey),
+  ]);
+  signal.throwIfAborted();
   const model = env().OPENAI_MODEL;
   const response = await openai().responses.parse(
     {
       model,
-      instructions: await loadPrompt(),
+      instructions,
+      store: false,
+      // Luna supports disabling reasoning for this latency-sensitive task.
+      ...(model.startsWith("gpt-6-luna")
+        ? { reasoning: { effort: "none" as const } }
+        : {}),
       input: [
         {
           role: "user",
@@ -81,7 +134,7 @@ export async function suggestCategory(
             { type: "input_text", text: "Triage this report photo." },
             {
               type: "input_image",
-              image_url: await imageInput(upload.thumbKey),
+              image_url: imageUrl,
               detail: "low",
             },
           ],
@@ -90,14 +143,16 @@ export async function suggestCategory(
       text: { format: zodTextFormat(triageSchema, "report_triage") },
       max_output_tokens: 300,
     },
-    { signal: AbortSignal.timeout(SUGGEST_TIMEOUT_MS) },
+    { signal },
   );
 
+  signal.throwIfAborted();
   const triage = response.output_parsed;
-  if (!triage)
+  if (response.status !== "completed" || !triage) {
     throw new Error(
-      "Model returned no parsable triage (refusal or truncation)",
+      "Model returned no complete triage (refusal or truncation)",
     );
+  }
 
   const id = prefixedId("ais");
   const suggestion = toSuggestion(id, triage);
@@ -118,21 +173,4 @@ export async function suggestCategory(
       raw: triage,
     });
   return suggestion;
-}
-
-/** Records whether the person kept the suggested category. */
-export async function markSuggestionOutcome(
-  suggestionId: string,
-  chosenCategory: string,
-): Promise<void> {
-  const [row] = await db()
-    .select({ category: aiSuggestions.category })
-    .from(aiSuggestions)
-    .where(eq(aiSuggestions.id, suggestionId))
-    .limit(1);
-  if (!row) return;
-  await db()
-    .update(aiSuggestions)
-    .set({ accepted: row.category === chosenCategory })
-    .where(eq(aiSuggestions.id, suggestionId));
 }

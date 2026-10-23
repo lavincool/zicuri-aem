@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { aiEnabled } from "@/features/ai/server/suggest";
 import { MapScreen } from "@/features/map/components/map-screen";
 import { getReportSummary } from "@/features/reports/server/queries";
 import { env } from "@/lib/env";
@@ -49,6 +50,7 @@ async function ReportDeepLink({
   return (
     <MapScreen
       demoMode={env().DEMO_MODE}
+      aiEnabled={aiEnabled()}
       initialFocus={{
         kind: "report",
         id: summary.id,

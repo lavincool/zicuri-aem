@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { REPORT_CATEGORIES, type ReportCategory } from "@/config/categories";
+import { REPORT_CATEGORIES } from "@/config/categories";
 
 export const PROMPT_VERSION = "report-triage/v1";
 
@@ -17,13 +17,14 @@ export const suggestRequestSchema = z.object({
   uploadId: z.string().min(1).max(64),
 });
 
-export type Suggestion = {
-  suggestionId: string;
-  category: ReportCategory | null;
-  confidence: number;
-  description: string | null;
-  isRelevant: boolean;
-};
+export const suggestionSchema = z.object({
+  suggestionId: z.string().min(1).max(64),
+  category: z.enum(REPORT_CATEGORIES).nullable(),
+  confidence: z.number().min(0).max(1),
+  description: z.string().max(140).nullable(),
+  isRelevant: z.boolean(),
+});
+export type Suggestion = z.infer<typeof suggestionSchema>;
 
 /** Below this confidence the app shows no suggestion at all. */
 export const MIN_CONFIDENCE = 0.5;
@@ -36,10 +37,10 @@ export function toSuggestion(id: string, triage: Triage): Suggestion {
     triage.confidence >= MIN_CONFIDENCE;
   return {
     suggestionId: id,
-    category: usable ? (triage.category as ReportCategory) : null,
+    category: usable && triage.category !== "unclear" ? triage.category : null,
     confidence: triage.confidence,
     description:
-      triage.is_relevant && triage.description_es.trim()
+      usable && triage.description_es.trim()
         ? triage.description_es.trim().slice(0, 140)
         : null,
     isRelevant: triage.is_relevant,
