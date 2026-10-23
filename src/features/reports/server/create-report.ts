@@ -50,6 +50,8 @@ export async function countNearbyReporters(
         gte(reports.createdAt, new Date(now.getTime() - NEARBY_WINDOW_MS)),
         ne(reports.id, report.id),
         ne(reports.reporterHash, report.reporterHash),
+        // Demo reports are not neighbors.
+        ne(reports.source, "seed"),
       ),
     );
   return row?.total ?? 0;

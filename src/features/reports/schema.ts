@@ -72,6 +72,8 @@ export type ReportFeatureProps = {
   sev: number | null;
   /** 1 while the report waits in the offline outbox (local only) */
   p?: 1;
+  /** 1 for seeded demo reports */
+  d?: 1;
 };
 
 export type ReportFeature = {

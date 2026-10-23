@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import { DEFAULT_THRESHOLDS, type DeviceSiteType } from "@/config/devices";
+import { DEMO_ORG_ID } from "@/config/operators";
 import { generateDeviceKey } from "@/features/devices/server/keys";
 import { db } from "@/lib/db/client";
 import { type Device, devices, organizations } from "@/lib/db/schema";
@@ -12,7 +13,8 @@ export {
   saveSimulatorDevices,
 } from "./simulator-file";
 
-export const DEMO_ORG_ID = "org_demo";
+export { DEMO_ORG_ID };
+
 const DEMO_ORG_NAME = "Operador demo";
 /** Owns the seeded sensors; the demo operator account belongs to it. */
 export async function ensureDemoOrganization(): Promise<void> {

@@ -67,6 +67,7 @@ export async function listReportFeatures(
       stillThereCount: reports.stillThereCount,
       severity: reports.severity,
       expiresAt: reports.expiresAt,
+      source: reports.source,
     })
     .from(reports)
     .where(and(...conditions))
@@ -95,6 +96,7 @@ export async function listReportFeatures(
           t: row.createdAt.getTime(),
           v: row.stillThereCount,
           sev: row.severity,
+          ...(row.source === "seed" ? { d: 1 as const } : {}),
         },
       };
     }),

@@ -6,7 +6,6 @@
     "report": "Report",
     "retry": "Try again",
     "close": "Close",
-    "demoData": "Demo data",
     "offline": "Offline: showing the last data we loaded."
   },
   "categories": {
@@ -37,6 +36,9 @@
     "error": "We couldn't load the map. Check your connection.",
     "emptyTitle": "No reports around here yet.",
     "emptyBody": "If you see a problem, be the first to report it.",
+    "demoShown": "Demo data · Hide",
+    "demoHidden": "Demo hidden · Show",
+    "demoExample": "See the example in {city}",
     "truncated": "There are many reports in this area. Zoom in to see them all.",
     "nearMe": "Near me",
     "locating": "Finding your location…",

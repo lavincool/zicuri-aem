@@ -1,6 +1,7 @@
 import "server-only";
 import { and, asc, between, eq, gte, ne, sql } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
+import { DEMO_ORG_ID } from "@/config/operators";
 import { db } from "@/lib/db/client";
 import { type Device, devices, sensorReadings } from "@/lib/db/schema";
 import type { Bbox } from "@/lib/geo";
@@ -36,6 +37,7 @@ export function toDeviceFeatures(
           site: d.siteType,
           l: deviceLevel(d, now),
           cm: d.lastLevelCm,
+          ...(d.orgId === DEMO_ORG_ID ? { d: 1 as const } : {}),
         },
       })),
   };

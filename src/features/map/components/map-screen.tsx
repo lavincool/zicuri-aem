@@ -1,6 +1,13 @@
 "use client";
 
-import { CloudUpload, LoaderCircle, LocateFixed, WifiOff } from "lucide-react";
+import {
+  CloudUpload,
+  Eye,
+  EyeOff,
+  LoaderCircle,
+  LocateFixed,
+  WifiOff,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import {
@@ -15,6 +22,7 @@ import { toast } from "sonner";
 import { DESKTOP_SHEET_QUERY } from "@/components/detail-sheet";
 import { Button } from "@/components/ui/button";
 import { CATEGORY_COLORS, type ReportCategory } from "@/config/categories";
+import { PILOT } from "@/config/pilot";
 import {
   isInsideServiceArea,
   type LngLat,
@@ -22,6 +30,7 @@ import {
 } from "@/config/service-area";
 import { SensorSheet } from "@/features/devices/components/sensor-sheet";
 import { FirstRun } from "@/features/onboarding/first-run";
+import { readFlag, writeFlag } from "@/features/onboarding/storage";
 import {
   type FlowMapControls,
   ReportFlow,
@@ -62,6 +71,7 @@ const DEFAULT_FILTERS: ReportFilters = {
 };
 
 const noopSubscribe = () => () => {};
+const HIDE_DEMO_KEY = "cauce:hide-demo";
 
 /**
  * Keeps a focused pin visible above the detail sheet's first snap point. On desktop the
@@ -154,21 +164,45 @@ export function MapScreen({
     return () => window.clearTimeout(timer);
   }, [view]);
 
+  // Seeded demo reports and simulated sensors can be hidden; the choice sticks.
+  const [hideDemo, setHideDemo] = useState(false);
+  useEffect(() => setHideDemo(readFlag(HIDE_DEMO_KEY) === "1"), []);
+  const toggleDemo = () => {
+    writeFlag(HIDE_DEMO_KEY, hideDemo ? "0" : "1");
+    setHideDemo(!hideDemo);
+  };
+
   const feed = useReportsFeed(view, filters);
-  const sensors = useSensorsFeed(view);
+  const sensorFeed = useSensorsFeed(view);
+  const sensors = useMemo(
+    () =>
+      hideDemo
+        ? {
+            ...sensorFeed,
+            features: sensorFeed.features.filter((f) => !f.properties.d),
+          }
+        : sensorFeed,
+    [sensorFeed, hideDemo],
+  );
+  const demoInView =
+    feed.data.features.some((f) => f.properties.d) ||
+    sensorFeed.features.some((f) => f.properties.d);
   const [pinned, setPinned] = useState<ReportFeature | null>(null);
   /** Reports created (or queued) on this device, shown before the feed catches up. */
   const [local, setLocal] = useState<ReportFeature[]>([]);
 
   const mapReports = useMemo(() => {
-    const ids = new Set(feed.data.features.map((f) => f.properties.id));
+    const features = hideDemo
+      ? feed.data.features.filter((f) => !f.properties.d)
+      : feed.data.features;
+    const ids = new Set(features.map((f) => f.properties.id));
     const extra = [...local, ...(pinned ? [pinned] : [])].filter(
       (f) => !ids.has(f.properties.id),
     );
-    return extra.length
-      ? { ...feed.data, features: [...feed.data.features, ...extra] }
+    return extra.length || features !== feed.data.features
+      ? { ...feed.data, features: [...features, ...extra] }
       : feed.data;
-  }, [feed.data, local, pinned]);
+  }, [feed.data, local, pinned, hideDemo]);
 
   // The open report always shows on the map, even when the filters would hide it.
   const pinReport = useCallback((report: ReportDetail) => {
@@ -412,10 +446,20 @@ export function MapScreen({
             />
             <FilterBar filters={filters} onChange={setFilters} />
             <div className="flex flex-col items-start gap-2 px-3">
-              {demoMode ? (
-                <p className="rounded-full bg-navy/85 px-3 py-1 text-xs font-semibold text-white">
-                  {t("common.demoData")}
-                </p>
+              {demoInView || hideDemo ? (
+                <button
+                  type="button"
+                  onClick={toggleDemo}
+                  aria-pressed={hideDemo}
+                  className="pointer-events-auto flex min-h-8 items-center gap-1.5 rounded-full bg-navy/85 px-3 text-xs font-semibold text-white"
+                >
+                  {hideDemo ? (
+                    <Eye className="size-3.5" />
+                  ) : (
+                    <EyeOff className="size-3.5" />
+                  )}
+                  {hideDemo ? t("map.demoHidden") : t("map.demoShown")}
+                </button>
               ) : null}
               {!online ? (
                 <p className="pointer-events-auto flex items-center gap-2 rounded-full bg-navy px-4 py-2 text-sm font-semibold text-white shadow-md">
@@ -447,13 +491,24 @@ export function MapScreen({
           </div>
 
           {empty ? (
-            <div className="absolute inset-x-4 bottom-[calc(env(safe-area-inset-bottom)+7rem)] z-10 mx-auto max-w-sm rounded-2xl bg-card p-4 text-center shadow-lg ring-1 ring-foreground/10">
+            <div className="absolute right-20 bottom-[calc(env(safe-area-inset-bottom)+7rem)] left-4 z-10 mx-auto max-w-sm sm:inset-x-4 rounded-2xl bg-card p-4 text-center shadow-lg ring-1 ring-foreground/10">
               <p className="font-display text-lg font-bold">
                 {t("map.emptyTitle")}
               </p>
               <p className="text-sm text-muted-foreground">
                 {t("map.emptyBody")}
               </p>
+              {demoMode && !hideDemo ? (
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    mapRef.current?.flyTo(PILOT.center, PILOT.zoom)
+                  }
+                  className="mt-3 h-11 rounded-full px-4 font-semibold"
+                >
+                  {t("map.demoExample", { city: PILOT.city })}
+                </Button>
+              ) : null}
             </div>
           ) : null}
 

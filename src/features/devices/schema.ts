@@ -40,6 +40,8 @@ export type DeviceFeatureProps = {
   l: DeviceLevel;
   /** last level in cm */
   cm: number | null;
+  /** 1 for simulated demo sensors */
+  d?: 1;
 };
 
 export type DeviceFeature = {

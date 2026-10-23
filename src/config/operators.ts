@@ -21,3 +21,5 @@ export const LOGIN_WINDOW_S = 15 * 60;
 
 /** The seeded account behind "Entrar con cuenta de demostración" (only with DEMO_MODE). */
 export const DEMO_OPERATOR_EMAIL = "demo@operador.example";
+/** Owns the seeded (simulated) sensors; the public map labels them as demo data. */
+export const DEMO_ORG_ID = "org_demo";
