@@ -14,12 +14,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ModerationPage() {
   const t = await getTranslations("panel.moderation");
   return (
-    <div className="space-y-4">
-      <header className="space-y-1">
-        <h1 className="text-3xl font-extrabold">{t("title")}</h1>
-        <p className="text-muted-foreground">{t("body")}</p>
+    <div className="space-y-6">
+      <header className="space-y-1.5">
+        <h1 className="text-3xl font-semibold sm:text-4xl">{t("title")}</h1>
+        <p className="max-w-2xl text-muted-foreground">{t("body")}</p>
       </header>
-      <Suspense fallback={<Skeleton className="h-64 rounded-2xl" />}>
+      <Suspense fallback={<Skeleton className="h-64 rounded-3xl" />}>
         <QueueContent />
       </Suspense>
     </div>

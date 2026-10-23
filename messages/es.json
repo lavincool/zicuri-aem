@@ -511,7 +511,8 @@
       "overview": "Resumen",
       "moderation": "Moderación",
       "map": "Mapa público",
-      "logout": "Salir"
+      "logout": "Salir",
+      "label": "Navegación del panel"
     },
     "login": {
       "title": "Acceso para autoridades",
@@ -536,27 +537,55 @@
     },
     "forecast": {
       "title": "Lluvia en las próximas 48 h",
-      "openMeteo": "Open-Meteo (por zona)",
-      "smn": "SMN · CONAGUA (oficial, municipio)",
-      "upTo": "Hasta {mm} mm",
-      "next24": "{mm} mm en 24 h",
-      "probability": "{percent} % de probabilidad",
-      "peak": "Lluvia más fuerte {time}",
+      "sources": {
+        "openMeteo": "Open-Meteo",
+        "smn": "SMN"
+      },
+      "scopes": {
+        "openMeteo": "Lluvia esperada por zona en las próximas 48 h.",
+        "smn": "Pronóstico oficial de CONAGUA para el municipio."
+      },
+      "status": {
+        "scenario": "Simulado",
+        "fresh": "Al día",
+        "stale": "Desactualizado",
+        "none": "Sin datos"
+      },
+      "previous": "Fuente anterior",
+      "next": "Siguiente fuente",
+      "labels": {
+        "next24": "Próximas 24 h",
+        "probability": "Probabilidad",
+        "peak": "Más fuerte",
+        "updated": "Actualizado"
+      },
+      "mm": "{mm} mm",
+      "percent": "{percent} %",
+      "dayValue": "{mm} mm · {percent} %",
+      "in48": "en 48 h",
       "noRain": "Sin lluvia importante",
-      "age": "Pronóstico {time}",
       "stale": "El pronóstico tiene más de 6 h; el servicio no respondió.",
-      "unavailable": "Sin datos de este servicio por ahora.",
-      "day": "{date}: {mm} mm · {percent} %"
+      "unavailable": "Sin datos de este servicio por ahora."
     },
-    "kpis": {
-      "openBlockages": "Alcantarillas tapadas o tapas rotas abiertas",
-      "newReports": "Reportes nuevos en 7 días",
-      "resolution": "Tiempo medio para resolver (30 días)",
-      "resolutionValue": "{hours, plural, one {# hora} other {# horas}}",
-      "resolutionDays": "{days, plural, one {# día} other {# días}}",
-      "noData": "Sin datos",
+    "stats": {
+      "maxRisk": "Riesgo máximo",
       "sensors": "Sensores en alerta",
-      "sensorsValue": "{alert} de {total}"
+      "sensorsRatio": "{alert} de {total}",
+      "resolution": "Tiempo para resolver",
+      "resolutionWindow": "Mediana · 30 días",
+      "hours": "{hours, plural, one {# hora} other {# horas}}",
+      "days": "{days, plural, one {# día} other {# días}}",
+      "noData": "Sin datos",
+      "reported": "Reporte",
+      "resolved": "Resuelto",
+      "types": "Reportes por tipo",
+      "typesWindow": "7 días",
+      "openBlockages": "Alcantarillas tapadas o tapas rotas abiertas",
+      "blockagesTrend": "Alcantarillas tapadas o tapas rotas reportadas por día en los últimos 14 días",
+      "newReports": "Reportes nuevos en 7 días",
+      "reportsTrend": "Reportes nuevos por día en los últimos 14 días",
+      "zones": "Zonas por nivel de riesgo",
+      "zonesCount": "{count, plural, one {# zona} other {# zonas}} de ~1 km"
     },
     "drains": {
       "title": "Limpia estos drenes antes de la lluvia",
@@ -564,7 +593,16 @@
       "empty": "No hay alcantarillas tapadas abiertas. ¡Buen trabajo!",
       "baselineNote": "No se espera lluvia importante en 48 h: buen momento para mantenimiento preventivo.",
       "confirmations": "{count, plural, =0 {sin confirmaciones} one {# confirmación} other {# confirmaciones}}",
-      "view": "Ver reporte"
+      "view": "Ver reporte",
+      "seeAll": "Ver todos ({count})",
+      "seeLess": "Ver menos",
+      "rank": "Prioridad {rank}",
+      "zoneRisk": "Riesgo de la zona",
+      "colonia": "Colonia",
+      "confirmationsLabel": "Confirmaciones",
+      "reported": "Reportado",
+      "severity": "Gravedad {severity} de 3",
+      "showOnMap": "Ver en el mapa"
     },
     "levels": {
       "low": "Bajo",
@@ -583,7 +621,10 @@
     "map": {
       "title": "Mapa de riesgo por zona",
       "hint": "Cada hexágono mide cerca de 1 km. Tócalo para ver por qué tiene ese riesgo.",
-      "ariaLabel": "Mapa de riesgo de inundación por zona en Matamoros"
+      "ariaLabel": "Mapa de riesgo de inundación por zona en Matamoros",
+      "recenter": "Volver a Matamoros",
+      "zoomIn": "Acercar",
+      "zoomOut": "Alejar"
     },
     "cell": {
       "title": "Zona {colonia}",

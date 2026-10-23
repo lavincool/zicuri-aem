@@ -45,17 +45,27 @@ async function PanelContent() {
 function PanelSkeleton() {
   return (
     <div className="space-y-6" aria-hidden="true">
-      <Skeleton className="h-10 w-2/3" />
-      <div className="grid gap-4 md:grid-cols-2">
-        <Skeleton className="h-36 rounded-2xl" />
-        <Skeleton className="h-36 rounded-2xl" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-48 rounded-full bg-card" />
+        <Skeleton className="h-10 w-2/3 rounded-xl bg-card" />
       </div>
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {[0, 1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-24 rounded-2xl" />
-        ))}
+      <div className="grid gap-3 lg:grid-cols-2 2xl:grid-cols-3">
+        <Skeleton className="h-80 rounded-[1.75rem] bg-card" />
+        <div className="grid grid-cols-2 gap-1.5">
+          {[0, 1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-40 rounded-3xl bg-card" />
+          ))}
+        </div>
+        <Skeleton className="h-48 rounded-[1.75rem] bg-card lg:col-span-2 2xl:col-span-1 2xl:h-80" />
       </div>
-      <Skeleton className="h-96 rounded-2xl" />
+      <div className="grid gap-4 lg:grid-cols-[minmax(20rem,26rem)_minmax(0,1fr)]">
+        <div className="space-y-2.5">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-20 rounded-3xl bg-card" />
+          ))}
+        </div>
+        <Skeleton className="h-[34rem] rounded-[2rem] bg-card lg:h-[46rem]" />
+      </div>
     </div>
   );
 }

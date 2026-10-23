@@ -101,6 +101,34 @@
   --sidebar-ring: #ffc233;
 }
 
+/*
+ * Authorities panel: a cooler, quieter dashboard surface (white cards on cool gray)
+ * over the same brand tokens. Scoped so the public map keeps its warm paper.
+ */
+.panel-surface {
+  --background: #eceef1;
+  --card: #ffffff;
+  --popover: #ffffff;
+  --secondary: #eef0f3;
+  --muted: #f1f3f5;
+  --muted-foreground: #5b6673;
+  --accent: #eef0f3;
+  --border: #e0e3e8;
+  --input: #d5d9df;
+}
+
+.dark .panel-surface {
+  --background: #050e17;
+  --card: #0c1b2a;
+  --popover: #0c1b2a;
+  --secondary: #13263a;
+  --muted: #12253a;
+  --muted-foreground: #a3b3c3;
+  --accent: #13263a;
+  --border: #1b3148;
+  --input: #1e3a55;
+}
+
 @theme inline {
   --font-sans: var(--font-body);
   --font-heading: var(--font-display);

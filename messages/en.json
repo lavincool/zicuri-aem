@@ -511,7 +511,8 @@
       "overview": "Overview",
       "moderation": "Moderation",
       "map": "Public map",
-      "logout": "Sign out"
+      "logout": "Sign out",
+      "label": "Panel navigation"
     },
     "login": {
       "title": "Authorities access",
@@ -536,27 +537,55 @@
     },
     "forecast": {
       "title": "Rain in the next 48 h",
-      "openMeteo": "Open-Meteo (by area)",
-      "smn": "SMN · CONAGUA (official, municipality)",
-      "upTo": "Up to {mm} mm",
-      "next24": "{mm} mm in 24 h",
-      "probability": "{percent}% chance",
-      "peak": "Heaviest rain {time}",
+      "sources": {
+        "openMeteo": "Open-Meteo",
+        "smn": "SMN"
+      },
+      "scopes": {
+        "openMeteo": "Expected rain by area over the next 48 h.",
+        "smn": "Official CONAGUA forecast for the municipality."
+      },
+      "status": {
+        "scenario": "Simulated",
+        "fresh": "Up to date",
+        "stale": "Outdated",
+        "none": "No data"
+      },
+      "previous": "Previous source",
+      "next": "Next source",
+      "labels": {
+        "next24": "Next 24 h",
+        "probability": "Chance",
+        "peak": "Heaviest",
+        "updated": "Updated"
+      },
+      "mm": "{mm} mm",
+      "percent": "{percent}%",
+      "dayValue": "{mm} mm · {percent}%",
+      "in48": "in 48 h",
       "noRain": "No significant rain",
-      "age": "Forecast {time}",
       "stale": "The forecast is more than 6 h old; the service didn't respond.",
-      "unavailable": "No data from this service right now.",
-      "day": "{date}: {mm} mm · {percent}%"
+      "unavailable": "No data from this service right now."
     },
-    "kpis": {
-      "openBlockages": "Open blocked drains or broken covers",
-      "newReports": "New reports in 7 days",
-      "resolution": "Median time to resolve (30 days)",
-      "resolutionValue": "{hours, plural, one {# hour} other {# hours}}",
-      "resolutionDays": "{days, plural, one {# day} other {# days}}",
-      "noData": "No data",
+    "stats": {
+      "maxRisk": "Highest risk",
       "sensors": "Sensors in alert",
-      "sensorsValue": "{alert} of {total}"
+      "sensorsRatio": "{alert} of {total}",
+      "resolution": "Time to resolve",
+      "resolutionWindow": "Median · 30 days",
+      "hours": "{hours, plural, one {# hour} other {# hours}}",
+      "days": "{days, plural, one {# day} other {# days}}",
+      "noData": "No data",
+      "reported": "Report",
+      "resolved": "Resolved",
+      "types": "Reports by type",
+      "typesWindow": "7 days",
+      "openBlockages": "Open blocked drains or broken covers",
+      "blockagesTrend": "Blocked drains or broken covers reported per day over the last 14 days",
+      "newReports": "New reports in 7 days",
+      "reportsTrend": "New reports per day over the last 14 days",
+      "zones": "Areas by risk level",
+      "zonesCount": "{count, plural, one {# area} other {# areas}} of ~1 km"
     },
     "drains": {
       "title": "Clear these drains before the rain",
@@ -564,7 +593,16 @@
       "empty": "No open blocked drains. Nice work!",
       "baselineNote": "No significant rain expected in 48 h: a good time for preventive maintenance.",
       "confirmations": "{count, plural, =0 {no confirmations} one {# confirmation} other {# confirmations}}",
-      "view": "View report"
+      "view": "View report",
+      "seeAll": "See all ({count})",
+      "seeLess": "See less",
+      "rank": "Priority {rank}",
+      "zoneRisk": "Area risk",
+      "colonia": "Neighborhood",
+      "confirmationsLabel": "Confirmations",
+      "reported": "Reported",
+      "severity": "Severity {severity} of 3",
+      "showOnMap": "Show on map"
     },
     "levels": {
       "low": "Low",
@@ -583,7 +621,10 @@
     "map": {
       "title": "Risk map by area",
       "hint": "Each hexagon is about 1 km across. Tap one to see why it has that risk.",
-      "ariaLabel": "Flood risk map by area in Matamoros"
+      "ariaLabel": "Flood risk map by area in Matamoros",
+      "recenter": "Back to Matamoros",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out"
     },
     "cell": {
       "title": "Area {colonia}",
