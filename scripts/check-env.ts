@@ -37,6 +37,9 @@ info(`Database: ${dbKind}`);
 info(`Photo storage: ${config.STORAGE_DRIVER}`);
 info(`Reverse geocoding: ${config.GEOCODER_CONTACT_EMAIL ? "on" : "off"}`);
 info(
+  `Privacy contact: ${config.CONTACT_EMAIL ? "set" : "missing (set CONTACT_EMAIL before launch)"}`,
+);
+info(
   `Authorities panel: ${config.PANEL_PASSWORD ? "on" : "off (set PANEL_PASSWORD)"}`,
 );
 info(

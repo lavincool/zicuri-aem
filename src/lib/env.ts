@@ -34,6 +34,8 @@ const serverEnvSchema = z
 
     RATE_LIMIT_REPORTS_PER_HOUR: z.coerce.number().int().positive().default(10),
     GEOCODER_CONTACT_EMAIL: optionalString,
+    /** Public contact for privacy requests (ARCO rights), shown on /privacidad. */
+    CONTACT_EMAIL: optionalString,
 
     /** Cloudflare Turnstile on report creation; off while the secret is unset. */
     TURNSTILE_SECRET: optionalString,

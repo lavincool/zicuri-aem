@@ -85,6 +85,8 @@
     "open": "Menu",
     "about": "About Cauce",
     "info": "Project information",
+    "privacy": "Privacy notice",
+    "terms": "Terms of use",
     "theme": "Theme",
     "themeLight": "Light",
     "themeDark": "Dark",
@@ -202,6 +204,7 @@
     "noteCounter": "{count}/280",
     "changePhoto": "Change photo",
     "submit": "Send report",
+    "legalNote": "Your report will be public. By sending it you accept the <terms>terms</terms> and the <privacy>privacy notice</privacy>. In an emergency, call 911.",
     "uploading": "Uploading photo… {percent}%",
     "sending": "Sending…",
     "success": "Thanks! Your report is on the map.",
@@ -325,6 +328,8 @@
     "authoritiesLink": "Go to the dashboard",
     "privacyTitle": "Privacy",
     "privacyBody": "We don't ask for an account or personal data. Photos are compressed on your phone and their metadata is removed before upload. Please avoid faces and license plates.",
+    "privacyLink": "Privacy notice",
+    "termsLink": "Terms of use",
     "demoTitle": "Demo data",
     "demoBody": "For this presentation, the map includes reports and sensors simulated from real floods in Matamoros between 2024 and 2026. Illustrations are labeled.",
     "creditsTitle": "Data and credits",
@@ -975,5 +980,123 @@
       "generic": "We couldn't save. Try again."
     },
     "refreshing": "Refreshing…"
+  },
+  "legal": {
+    "back": "Back to the map",
+    "updated": "Last updated: October 23, 2026",
+    "contact": "Contact: {email}",
+    "seeAlso": "See also",
+    "privacy": {
+      "metaTitle": "Privacy notice",
+      "metaDescription": "What data Cauce uses, why, and how to exercise your rights.",
+      "title": "Privacy notice",
+      "intro": "Cauce is a community flood map. It is built so you can report a problem without an account or your name. Here we explain what data we use and why.",
+      "sections": {
+        "controller": {
+          "title": "Who is responsible",
+          "body": [
+            "The Cauce team, which builds this community project for the Mexican Space Agency (AEM) Hackathon, is responsible for your data. You can write to the contact email shown on this page."
+          ]
+        },
+        "data": {
+          "title": "What data we use",
+          "body": [
+            "When you report: the photo of the problem, the point on the map, the category, the water level and your note if you write one. The photo is compressed on your phone and stripped of metadata (such as the camera's location) before upload.",
+            "To protect the service: an anonymous ID for your browser (a signed cookie) and your IP address. We only store a keyed hash of each, never the original value.",
+            "To open the map on your city we use your approximate location from your IP. We don't store it. If you tap \"Use my location\", your phone asks for permission and the position stays on your device, except for the point you choose when reporting.",
+            "If you operate sensors, we use your email address to sign you in.",
+            "We don't ask for sensitive personal data. Please don't include faces, license plates or other people's data in your photos or notes."
+          ]
+        },
+        "purposes": {
+          "title": "Why we use it",
+          "body": [
+            "To publish your report on the map so neighbors and authorities can see it.",
+            "To estimate, per area, how urgently drains need attention.",
+            "To prevent abuse: submission limits, a check that you're a person, and automatic review of photos and notes.",
+            "To produce general statistics that identify no one."
+          ]
+        },
+        "public": {
+          "title": "What is public and who we share it with",
+          "body": [
+            "Each report's photo, point, category, water level and note are public and may be shared with authorities such as water and drainage agencies and Civil Protection.",
+            "To run the service, these providers process data on our behalf: Vercel (hosting), Turso (database), Cloudflare (photo storage and bot checks), OpenAI (automatic review and category suggestion for the photo, not retained) and OpenStreetMap Nominatim (street and neighborhood of the reported point).",
+            "We don't sell your data or use it for advertising."
+          ]
+        },
+        "cookies": {
+          "title": "Cookies and local storage",
+          "body": [
+            "We use one functional cookie with your anonymous ID. Your browser keeps preferences such as the theme, the last map view and reports waiting to be sent offline. We don't use advertising or tracking cookies."
+          ]
+        },
+        "retention": {
+          "title": "How long we keep it",
+          "body": [
+            "Water reports leave the map after 24 hours without confirmations, but we keep the history while it helps understand where flooding happens. You can ask us to delete a report of yours."
+          ]
+        },
+        "rights": {
+          "title": "Your rights",
+          "body": [
+            "You can request access, correction, deletion or objection to the use of your data (ARCO rights), or withdraw your consent, by writing to the contact email. Since reports are anonymous, include the report's link. You can also use \"Report content\" on any report."
+          ]
+        },
+        "changes": {
+          "title": "Changes to this notice",
+          "body": [
+            "We will publish any change on this page with its update date."
+          ]
+        }
+      }
+    },
+    "terms": {
+      "metaTitle": "Terms of use",
+      "metaDescription": "Rules for using Cauce, Mexico's community flood map.",
+      "title": "Terms of use",
+      "intro": "By using Cauce you accept these terms. They are short on purpose.",
+      "sections": {
+        "emergency": {
+          "title": "Cauce is not an emergency service",
+          "body": [
+            "If you or someone else is in danger, call 911. Cauce is not an official warning system and does not replace Civil Protection, CONAGUA or your municipality."
+          ]
+        },
+        "public": {
+          "title": "Your reports are public",
+          "body": [
+            "Your report's photo, point, category and note are published on the map. By sending it you allow us to show it and share it with neighbors and authorities to prevent flooding."
+          ]
+        },
+        "rules": {
+          "title": "What's allowed and what isn't",
+          "body": [
+            "Report real problems you see in public spaces.",
+            "Don't upload faces, license plates, personal data, or violent, sexual or offensive content.",
+            "Don't send fake reports, spam or content meant to bother someone.",
+            "Don't try to overload or break into the service."
+          ]
+        },
+        "moderation": {
+          "title": "Moderation",
+          "body": [
+            "Neighbors can flag problematic reports, and we hide them automatically after several flags. We also review photos and notes automatically and may hide or delete any report that breaks these terms."
+          ]
+        },
+        "accuracy": {
+          "title": "No guarantees",
+          "body": [
+            "Information comes from neighbors, sensors and public sources and may be incomplete or outdated. The risk per area is a priority for clearing drains, not a street-by-street prediction. Use your judgment and follow the authorities' instructions."
+          ]
+        },
+        "changes": {
+          "title": "Changes",
+          "body": [
+            "We may update these terms. The current version is always on this page."
+          ]
+        }
+      }
+    }
   }
 }

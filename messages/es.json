@@ -85,6 +85,8 @@
     "open": "Menú",
     "about": "Acerca de Cauce",
     "info": "Información del proyecto",
+    "privacy": "Aviso de privacidad",
+    "terms": "Términos de uso",
     "theme": "Tema",
     "themeLight": "Claro",
     "themeDark": "Oscuro",
@@ -202,6 +204,7 @@
     "noteCounter": "{count}/280",
     "changePhoto": "Cambiar foto",
     "submit": "Enviar reporte",
+    "legalNote": "Tu reporte será público. Al enviarlo aceptas los <terms>términos</terms> y el <privacy>aviso de privacidad</privacy>. En una emergencia, llama al 911.",
     "uploading": "Subiendo foto… {percent} %",
     "sending": "Enviando…",
     "success": "¡Gracias! Tu reporte ya está en el mapa.",
@@ -325,6 +328,8 @@
     "authoritiesLink": "Ir al panel",
     "privacyTitle": "Privacidad",
     "privacyBody": "No pedimos cuenta ni datos personales. Las fotos se comprimen en tu celular y se les quitan los metadatos antes de subirse. Te pedimos evitar caras y placas de autos.",
+    "privacyLink": "Aviso de privacidad",
+    "termsLink": "Términos de uso",
     "demoTitle": "Datos de demostración",
     "demoBody": "Para esta presentación, el mapa incluye reportes y sensores simulados a partir de inundaciones reales de 2024 a 2026 en Matamoros. Las imágenes ilustrativas lo indican.",
     "creditsTitle": "Datos y créditos",
@@ -975,5 +980,123 @@
       "generic": "No pudimos guardar. Intenta de nuevo."
     },
     "refreshing": "Actualizando…"
+  },
+  "legal": {
+    "back": "Volver al mapa",
+    "updated": "Última actualización: 23 de octubre de 2026",
+    "contact": "Contacto: {email}",
+    "seeAlso": "Consulta también",
+    "privacy": {
+      "metaTitle": "Aviso de privacidad",
+      "metaDescription": "Qué datos usa Cauce, para qué y cómo puedes ejercer tus derechos.",
+      "title": "Aviso de privacidad",
+      "intro": "Cauce es un mapa ciudadano de inundaciones. Está hecho para que reportes un problema sin crear cuenta ni dar tu nombre. Aquí explicamos qué datos usamos y por qué.",
+      "sections": {
+        "controller": {
+          "title": "Quién es responsable",
+          "body": [
+            "El responsable del tratamiento de tus datos es el Equipo Cauce, que desarrolla este proyecto ciudadano para el Hackathon de la Agencia Espacial Mexicana (AEM). Puedes escribirnos al correo de contacto que aparece en esta página."
+          ]
+        },
+        "data": {
+          "title": "Qué datos usamos",
+          "body": [
+            "Al reportar: la foto del problema, el punto en el mapa, la categoría, el nivel de agua y la nota si la escribes. La foto se comprime en tu celular y se le quitan los metadatos (como la ubicación de la cámara) antes de subirse.",
+            "Para cuidar el servicio: un identificador anónimo de tu navegador (una cookie firmada) y tu dirección IP. De ambos guardamos solo una huella cifrada, nunca el valor original.",
+            "Para abrir el mapa en tu ciudad usamos tu ubicación aproximada según tu IP. No la guardamos. Si tocas \"Usar mi ubicación\", tu celular te pide permiso y la posición se usa solo en tu dispositivo, salvo el punto que eliges al reportar.",
+            "Si operas sensores, usamos tu correo electrónico para que inicies sesión.",
+            "No pedimos datos personales sensibles. Por favor no incluyas rostros, placas de autos ni datos de otras personas en tus fotos o notas."
+          ]
+        },
+        "purposes": {
+          "title": "Para qué los usamos",
+          "body": [
+            "Publicar tu reporte en el mapa para que vecinos y autoridades lo vean.",
+            "Calcular, por zona, qué tan urgente es atender drenes y alcantarillas.",
+            "Evitar abusos: límites de envíos, verificación de que eres una persona y revisión automática de fotos y notas.",
+            "Elaborar estadísticas generales sin identificar a nadie."
+          ]
+        },
+        "public": {
+          "title": "Qué es público y con quién se comparte",
+          "body": [
+            "La foto, el punto, la categoría, el nivel de agua y la nota de cada reporte son públicos y pueden compartirse con autoridades como organismos de agua y drenaje y Protección Civil.",
+            "Para operar el servicio, estos proveedores procesan datos por nuestra cuenta: Vercel (hospedaje), Turso (base de datos), Cloudflare (almacenamiento de fotos y verificación contra bots), OpenAI (revisión automática y sugerencia de categoría de la foto, sin conservarla) y OpenStreetMap Nominatim (calle y colonia del punto reportado).",
+            "No vendemos tus datos ni los usamos para publicidad."
+          ]
+        },
+        "cookies": {
+          "title": "Cookies y almacenamiento local",
+          "body": [
+            "Usamos una cookie funcional con tu identificador anónimo. En tu navegador guardamos preferencias como el tema, la última vista del mapa y los reportes pendientes de enviar sin conexión. No usamos cookies de publicidad ni de rastreo."
+          ]
+        },
+        "retention": {
+          "title": "Cuánto tiempo los conservamos",
+          "body": [
+            "Los reportes de agua dejan de mostrarse en el mapa después de 24 horas sin confirmaciones, pero conservamos el historial mientras sirva para entender dónde se inunda. Puedes pedir que eliminemos un reporte tuyo."
+          ]
+        },
+        "rights": {
+          "title": "Tus derechos",
+          "body": [
+            "Puedes pedir acceso, rectificación, cancelación u oposición al uso de tus datos (derechos ARCO), o revocar tu consentimiento, escribiendo al correo de contacto. Como los reportes son anónimos, indícanos el enlace del reporte. También puedes usar \"Reportar contenido\" en cualquier reporte."
+          ]
+        },
+        "changes": {
+          "title": "Cambios a este aviso",
+          "body": [
+            "Publicaremos cualquier cambio en esta página, con su fecha de actualización."
+          ]
+        }
+      }
+    },
+    "terms": {
+      "metaTitle": "Términos de uso",
+      "metaDescription": "Reglas para usar Cauce, el mapa ciudadano de inundaciones de México.",
+      "title": "Términos de uso",
+      "intro": "Al usar Cauce aceptas estos términos. Son cortos a propósito.",
+      "sections": {
+        "emergency": {
+          "title": "Cauce no es un servicio de emergencias",
+          "body": [
+            "Si tú o alguien más está en peligro, llama al 911. Cauce no es un sistema oficial de alerta ni sustituye a Protección Civil, a la CONAGUA ni a tu municipio."
+          ]
+        },
+        "public": {
+          "title": "Tus reportes son públicos",
+          "body": [
+            "La foto, el punto, la categoría y la nota de tu reporte se publican en el mapa. Al enviarlo nos das permiso de mostrarlo y compartirlo con vecinos y autoridades para prevenir inundaciones."
+          ]
+        },
+        "rules": {
+          "title": "Qué se vale y qué no",
+          "body": [
+            "Reporta problemas reales que veas en la vía pública.",
+            "No subas rostros, placas, datos personales, ni contenido violento, sexual u ofensivo.",
+            "No envíes reportes falsos, spam ni contenido para molestar a alguien.",
+            "No intentes saturar ni vulnerar el servicio."
+          ]
+        },
+        "moderation": {
+          "title": "Moderación",
+          "body": [
+            "Los vecinos pueden avisar de reportes con problemas, y los ocultamos automáticamente cuando reciben varios avisos. También revisamos fotos y notas de forma automática y podemos ocultar o eliminar cualquier reporte que no cumpla estos términos."
+          ]
+        },
+        "accuracy": {
+          "title": "Sin garantías",
+          "body": [
+            "La información viene de vecinos, sensores y fuentes públicas, y puede estar incompleta o desactualizada. El riesgo por zona es una prioridad para atender drenes, no una predicción calle por calle. Usa tu criterio y sigue las indicaciones de las autoridades."
+          ]
+        },
+        "changes": {
+          "title": "Cambios",
+          "body": [
+            "Podemos actualizar estos términos. La versión vigente siempre está en esta página."
+          ]
+        }
+      }
+    }
   }
 }

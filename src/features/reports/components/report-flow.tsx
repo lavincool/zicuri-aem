@@ -10,6 +10,7 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -837,6 +838,26 @@ export function ReportFlow({
                 t("flow.submit")
               )}
             </Button>
+            <p className="text-center text-xs text-muted-foreground">
+              {t.rich("flow.legalNote", {
+                terms: (chunks) => (
+                  <Link
+                    href="/terminos"
+                    className="font-semibold underline underline-offset-2"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+                privacy: (chunks) => (
+                  <Link
+                    href="/privacidad"
+                    className="font-semibold underline underline-offset-2"
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            </p>
           </footer>
         </div>
       ) : null}

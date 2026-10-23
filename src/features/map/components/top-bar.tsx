@@ -90,6 +90,18 @@ export function TopBar({
             >
               {t("menu.info")}
             </DropdownMenuItem>
+            <DropdownMenuItem
+              render={<Link href="/privacidad" />}
+              className="min-h-11 text-base"
+            >
+              {t("menu.privacy")}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              render={<Link href="/terminos" />}
+              className="min-h-11 text-base"
+            >
+              {t("menu.terms")}
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuLabel>{t("menu.theme")}</DropdownMenuLabel>

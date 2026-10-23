@@ -108,6 +108,14 @@ export default function AboutPage() {
           {t("privacyTitle")}
         </h2>
         <p className="text-base leading-relaxed">{t("privacyBody")}</p>
+        <p className="flex flex-wrap gap-x-4 gap-y-1 font-semibold">
+          <Link href="/privacidad" className="underline underline-offset-4">
+            {t("privacyLink")}
+          </Link>
+          <Link href="/terminos" className="underline underline-offset-4">
+            {t("termsLink")}
+          </Link>
+        </p>
       </section>
 
       <section className="my-6 space-y-2 rounded-2xl border-2 border-dashed border-border p-5">

@@ -38,6 +38,7 @@ const config: ServerEnv = {
   R2_PUBLIC_BASE_URL: undefined,
   RATE_LIMIT_REPORTS_PER_HOUR: 10,
   GEOCODER_CONTACT_EMAIL: undefined,
+  CONTACT_EMAIL: undefined,
   TURNSTILE_SECRET: undefined,
   NEXT_PUBLIC_TURNSTILE_SITE_KEY: undefined,
   TURNSTILE_HOSTNAMES: new Set(),
