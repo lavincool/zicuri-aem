@@ -30,6 +30,11 @@ export type { UserLocation };
 
 export type FloodMapHandle = {
   flyTo: (center: LngLat, zoom?: number) => void;
+  /** Centers a point in the area left visible above a bottom sheet. */
+  focusOn: (
+    center: LngLat,
+    options?: { bottomPadding?: number; zoom?: number },
+  ) => void;
   getView: () => MapView | null;
 };
 
@@ -44,7 +49,7 @@ type FloodMapProps = {
   selectedReportId?: string | null;
   userLocation?: UserLocation | null;
   onViewChange?: (view: MapView) => void;
-  onReportClick?: (id: string) => void;
+  onReportClick?: (id: string, center: LngLat) => void;
   onLoad?: () => void;
   onError?: (error: Error) => void;
   ariaLabel: string;
@@ -110,6 +115,19 @@ export function FloodMap({
         essential: true,
       });
     },
+    focusOn(center, options) {
+      mapRef.current?.easeTo({
+        center,
+        zoom: options?.zoom ?? Math.max(mapRef.current.getZoom(), 15),
+        padding: {
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: options?.bottomPadding ?? 0,
+        },
+        duration: 600,
+      });
+    },
     getView() {
       const map = mapRef.current;
       return map ? readView(map) : null;
@@ -149,11 +167,13 @@ export function FloodMap({
       const instance = map;
       instance.on("style.load", () => {
         void installLayers(instance);
-      });
-      instance.on("load", () => {
-        loaded = true;
-        latest.current.onLoad?.();
-        latest.current.onViewChange?.(readView(instance));
+        // Show the map as soon as the style is ready; tiles fade in as they arrive
+        // instead of keeping a skeleton up until every tile has loaded.
+        if (!loaded) {
+          loaded = true;
+          latest.current.onLoad?.();
+          latest.current.onViewChange?.(readView(instance));
+        }
       });
       for (const event of ["moveend", "resize"] as const) {
         instance.on(event, () => {
@@ -179,7 +199,12 @@ export function FloodMap({
           void zoomIntoCluster(instance, hit);
         } else {
           const id = hit.properties?.id;
-          if (typeof id === "string") latest.current.onReportClick?.(id);
+          if (typeof id === "string" && hit.geometry.type === "Point") {
+            latest.current.onReportClick?.(
+              id,
+              hit.geometry.coordinates as [number, number],
+            );
+          }
         }
       });
       for (const layer of [REPORT_LAYERS.points, REPORT_LAYERS.clusters]) {

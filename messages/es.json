@@ -84,5 +84,66 @@
     "themeLight": "Claro",
     "themeDark": "Oscuro",
     "themeSystem": "Automático"
+  },
+  "report": {
+    "sheetTitle": "Detalle del reporte",
+    "photoAlt": "Foto del reporte: {category}",
+    "illustrationNote": "Imagen ilustrativa · datos de demostración",
+    "openPhoto": "Ver foto completa",
+    "reportedAgo": "Reportado {time}",
+    "location": "Ubicación",
+    "unknownPlace": "Matamoros",
+    "note": "Nota",
+    "stillThereCount": "{count, plural, =0 {Nadie ha confirmado aún} one {# vecino dice que sigue ahí} other {# vecinos dicen que sigue ahí}}",
+    "fixedCount": "{count, plural, =0 {} one {# dice que ya se arregló} other {# dicen que ya se arregló}}",
+    "stillThere": "Sigue ahí",
+    "fixed": "Ya se arregló",
+    "yourAnswer": "Tu respuesta",
+    "signalQuestion": "¿Sigue ahí este problema?",
+    "thanksStillThere": "Gracias por confirmar.",
+    "thanksFixed": "Gracias. Si otro vecino lo confirma, se marcará como resuelto.",
+    "nowResolved": "¡Listo! El reporte se marcó como resuelto.",
+    "signalError": "No pudimos guardar tu respuesta. Intenta de nuevo.",
+    "resolvedBanner": "Se marcó como resuelto {date}.",
+    "expiredBanner": "Este reporte ya no está activo: pasaron más de 24 horas sin que nadie confirmara que sigue ahí.",
+    "hiddenBanner": "Este reporte está en revisión.",
+    "notFound": "No encontramos este reporte.",
+    "loadError": "No pudimos cargar el reporte.",
+    "share": "Compartir",
+    "shareText": "{category} en {place}. Mira el reporte en Cauce:",
+    "linkCopied": "Enlace copiado.",
+    "more": "Más opciones",
+    "flag": "Reportar contenido",
+    "flagReasons": {
+      "inappropriate": "Es inapropiado",
+      "not_a_problem": "No es un problema real",
+      "duplicate": "Está repetido",
+      "other": "Otro motivo"
+    },
+    "flagThanks": "Gracias. Revisaremos este reporte.",
+    "flagged": "Ya lo reportaste",
+    "severity": {
+      "partial": "Parcialmente tapada",
+      "full": "Totalmente tapada",
+      "damaged": "Tapa dañada",
+      "missing": "No tiene tapa (hoyo abierto)"
+    },
+    "depth": {
+      "5": "Charco (menos de 5 cm)",
+      "15": "Al tobillo (~15 cm)",
+      "45": "A la rodilla (~45 cm)",
+      "80": "A la cintura o más (80+ cm)"
+    },
+    "metaTitle": "{category} en {place}",
+    "metaDescription": "Reporte ciudadano en Cauce, el mapa de inundaciones de Matamoros."
+  },
+  "notFound": {
+    "title": "No encontramos esta página.",
+    "body": "Puede que el enlace esté incompleto o que el reporte ya no esté disponible.",
+    "back": "Ir al mapa"
+  },
+  "og": {
+    "kicker": "Reporte ciudadano · Matamoros",
+    "cta": "Míralo en el mapa de Cauce"
   }
 }

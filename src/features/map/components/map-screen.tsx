@@ -3,10 +3,18 @@
 import { LoaderCircle, LocateFixed, WifiOff } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import { useCallback, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { isInsidePilot, PILOT } from "@/config/pilot";
+import { isInsidePilot, type LngLat, PILOT } from "@/config/pilot";
+import { ReportSheet } from "@/features/reports/components/report-sheet";
+import type { ReportDetail, ReportFeature } from "@/features/reports/schema";
 import { useOnline } from "@/hooks/use-online";
 import { type ReportFilters, useReportsFeed } from "../hooks/use-reports-feed";
 import { FilterBar } from "./filter-bar";
@@ -33,7 +41,23 @@ const DEFAULT_FILTERS: ReportFilters = {
 
 const noopSubscribe = () => () => {};
 
-export function MapScreen({ demoMode }: { demoMode: boolean }) {
+/** Keeps a focused pin visible above the report sheet's first snap point. */
+const sheetPadding = () => Math.round(window.innerHeight * 0.6);
+
+export type InitialReport = { id: string; center: LngLat };
+
+/** Keeps the address bar shareable (`/r/[id]`) without a navigation. */
+function setReportUrl(id: string | null) {
+  window.history.replaceState(window.history.state, "", id ? `/r/${id}` : "/");
+}
+
+export function MapScreen({
+  demoMode,
+  initialReport,
+}: {
+  demoMode: boolean;
+  initialReport?: InitialReport;
+}) {
   const t = useTranslations();
   const online = useOnline();
   const { resolvedTheme } = useTheme();
@@ -51,12 +75,41 @@ export function MapScreen({ demoMode }: { demoMode: boolean }) {
   );
   const [view, setView] = useState<MapView | null>(null);
   const [filters, setFilters] = useState<ReportFilters>(DEFAULT_FILTERS);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(
+    initialReport?.id ?? null,
+  );
   const [legendOpen, setLegendOpen] = useState(false);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [locating, setLocating] = useState(false);
 
   const feed = useReportsFeed(view, filters);
+  const [pinned, setPinned] = useState<ReportFeature | null>(null);
+
+  // The open report always shows on the map, even when the filters would hide it.
+  const mapReports = useMemo(() => {
+    if (
+      !pinned ||
+      feed.data.features.some((f) => f.properties.id === pinned.properties.id)
+    ) {
+      return feed.data;
+    }
+    return { ...feed.data, features: [...feed.data.features, pinned] };
+  }, [feed.data, pinned]);
+
+  const pinReport = useCallback((report: ReportDetail) => {
+    setPinned({
+      type: "Feature",
+      geometry: { type: "Point", coordinates: [report.lng, report.lat] },
+      properties: {
+        id: report.id,
+        c: report.category,
+        s: report.status,
+        t: new Date(report.createdAt).getTime(),
+        v: report.stillThereCount,
+        sev: report.severity,
+      },
+    });
+  }, []);
 
   const locate = useCallback(() => {
     if (!("geolocation" in navigator)) {
@@ -101,16 +154,28 @@ export function MapScreen({ demoMode }: { demoMode: boolean }) {
           className="absolute inset-0"
           styleUrl={STYLE_URLS[theme]}
           theme={theme}
-          initialCenter={PILOT.center}
-          initialZoom={PILOT.zoom}
+          initialCenter={initialReport?.center ?? PILOT.center}
+          initialZoom={initialReport ? 16 : PILOT.zoom}
           minZoom={PILOT.minZoom}
           maxZoom={PILOT.maxZoom}
-          reports={feed.data}
+          reports={mapReports}
           selectedReportId={selectedId}
           userLocation={userLocation}
           onViewChange={setView}
-          onReportClick={setSelectedId}
-          onLoad={() => setMapState("ready")}
+          onReportClick={(id, center) => {
+            setSelectedId(id);
+            setReportUrl(id);
+            mapRef.current?.focusOn(center, { bottomPadding: sheetPadding() });
+          }}
+          onLoad={() => {
+            setMapState("ready");
+            if (initialReport) {
+              mapRef.current?.focusOn(initialReport.center, {
+                bottomPadding: sheetPadding(),
+                zoom: 16,
+              });
+            }
+          }}
           onError={() => setMapState("error")}
           ariaLabel={t("map.ariaLabel")}
         />
@@ -200,6 +265,23 @@ export function MapScreen({ demoMode }: { demoMode: boolean }) {
       ) : null}
 
       <LegendSheet open={legendOpen} onOpenChange={setLegendOpen} />
+      <ReportSheet
+        reportId={selectedId}
+        onClose={() => {
+          setSelectedId(null);
+          setPinned(null);
+          setReportUrl(null);
+          const view = mapRef.current?.getView();
+          if (view) {
+            mapRef.current?.focusOn(view.center, {
+              bottomPadding: 0,
+              zoom: view.zoom,
+            });
+          }
+        }}
+        onResolved={feed.refresh}
+        onLoaded={pinReport}
+      />
     </div>
   );
 }
