@@ -1,26 +1,228 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Cauce design tokens: "civic signal".
+ * Storm navy + signal amber on warm paper; water teal for sensors.
+ * Category colors (Okabe–Ito) must always be paired with an icon.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f6f4ee;
+  --foreground: #0b1f33;
+  --card: #ffffff;
+  --card-foreground: #0b1f33;
+  --popover: #ffffff;
+  --popover-foreground: #0b1f33;
+  --primary: #ffb000;
+  --primary-foreground: #0b1f33;
+  --secondary: #e9e4d6;
+  --secondary-foreground: #0b1f33;
+  --muted: #ece8dd;
+  --muted-foreground: #4a5b6c;
+  --accent: #e9e4d6;
+  --accent-foreground: #0b1f33;
+  --destructive: #c62828;
+  --border: #d9d3c3;
+  --input: #d9d3c3;
+  --ring: #e08e00;
+  --radius: 0.875rem;
+
+  --navy: #0b1f33;
+  --water: #0e7c86;
+  --water-foreground: #ffffff;
+  --success: #0f7b4f;
+  --warning: #b77900;
+  --critical: #c8102e;
+
+  --sensor-normal: #009e73;
+  --sensor-warning: #f0b400;
+  --sensor-critical: #d7263d;
+  --sensor-offline: #8a96a3;
+
+  --cat-blocked-drain: #e69f00;
+  --cat-broken-cover: #d55e00;
+  --cat-flooded-street: #0072b2;
+  --cat-overflowing-canal: #56b4e9;
+  --cat-sewage-backflow: #cc79a7;
+  --cat-other: #6b7280;
+
+  --chart-1: #0e7c86;
+  --chart-2: #ffb000;
+  --chart-3: #0072b2;
+  --chart-4: #d55e00;
+  --chart-5: #cc79a7;
+
+  --sidebar: #f6f4ee;
+  --sidebar-foreground: #0b1f33;
+  --sidebar-primary: #ffb000;
+  --sidebar-primary-foreground: #0b1f33;
+  --sidebar-accent: #e9e4d6;
+  --sidebar-accent-foreground: #0b1f33;
+  --sidebar-border: #d9d3c3;
+  --sidebar-ring: #e08e00;
+}
+
+.dark {
+  --background: #07131f;
+  --foreground: #eef2f6;
+  --card: #0e2236;
+  --card-foreground: #eef2f6;
+  --popover: #0e2236;
+  --popover-foreground: #eef2f6;
+  --primary: #ffc233;
+  --primary-foreground: #07131f;
+  --secondary: #16304a;
+  --secondary-foreground: #eef2f6;
+  --muted: #132b42;
+  --muted-foreground: #a9b8c7;
+  --accent: #16304a;
+  --accent-foreground: #eef2f6;
+  --destructive: #f0566a;
+  --border: #1e3a55;
+  --input: #1e3a55;
+  --ring: #ffc233;
+
+  --water: #2bb3bf;
+  --water-foreground: #07131f;
+  --success: #3ccf91;
+  --warning: #ffc233;
+  --critical: #ff5a6e;
+
+  --sidebar: #07131f;
+  --sidebar-foreground: #eef2f6;
+  --sidebar-primary: #ffc233;
+  --sidebar-primary-foreground: #07131f;
+  --sidebar-accent: #16304a;
+  --sidebar-accent-foreground: #eef2f6;
+  --sidebar-border: #1e3a55;
+  --sidebar-ring: #ffc233;
 }
 
 @theme inline {
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-display);
+  --font-display: var(--font-display);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-navy: var(--navy);
+  --color-water: var(--water);
+  --color-water-foreground: var(--water-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-critical: var(--critical);
+
+  --color-sensor-normal: var(--sensor-normal);
+  --color-sensor-warning: var(--sensor-warning);
+  --color-sensor-critical: var(--sensor-critical);
+  --color-sensor-offline: var(--sensor-offline);
+
+  --color-cat-blocked-drain: var(--cat-blocked-drain);
+  --color-cat-broken-cover: var(--cat-broken-cover);
+  --color-cat-flooded-street: var(--cat-flooded-street);
+  --color-cat-overflowing-canal: var(--cat-overflowing-canal);
+  --color-cat-sewage-backflow: var(--cat-sewage-backflow);
+  --color-cat-other: var(--cat-other);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  --animate-pin-ripple: pin-ripple 1.1s ease-out 1;
+  --animate-pulse-soft: pulse-soft 1.6s ease-in-out infinite;
+
+  @keyframes pin-ripple {
+    0% {
+      transform: scale(0.4);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
+
+  @keyframes pulse-soft {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-heading tracking-tight;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }

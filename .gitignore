@@ -45,3 +45,7 @@ next-env.d.ts
 /local.db*
 /.uploads/
 /.simulator-devices.json
+
+# local tool config
+/.claude/launch.json
+/.claude/settings.local.json
