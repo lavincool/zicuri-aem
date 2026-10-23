@@ -88,6 +88,19 @@
     "themeDark": "Oscuro",
     "themeSystem": "Automático"
   },
+  "search": {
+    "open": "Buscar un lugar",
+    "title": "Buscar un lugar",
+    "placeholder": "Ciudad, municipio o estado",
+    "hint": "Busca tu ciudad o pueblo para ver los reportes y reportar ahí.",
+    "useLocation": "Usar mi ubicación",
+    "loading": "Cargando lugares…",
+    "empty": "No encontramos ese lugar. Prueba con el nombre del municipio.",
+    "failed": "No pudimos cargar la lista de lugares.",
+    "retry": "Intentar de nuevo",
+    "state": "Estado",
+    "city": "Ciudad"
+  },
   "report": {
     "sheetTitle": "Detalle del reporte",
     "photoAlt": "Foto del reporte: {category}",

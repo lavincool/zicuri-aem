@@ -101,8 +101,12 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(networkFirst(request, SHELL_CACHE, "/sin-conexion"));
     return;
   }
-  // Last-known map data so a reload while offline still shows something.
-  if (url.pathname === "/api/reports" || url.pathname === "/api/devices") {
+  // Last-known map data and place index, so a reload while offline still works.
+  if (
+    url.pathname === "/api/reports" ||
+    url.pathname === "/api/devices" ||
+    url.pathname.startsWith("/data/")
+  ) {
     event.respondWith(networkFirst(request, DATA_CACHE));
     return;
   }

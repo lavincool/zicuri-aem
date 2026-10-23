@@ -88,6 +88,19 @@
     "themeDark": "Dark",
     "themeSystem": "Automatic"
   },
+  "search": {
+    "open": "Search for a place",
+    "title": "Search for a place",
+    "placeholder": "City, municipality or state",
+    "hint": "Find your city or town to see reports and report there.",
+    "useLocation": "Use my location",
+    "loading": "Loading places…",
+    "empty": "We couldn't find that place. Try the municipality's name.",
+    "failed": "We couldn't load the list of places.",
+    "retry": "Try again",
+    "state": "State",
+    "city": "City"
+  },
   "report": {
     "sheetTitle": "Report details",
     "photoAlt": "Report photo: {category}",

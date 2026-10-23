@@ -45,6 +45,7 @@ import {
   type UserLocation,
 } from "./flood-map";
 import { LegendSheet } from "./legend-sheet";
+import { PlaceSearch } from "./place-search";
 import { ReportListSheet } from "./report-list-sheet";
 import { TopBar } from "./top-bar";
 
@@ -140,6 +141,7 @@ export function MapScreen({
   );
   const [legendOpen, setLegendOpen] = useState(false);
   const [listOpen, setListOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [locating, setLocating] = useState(false);
   const [flowStep, setFlowStep] = useState("closed");
@@ -404,6 +406,7 @@ export function MapScreen({
         <>
           <div className="pointer-events-none absolute inset-x-0 top-0 z-10">
             <TopBar
+              onOpenSearch={() => setSearchOpen(true)}
               onOpenLegend={() => setLegendOpen(true)}
               onOpenList={() => setListOpen(true)}
             />
@@ -488,6 +491,12 @@ export function MapScreen({
 
       {!flowActive ? <FirstRun enabled={!initialFocus} /> : null}
       <LegendSheet open={legendOpen} onOpenChange={setLegendOpen} />
+      <PlaceSearch
+        open={searchOpen}
+        onOpenChange={setSearchOpen}
+        onSelect={(place) => mapRef.current?.flyTo(place.center, place.zoom)}
+        onLocate={locate}
+      />
       <ReportListSheet
         open={listOpen}
         onOpenChange={setListOpen}

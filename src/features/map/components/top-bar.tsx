@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleHelp, List, Menu } from "lucide-react";
+import { CircleHelp, List, Menu, Search } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
@@ -22,9 +22,11 @@ const floatingButton =
   "size-12 rounded-full bg-card/95 text-foreground shadow-md ring-1 ring-foreground/10 backdrop-blur hover:bg-card";
 
 export function TopBar({
+  onOpenSearch,
   onOpenLegend,
   onOpenList,
 }: {
+  onOpenSearch: () => void;
   onOpenLegend: () => void;
   onOpenList: () => void;
 }) {
@@ -37,6 +39,15 @@ export function TopBar({
         <Logo />
       </div>
       <div className="pointer-events-auto flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          className={floatingButton}
+          onClick={onOpenSearch}
+          aria-label={t("search.open")}
+        >
+          <Search className="size-6" />
+        </Button>
         <Button
           variant="ghost"
           size="icon"
