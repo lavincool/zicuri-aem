@@ -75,3 +75,48 @@ export type ReportFeatureCollection = {
   truncated: boolean;
   features: ReportFeature[];
 };
+
+export type ReportDetail = {
+  id: string;
+  category: ReportCategory;
+  status: ReportStatus;
+  severity: number | null;
+  severityDetail: "partial" | "full" | "damaged" | "missing" | null;
+  waterDepthCm: number | null;
+  note: string | null;
+  lat: number;
+  lng: number;
+  accuracyM: number | null;
+  address: string | null;
+  colonia: string | null;
+  photo: {
+    fullUrl: string;
+    thumbUrl: string;
+    width: number;
+    height: number;
+    color: string | null;
+  };
+  stillThereCount: number;
+  fixedCount: number;
+  createdAt: string;
+  lastConfirmedAt: string | null;
+  resolvedAt: string | null;
+  expiresAt: string | null;
+  isDemo: boolean;
+  mySignal: "still_there" | "fixed" | null;
+  myFlagged: boolean;
+};
+
+export const signalBodySchema = z.object({
+  kind: z.enum(["still_there", "fixed"]),
+});
+
+export const FLAG_REASONS = [
+  "inappropriate",
+  "not_a_problem",
+  "duplicate",
+  "other",
+] as const;
+export type FlagReason = (typeof FLAG_REASONS)[number];
+
+export const flagBodySchema = z.object({ reason: z.enum(FLAG_REASONS) });

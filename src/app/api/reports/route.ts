@@ -1,5 +1,6 @@
-import { type NextRequest, NextResponse } from "next/server";
+import { after, type NextRequest, NextResponse } from "next/server";
 import { reportsQuerySchema } from "@/features/reports/schema";
+import { sweepExpiredReports } from "@/features/reports/server/commands";
 import { listReportFeatures } from "@/features/reports/server/queries";
 import { jsonError, zodDetails } from "@/lib/http";
 
@@ -16,6 +17,7 @@ export async function GET(request: NextRequest) {
     );
   }
   const collection = await listReportFeatures(parsed.data);
+  after(() => sweepExpiredReports());
   return NextResponse.json(collection, {
     headers: {
       "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30",
