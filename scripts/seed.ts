@@ -34,6 +34,7 @@ import {
   illustrationKey,
   writeIllustrations,
 } from "./lib/illustrations";
+import { seedDevices } from "./lib/seed-devices";
 
 const HOUR = 3_600_000;
 const DAY = 24 * HOUR;
@@ -425,6 +426,11 @@ async function main() {
   console.log(
     `Seeded ${built.length} reports (removed ${oldIds.length} old):`,
     byStatus,
+  );
+
+  const sensors = await seedDevices();
+  console.log(
+    `Seeded ${sensors} sensors with 7 days of readings; keys saved to .simulator-devices.json`,
   );
 }
 
