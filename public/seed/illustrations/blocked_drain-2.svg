@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="1600" height="1200">
+  <defs>
+    <linearGradient id="g" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E69F00"/>
+      <stop offset="1" stop-color="#0b1f33"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#g)"/>
+  <g stroke="#ffffff" stroke-opacity="0.12" stroke-width="3" stroke-linecap="round"><path d="M19 31l-14 34" /><path d="M56 84l-14 34" /><path d="M93 137l-14 34" /><path d="M130 190l-14 34" /><path d="M167 243l-14 34" /><path d="M204 296l-14 34" /><path d="M241 49l-14 34" /><path d="M278 102l-14 34" /><path d="M315 155l-14 34" /><path d="M352 208l-14 34" /><path d="M389 261l-14 34" /><path d="M6 14l-14 34" /><path d="M43 67l-14 34" /><path d="M80 120l-14 34" /><path d="M117 173l-14 34" /><path d="M154 226l-14 34" /><path d="M191 279l-14 34" /><path d="M228 32l-14 34" /></g>
+  <circle cx="200" cy="150" r="78" fill="#0b1f33" fill-opacity="0.28"/>
+  <g transform="translate(140 90) scale(5)" fill="none" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M8 5v14"/><path d="M12 5v14"/><path d="M16 5v14"/><path d="M3 14c2.5-2 5-2 7 0s4.5 2 7 0 3-1.5 4-1"/></g>
+</svg>
