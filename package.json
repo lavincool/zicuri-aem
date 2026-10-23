@@ -18,7 +18,8 @@
     "map:styles": "bun scripts/build-map-styles.ts",
     "seed": "bun --conditions=react-server scripts/seed.ts",
     "device:register": "bun --conditions=react-server scripts/register-device.ts",
-    "simulate": "bun scripts/simulate-sensors.ts"
+    "simulate": "bun scripts/simulate-sensors.ts",
+    "check:env": "bun --conditions=react-server scripts/check-env.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1156.0",
