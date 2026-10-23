@@ -2,7 +2,7 @@
 
 > Documento de referencia para dárselo a una IA (o a una persona) y que pueda responder preguntas sobre el proyecto: qué es, qué hace hoy, cómo está construido, qué falta y hacia dónde puede crecer.
 >
-> **Corte:** 23 de octubre de 2026 · **Rama:** `main` (46 commits, 22–23 oct 2026) · **Fuente de verdad técnica:** `PLAN.md` del repositorio.
+> **Corte:** 23 de octubre de 2026, actualizado con el alcance nacional (sección 5.12) · **Rama:** `main` · **Fuente de verdad técnica:** `PLAN.md` del repositorio.
 
 ---
 
@@ -22,7 +22,7 @@
 
 ## 1. Resumen en una línea, en 30 segundos y en un minuto
 
-**Una línea:** Cauce es una app web (PWA) donde los vecinos de Matamoros reportan con una foto lo que inunda su calle; junto con sensores de nivel de agua, el pronóstico de lluvia y datos satelitales del terreno, le dice a las autoridades qué drenes limpiar antes de la siguiente tormenta.
+**Una línea:** Cauce es una app web (PWA) donde cualquier persona en México reporta con una foto lo que inunda su calle; junto con sensores de nivel de agua, el pronóstico de lluvia y datos satelitales del terreno, le dice a las autoridades qué drenes limpiar antes de la siguiente tormenta. El piloto con sensores y panel de riesgo está en Matamoros, Tamaulipas.
 
 **30 segundos:** El 4 de octubre de 2026 el frente frío número 1 dejó 215.9 mm de lluvia en Matamoros y colonias como Buenavista, San Francisco y Los Sauces quedaron incomunicadas. Muchas inundaciones empiezan con algo pequeño: una alcantarilla tapada con basura que nadie reportó. Cauce convierte a cada vecino en un sensor: una foto, la ubicación sale sola y un toque para decir qué es. Los vecinos confirman si el problema sigue o ya se arregló. Sensores IoT miden el agua en tiempo real. Y un panel para la Junta de Aguas y Protección Civil combina todo con el pronóstico y la elevación satelital (Copernicus) para priorizar, con razones explicadas.
 
@@ -66,7 +66,7 @@ Buenavista y San Francisco están en **zonas bajas con drenaje limitado**, por e
 
 - Colonias foco: **Buenavista, San Francisco y Los Sauces**. También Paseo Residencial, Nuevo Milenio, Los Palmares, Rinconada de las Brisas, Residencial Misiones, Valle Alto y Centro.
 - Los centroides de colonias son **aproximados** (OpenStreetMap tiene poca cobertura de colonias en Matamoros) y están en `src/config/pilot.ts`.
-- Los reportes fuera de los límites de Matamoros se rechazan ("Por ahora Cauce funciona en Matamoros").
+- Desde el 23 de octubre de 2026 los reportes se aceptan **en todo México** (sección 5.12). Matamoros sigue siendo el piloto del panel de riesgo, el pronóstico y los sensores.
 
 ---
 
@@ -266,6 +266,19 @@ Cada celda H3 r8 (~0.74 km², ~0.9 km de ancho) recibe una puntuación de 0 a 10
 - **`/acerca`**: pitch, problema, "Reporta · Confirma · Mide · Anticipa", sensores, para autoridades, privacidad, aviso de datos de demostración, créditos de datos y el crédito al Hackathon de la AEM.
 - **`/info`**: ficha del proyecto "De la alcantarilla al satélite": por qué Matamoros (línea de tiempo de eventos), para quién es, **alcance del piloto (incluido / fuera de alcance)**, pesos del riesgo (leídos del código, nunca se desfasan), datos espaciales y fuentes futuras, siguientes pasos y cómo está hecho. Incluye una ilustración animada de un corte de calle (satélite, vecino, sensor, dren).
 
+### 5.12 Alcance nacional (corte 1, 23 oct 2026)
+
+- **Reportes en todo México:** se valida contra el contorno del país (Natural Earth, con 5 km de margen para costas y la frontera). Fuera de México: "Cauce funciona dentro de México".
+- **El mapa abre en tu ciudad:** con la ubicación aproximada por IP (sin pedir permiso y sin guardarla), o en la última vista del dispositivo, o en todo México.
+- **Buscador de lugares:** 32 estados y ~4,100 localidades (GeoNames), sin conexión a servicios externos al escribir. También aparece en el paso de ubicación si no hay GPS; el punto se confirma desde zoom 14.
+- **Municipio y estado** en cada reporte (geocodificación inversa): "Colonia, Municipio" o "Municipio, Estado".
+- **Datos de demostración:** solo en Matamoros, marcados, se pueden ocultar y no cuentan como "vecinos que reportaron cerca". Botón "Ver el ejemplo en Matamoros" cuando no hay reportes en la zona.
+- **Jurado en el panel:** con `DEMO_MODE`, "Entrar como demostración" abre `/panel` en **solo lectura**.
+- **Contra abuso:** Cloudflare Turnstile invisible al enviar (se activa al configurar las llaves) y revisión automática de fotos y notas con la moderación gratuita de OpenAI (se activa con `PHOTO_MODERATION_ENABLED`), además de los límites por hora.
+- **Legal:** `/privacidad` (aviso de privacidad, derechos ARCO) y `/terminos` (no es servicio de emergencias: 911; los reportes son públicos).
+- **Horas locales:** cada persona ve las horas en la zona horaria de su dispositivo.
+- **Pendiente (corte 2):** pronóstico, elevación y riesgo por municipio para todo el país; hoy el panel cubre Matamoros.
+
 ---
 
 ## 6. Componente espacial y fuentes de datos
@@ -392,7 +405,7 @@ bun run check:env             # verifica Turso, R2 y CORS sin imprimir secretos
 - No hay sensores físicos instalados: las lecturas vienen de un simulador con el mismo contrato que un sensor real.
 - Datos de demostración (marcados como tales).
 - Ubicación de colonias aproximada; el DEM de 90 m es ruidoso en terreno plano.
-- Solo Matamoros; solo español en la interfaz.
+- Reportes en todo México, pero el panel de riesgo, el pronóstico y los sensores solo cubren Matamoros (corte 2); solo español en la interfaz.
 - Sin avisos para vecinos ni alertas a autoridades todavía.
 - Panel con contraseña compartida (no hay cuentas por dependencia).
 - Open-Meteo gratuito es solo para uso no comercial.

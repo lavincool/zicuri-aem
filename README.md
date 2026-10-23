@@ -1,6 +1,6 @@
 # Cauce
 
-Community flood-reporting map for Matamoros, Tamaulipas. Residents report what floods their street with one photo, water-level sensors feed live readings, and authorities get an explainable view of where to clean drains before the next storm.
+Community flood-reporting map for Mexico, piloted in Matamoros, Tamaulipas. Anyone in the country reports what floods their street with one photo, water-level sensors feed live readings, and authorities get an explainable view of where to clean drains before the next storm (the risk panel and sensors cover the Matamoros pilot for now).
 
 Built for the Hackathon of the Agencia Espacial Mexicana (AEM).
 
@@ -49,3 +49,20 @@ bun run operator:invite -- --org org_demo --email ana@empresa.mx --name "Ana Ló
 ```
 
 `--create-org "Agua del Norte" --kind utility` creates the organization instead of `--org`. Roles: `owner` and `admin` edit sensors and rotate keys; `viewer` only reads. Sign-in links are single use and expire in 15 minutes. With `EMAIL_DRIVER=console` (the only driver for now) the link is printed by the script and in the server log; a real email provider is chosen before launch.
+
+## National scope and going public
+
+Reports are accepted anywhere in Mexico. The rules and data behind that:
+- **Service area:** `src/config/service-area.json` is Mexico's land outline from Natural Earth (public domain), buffered 5 km so coasts and the border river are never rejected, and simplified to ~850 vertices. Rebuild it with `bun run data:service-area -- ne_10m_admin_0_countries.geojson`.
+- **Place search:** `public/data/places-mx.json` holds the 32 states and ~4,100 towns (2,500+ people or a municipal seat) from [GeoNames](https://download.geonames.org/export/dump/) (CC BY 4.0). It loads the first time someone opens the search. Rebuild it with `bun run data:places -- cities1000.txt MX.txt admin1CodesASCII.txt`.
+- **Where the map opens:** a deep link, else the last view on that device, else the visitor's approximate city from Vercel's IP geolocation headers (`/api/geo`; nothing is stored), else all of Mexico. Locally there are no such headers, so it opens on the national view.
+- **Place names:** reverse geocoding (Nominatim, needs `GEOCODER_CONTACT_EMAIL`) now also stores the municipality and state of each report (`0006_report_municipality.sql`; run `bun run db:migrate`).
+- **Demo data:** seeded reports and the demo organization's sensors are flagged in the map feeds. People can hide them, and they never count as nearby neighbors. With `DEMO_MODE=true`, `/panel/entrar` also offers a read-only **Entrar como demostración** session for judges.
+
+### Before sharing the link
+
+1. Deploy (Vercel + Turso + R2, as in `.env.example`), run `bun run db:migrate` against Turso and `bun run check:env`.
+2. Set `CONTACT_EMAIL`, the public contact shown on `/privacidad`. Have someone qualified review `/privacidad` and `/terminos` before a formal launch.
+3. **Turnstile:** in the Cloudflare dashboard, add a Turnstile widget (mode _Managed_) for your production hostname and `localhost`. Set `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET` and `TURNSTILE_HOSTNAMES` (the production hostname only; never `localhost` in production). The widget stays invisible unless Cloudflare needs a click. Every send, including reports queued offline, asks for a fresh token, and the server checks the `report` action and the hostname. Cloudflare's public test keys return no action, so they are rejected by design; test with a real widget.
+4. **Photo moderation:** set `PHOTO_MODERATION_ENABLED=true` with `OPENAI_API_KEY`. Photos and notes go through OpenAI's free `omni-moderation-latest` before a report is saved. Flagged content is rejected with a friendly message, and outages never block a report.
+5. Keep `DEMO_MODE=true` (and `bun run seed`) while judges review the project. Turn it off once real authorities use the panel: the read-only demo session can see private sensors.

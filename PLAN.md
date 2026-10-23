@@ -1,6 +1,6 @@
 # Cauce: Project Plan
 
-> Community flood-reporting map for Matamoros, Tamaulipas.
+> Community flood-reporting map for Mexico, piloted in Matamoros, Tamaulipas.
 > Built for the Hackathon of the Agencia Espacial Mexicana (AEM).
 >
 > **Status:** approved 2026-10-22, implementation in progress · **Date:** 2026-10-22
@@ -33,6 +33,13 @@
 | 26    | AI            | **OpenAI** (no Anthropic key). Default model `gpt-6-luna`, set in env. Stretch milestone M7.                                                                                                |
 | 27–28 | Brand         | Name **Cauce**. "Civic signal" identity: storm navy + signal amber. Bricolage Grotesque + Atkinson Hyperlegible Next.                                                                       |
 | 29    | Tooling       | Biome, `bun test` for core logic, DB-backed rate limits, 5-minute presigned URLs.                                                                                                           |
+| 30    | Scope         | **National (cut 1, 2026-10-23):** reports and sensors anywhere in Mexico. The risk panel, forecasts and sensors stay on the Matamoros pilot until cut 2 (§10).                              |
+| 31    | Service area  | Mexico's outline (Natural Earth) buffered 5 km and simplified, checked with point-in-polygon on client and server. Points up to ~5 km into the US or the sea are accepted by design.        |
+| 32    | First view    | Deep link → last view on the device → visitor's city from Vercel IP headers → all of Mexico fitted to the screen. No location prompt on load.                                               |
+| 33    | Place search  | Offline index of 32 states and ~4,100 towns from GeoNames (CC BY 4.0); no geocoding API at typing time.                                                                                     |
+| 34    | Demo data     | Kept in Matamoros, labeled, hideable with a pill, excluded from "nearby neighbors". Judges get a read-only panel session with `DEMO_MODE`.                                                  |
+| 35    | Abuse         | Invisible Turnstile on report creation, OpenAI moderation of photos and notes (free, fail open), plus the existing rate limits. Both are off until configured.                              |
+| 36    | Legal         | `/privacidad` (LFPDPPP-style notice) and `/terminos` (911 disclaimer, public reports). Controller "Equipo Cauce"; contact from `CONTACT_EMAIL`.                                             |
 
 **New proposal for your approval (space-agency angle):** add a satellite-derived terrain factor to the risk score in M6, using **Copernicus DEM GLO-90** elevation from ESA via the Open-Meteo Elevation API (free, no key). It costs about half a day, and it gives the AEM judges a concrete "datos espaciales" story. More satellite sources are in the roadmap (§10).
 
@@ -1373,6 +1380,8 @@ Companies and agencies that own sensors see and manage their fleet. Notification
 | **Notifications**    | Web push for "my colonia", alerts to JAD and Protección Civil by email or WhatsApp when a sensor goes critical or the risk turns "muy alto"              | `device_alerts` state changes, risk levels stored over time, `push_subscriptions` / `alert_rules` / `alert_deliveries` designed, the service worker already registered.        |
 | **Accounts**         | Optional sign-in for residents, roles for agencies, member management in the operator portal, moving `/panel` from the shared password to accounts       | `reports.user_id`, panel auth isolated in `proxy.ts`, operator `users` / `memberships` / `sessions` (M8).                                                                      |
 
+**Cut 2 (national insights, deferred):** forecasts, satellite elevation and risk follow the reports instead of a fixed box: score only H3 cells with activity in the last 30 days (plus neighbors) with a per-run cap, fetch elevation lazily per r9 cell, match SMN by municipality name, and add a municipality selector to `/panel`. Reports already store `municipality` and `state` for this. The operator CSV still uses Matamoros time until then.
+
 ---
 
 ## 11. Security (kept light) and what to add before a public launch
@@ -1482,6 +1491,8 @@ Companies and agencies that own sensors see and manage their fleet. Notification
 5. **Name.** "Cauce" is the default. Renaming is one constant plus the logo.
 6. **Demo badge.** A "Datos de demostración" pill while seeded data is shown. Default: on.
 7. **Email provider for magic links (M8).** Needed only for real sign-ins in production; locally the link is printed to the console and the demo account needs no email. Chosen when deploying M8.
+8. **Public contact (national cut 1).** `/privacidad` needs a real `CONTACT_EMAIL` before the link is shared, and a qualified review of the privacy notice and terms before a formal launch.
+9. **Deploy and domain.** Vercel project, production domain (or `*.vercel.app`), R2 bucket and the Turnstile widget hostnames are still pending.
 
 ---
 
@@ -1555,3 +1566,14 @@ Small decisions made during implementation, recorded here as the brief asks.
 - **Panel redesign:** Activity sparklines count non-hidden reports per 24 h window over the last 14 days (`ACTIVITY_DAYS`, oldest first, today last). Area shares per risk level use largest-remainder rounding so they always add up to 100 %.
 - **Panel redesign:** Selecting a drain (in the list or on the map) selects its area and, from the list, focuses its pin at zoom 14.5, leaving room for the area card below it. Picks made on the map scroll the list to the card; taps in the list never move the page.
 - **Sheets:** Base UI places a snap point by moving a fixed-height popup down, which used to leave the end of the report and sensor sheets off screen and out of scroll reach. The drawer content now pads its bottom by that offset (copied to an inheriting variable, since Base UI registers it as non-inheriting), so the scroll area always ends at the screen edge; the swipe handle is a 24 px strip. From 1024 px wide, report and sensor details float as a 24rem card at the bottom left that fits its content (no snap points, a close button, capped below the top bar) and the map no longer offsets the pin; tablets get the bottom sheet centered at 32rem, like the legend and list on any wide screen.
+- **National scope (cut 1):** `isInsidePilot` became `isInsideServiceArea` (`src/config/service-area.ts`) and the error code `OUTSIDE_SERVICE_AREA`. `PILOT` keeps only what the Matamoros pilot needs (panel map, insights, seed colonias). `MAP_ZOOM.min` is 2.5 so a phone can show the whole country; `fitMexico()` frames mainland Mexico for the viewport, leaving room for the top bar and the report button.
+- **National scope:** at country-wide zooms the snapped feed bbox reached past ±90°, so `snapBbox` now clamps to valid coordinates. Basemap labels use `name:es` with `name` as fallback ("México", "Ciudad de México").
+- **National scope:** `/api/geo` returns the city center from `x-vercel-ip-*` headers only for country `MX` and points inside the service area (`private, no-store`). The map waits up to 1.5 s for it on a first visit, then saves the last view in `localStorage` (`cauce:map-view`).
+- **National scope:** place search ranks name matches first, then population; states rank like a town of 100,000 people, so "Puebla" shows the city before the state and "Tamaulipas" shows the state first. `cdmx` and `df` are aliases. The index (~186 KB, ~74 KB gzipped) is cached network-first by the service worker.
+- **National scope:** without GPS the location step starts from the national view, so the pin can only be confirmed from zoom 14 (about 10 m per pixel), and the step offers the place search.
+- **National scope:** reverse geocoding stores the municipality from OSM's `county` (Mexican municipios), `borough` (Mexico City alcaldías) or the city, plus the state. Labels read "Colonia, Municipio", else "Municipio, Estado", else "México".
+- **National scope:** demo data is flagged in the feeds (`d: 1`) instead of filtered by the API, so CDN cache keys stay the same. Demo sensors are the ones owned by `org_demo`; `device:register` still registers into that organization, so real hardware needs its own organization before it is installed.
+- **National scope:** panel sessions carry a role (`panel:` admin, `panel-viewer:` read-only). Viewers cannot refresh forecasts, run the storm scenario or hide reports; server actions check the role, not just the UI. Viewers can still see private sensors, so `DEMO_MODE` must be off once real operators register private sensors.
+- **National scope:** Turnstile tokens go in `x-turnstile-token`. Siteverify must report `success`, the `report` action and a hostname in `TURNSTILE_HOSTNAMES`. An unreachable siteverify answers 503 (the outbox retries), a bad token 403 `VERIFICATION_FAILED` (the outbox keeps the entry too, since that is never the report's fault).
+- **National scope:** photo moderation runs before the report is inserted, with a 3 s budget, no retries, and fails open. Flagged photos or notes return 422 `CONTENT_REJECTED`; nothing about the rejected content is stored.
+- **National scope:** the server renders dates in `America/Mexico_City`; a client provider switches to the browser's time zone after hydration, since Mexico has several zones and the border follows US daylight saving.
