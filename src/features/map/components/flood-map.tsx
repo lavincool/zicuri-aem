@@ -30,6 +30,8 @@ export type { UserLocation };
 
 export type FloodMapHandle = {
   flyTo: (center: LngLat, zoom?: number) => void;
+  /** Plays the "new report" pin drop with a water ripple at a point. */
+  dropPin: (center: LngLat, color: string) => void;
   /** Centers a point in the area left visible above a bottom sheet. */
   focusOn: (
     center: LngLat,
@@ -84,6 +86,7 @@ export function FloodMap({
 }: FloodMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
+  const libRef = useRef<typeof import("maplibre-gl") | null>(null);
   const latest = useRef({
     theme,
     reports,
@@ -115,6 +118,16 @@ export function FloodMap({
         essential: true,
       });
     },
+    dropPin(center, color) {
+      const map = mapRef.current;
+      const lib = libRef.current;
+      if (!map || !lib) return;
+      const element = document.createElement("div");
+      element.className = "pointer-events-none relative size-10";
+      element.innerHTML = `<span class="absolute inset-0 rounded-full border-4 animate-pin-ripple" style="border-color:${color}"></span><span class="absolute inset-1 rounded-full border-4 border-white shadow-lg animate-pin-drop" style="background:${color}"></span>`;
+      const marker = new lib.Marker({ element }).setLngLat(center).addTo(map);
+      window.setTimeout(() => marker.remove(), 1600);
+    },
     focusOn(center, options) {
       mapRef.current?.easeTo({
         center,
@@ -144,6 +157,7 @@ export function FloodMap({
     void (async () => {
       const maplibregl = await import("maplibre-gl");
       if (cancelled || !containerRef.current) return;
+      libRef.current = maplibregl;
       maplibregl.setWorkerUrl(
         `/map/maplibre-gl-worker.mjs?v=${maplibregl.getVersion()}`,
       );
