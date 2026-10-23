@@ -1040,15 +1040,14 @@ Page paths are Spanish because users see and share them. Folder and component na
    - One password field: "Acceso para JAD, Protección Civil y autoridades".
    - A wrong password shows "Contraseña incorrecta" and is rate-limited to 5 attempts per 15 minutes per IP.
    - Success sets a 30-day signed cookie.
-2. **Dashboard, top to bottom:**
-   - **Forecast strip:**
-     - "Próximas 48 h: hasta 38 mm (Open-Meteo)" and "SMN: 70 % de probabilidad, 25 mm", each with its snapshot time.
-     - _Stale (> 6 h):_ "Pronóstico de hace 7 h; el servicio no respondió."
-     - _Unavailable:_ the latest snapshot, with a warning.
-   - **KPI tiles:** open blockages · new reports in 7 days · median time to resolution over 30 days · sensors in warning or critical.
-   - **"Limpia estos drenes antes de la lluvia":** a ranked list. Each row shows the photo thumbnail, colonia and street, a risk badge, and **reasons**, for example: "38 mm esperados en 48 h · 4 reportes de alcantarilla tapada en 300 m · se inundó 3 veces en 30 días · zona baja (−1.8 m vs. alrededor, datos satelitales Copernicus)".
+2. **Dashboard** (an icon rail on wide screens, a top bar on phones), top to bottom:
+   - **Overview (bento):**
+     - **Forecast card:** a rain gauge filled to the 48 h total, with arrows to switch between Open-Meteo (24 h, probability, heaviest hour) and SMN (three days). A status pill reads "Simulado", "Al día" or "Desactualizado"; _stale (> 6 h):_ "El pronóstico tiene más de 6 h; el servicio no respondió."; _unavailable:_ "Sin datos".
+     - **Gauges:** highest cell risk (/100, with its colonia) and share of sensors in warning or critical.
+     - **KPI cards:** median time to resolution over 30 days · reports by type in 7 days · open blockages (with daily new blockages, 14 days) · new reports in 7 days (with a daily line, 14 days) · share of areas per risk level.
+   - **"Limpia estos drenes antes de la lluvia"**, beside the map on wide screens: a ranked list of cards (top 5, "Ver todos" for the rest). The selected card expands with the area risk bar, **reasons** (for example: "38 mm esperados en 48 h · 4 reportes de alcantarilla tapada en 300 m · se inundó 3 veces en 30 días · zona baja (−1.8 m vs. alrededor, datos satelitales Copernicus)"), colonia, confirmations, age, photo, "Ver en el mapa" and "Ver reporte".
      - _No rain expected:_ "No se espera lluvia importante en 48 h. Buen momento para mantenimiento preventivo." The list is still ranked by blockages and history.
-   - **Risk map:** an H3 r8 hex layer colored by level. Tapping a cell opens its factor breakdown.
+   - **Risk map:** an H3 r8 hex layer colored by level, with the ranked drains as pins and floating legend, recenter and zoom controls. Tapping a cell or a pin opens the area's factor breakdown in a card over the map.
    - **Moderation tab:** flagged and hidden reports, with "Ocultar" / "Restaurar".
 
 ### 7.4 Installer / device flow
@@ -1552,3 +1551,6 @@ Small decisions made during implementation, recorded here as the brief asks.
 - **M8:** The demo organization is now "Operador demo"; it owns every seeded sensor, so `bun run simulate` changes are visible in the portal too. The seed adds a private pumping-station canal, a low-battery drain, a stuck (flat) drain and one glitch reading in Los Sauces. Rotating a seeded key from the portal breaks that sensor in the simulator until `bun run seed` runs again.
 - **M8:** A sensor of another organization renders the portal's "not found" message (HTTP 200 under Cache Components, as noted for M2). The CSV export uses local Matamoros time, a BOM for Excel, and Spanish headers.
 - **Info page:** `/info` complements the `/acerca` pitch with a project sheet for judges and agencies, linked from the map menu. Its scope list states the limits plainly (not an official warning system, no street-level prediction, no installed hardware yet). Risk weights are read from `RISK_WEIGHTS`, so the page never drifts from the model. The street cross-section in the hero animates once with plain CSS (no client JavaScript) and renders its final state under reduced motion.
+- **Panel redesign:** The authorities panel has its own cooler surface (`.panel-surface` tokens: white cards on cool gray, white-tinted trays) over the brand tokens, so the public map keeps its warm paper. Big figures use Bricolage Grotesque Light; amber marks the active section and the storm scenario, and dark pills mark primary actions. Risk-level pills use dark ink on low, moderate and high and white ink on very high, for at least 4.5:1 contrast.
+- **Panel redesign:** Activity sparklines count non-hidden reports per 24 h window over the last 14 days (`ACTIVITY_DAYS`, oldest first, today last). Area shares per risk level use largest-remainder rounding so they always add up to 100 %.
+- **Panel redesign:** Selecting a drain (in the list or on the map) selects its area and, from the list, focuses its pin at zoom 14.5, leaving room for the area card below it. Picks made on the map scroll the list to the card; taps in the list never move the page.
