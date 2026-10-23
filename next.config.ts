@@ -31,9 +31,12 @@ const nextConfig: NextConfig = {
             key: "Cache-Control",
             value: "no-cache, no-store, must-revalidate",
           },
+          // This policy also governs the worker's own fetches, so the tile
+          // cache needs OpenFreeMap in connect-src.
           {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; script-src 'self'",
+            value:
+              "default-src 'self'; script-src 'self'; connect-src 'self' https://tiles.openfreemap.org",
           },
         ],
       },

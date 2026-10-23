@@ -1,7 +1,9 @@
 /* Cauce service worker: app shell, offline page, and a small tile cache.
    Report submissions don't go through here: the in-page IndexedDB outbox
    handles offline reports (iOS has no Background Sync). */
-const VERSION = "cauce-v1";
+// Bump on any change, including its response headers: browsers only replace
+// an installed worker (and its CSP) when this file's bytes change.
+const VERSION = "cauce-v2";
 const SHELL_CACHE = `${VERSION}-shell`;
 const STATIC_CACHE = `${VERSION}-static`;
 const DATA_CACHE = `${VERSION}-data`;
