@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { CATEGORY_COLORS, type ReportCategory } from "@/config/categories";
 import { isInsidePilot, type LngLat, PILOT } from "@/config/pilot";
 import { SensorSheet } from "@/features/devices/components/sensor-sheet";
+import { FirstRun } from "@/features/onboarding/first-run";
 import {
   type FlowMapControls,
   ReportFlow,
@@ -456,6 +457,7 @@ export function MapScreen({
         onQueued={onQueued}
       />
 
+      {!flowActive ? <FirstRun enabled={!initialFocus} /> : null}
       <LegendSheet open={legendOpen} onOpenChange={setLegendOpen} />
       <ReportSheet
         reportId={flowActive ? null : selectedId}

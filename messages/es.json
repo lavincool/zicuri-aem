@@ -242,5 +242,30 @@
     "title": "Sin conexión",
     "body": "No pudimos cargar esta página. Revisa tu señal; tus reportes guardados se enviarán solos cuando vuelva la conexión.",
     "retry": "Reintentar"
+  },
+  "onboarding": {
+    "label": "Bienvenida a Cauce",
+    "slides": {
+      "report": {
+        "title": "Reporta en segundos lo que inunda tu calle.",
+        "body": "Una foto, la ubicación y listo. No necesitas crear una cuenta."
+      },
+      "map": {
+        "title": "Mira qué está pasando en tu colonia.",
+        "body": "Alcantarillas tapadas, calles inundadas y sensores de nivel de agua en un solo mapa."
+      },
+      "signals": {
+        "title": "Confirma o avisa cuando ya se arregló.",
+        "body": "Tus respuestas mantienen el mapa al día y ayudan a decidir qué limpiar primero."
+      }
+    },
+    "next": "Siguiente",
+    "start": "Empezar",
+    "skip": "Saltar",
+    "step": "Paso {current} de {total}",
+    "coachmark": "Toca aquí para reportar",
+    "installTitle": "Instala Cauce en tu celular",
+    "installBody": "Toca Compartir y luego “Agregar a inicio”.",
+    "dismiss": "Cerrar"
   }
 }
