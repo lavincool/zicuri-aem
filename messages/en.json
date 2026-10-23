@@ -477,6 +477,262 @@
     "email": {
       "subject": "Your Cauce sign-in link",
       "body": "Hi {name},\n\nUse this link to sign in to the Cauce operator portal:\n{link}\n\nIt expires in {minutes} minutes and works once. If you didn't ask for it, ignore this email."
-    }
+    },
+    "levels": {
+      "normal": "Normal",
+      "warning": "Warning",
+      "critical": "Critical",
+      "offline": "No signal"
+    },
+    "status": {
+      "pending": "Pending",
+      "active": "Active",
+      "maintenance": "Maintenance",
+      "retired": "Retired"
+    },
+    "visibility": {
+      "public": "Public",
+      "private": "Private"
+    },
+    "issues": {
+      "never_reported": "Hasn't sent readings yet",
+      "silent": "No readings since {time}",
+      "spikes": "{count, plural, one {# reading with a sudden jump} other {# readings with sudden jumps}} in 24 h (echo or interference?)",
+      "flat_line": "Level unchanged for {days} days (blocked sensor?)",
+      "low_battery": "Low battery: {percent} %"
+    },
+    "duration": {
+      "minutes": "{minutes} min",
+      "hours": "{hours} h {minutes} min",
+      "days": "{days} d {hours} h"
+    },
+    "overview": {
+      "title": "Your sensor network",
+      "subtitle": "{org} · {count, plural, =0 {no sensors} one {# sensor} other {# sensors}}",
+      "empty": "Your organization has no sensors yet. Once you register one, it shows up here.",
+      "kpis": {
+        "attention": "Need attention",
+        "events7d": "Alerts in 7 days"
+      },
+      "attention": {
+        "title": "Need attention",
+        "body": "Sensors worth a field visit.",
+        "empty": "All good: no sensor needs a visit."
+      },
+      "map": {
+        "title": "Your sensors",
+        "hint": "Private ones included. Tap one to see its details.",
+        "ariaLabel": "Map of your organization's sensors"
+      },
+      "forecast": {
+        "title": "Rain in the next 48 h",
+        "upTo": "Up to {mm} mm",
+        "noRain": "No significant rain",
+        "probability": "{percent} % chance",
+        "source": "Open-Meteo · forecast {time}",
+        "unavailable": "No forecast right now."
+      },
+      "viewAll": "See all sensors"
+    },
+    "sensors": {
+      "title": "Sensors",
+      "subtitle": "{count, plural, =0 {No sensors} one {# sensor} other {# sensors}} at {org}",
+      "filterLabel": "Filter sensors",
+      "filters": {
+        "all": "All",
+        "attention": "Attention",
+        "critical": "Critical",
+        "warning": "Warning",
+        "offline": "No signal",
+        "normal": "Normal",
+        "retired": "Retired"
+      },
+      "empty": "No sensors match this filter.",
+      "lastSeen": "Last reading {time}",
+      "never": "No readings",
+      "battery": "Battery {percent} %",
+      "signal": "Signal {quality}",
+      "signalQuality": {
+        "good": "good",
+        "fair": "fair",
+        "weak": "weak"
+      }
+    },
+    "detail": {
+      "back": "Sensors",
+      "metaTitle": "Sensor {name}",
+      "notFound": "We couldn't find this sensor in your organization.",
+      "current": "Current level",
+      "thresholds": "Warning from {warning} cm · Critical from {critical} cm",
+      "rangeLabel": "Chart period",
+      "ranges": {
+        "1h": "1 h",
+        "24h": "24 h",
+        "7d": "7 days",
+        "30d": "30 days"
+      },
+      "publicLink": "View on the public map",
+      "privateNote": "Private: hidden from the public map and shared links. It still counts toward the area's risk and authorities can see it.",
+      "maintenanceNote": "In maintenance: the sensor rejects readings until you activate it.",
+      "retiredNote": "Retired: hidden from the map and rejects readings.",
+      "events": {
+        "title": "Recent events",
+        "empty": "No alerts or outages in the last 30 days.",
+        "viewAll": "See all events"
+      },
+      "health": {
+        "title": "Sensor health",
+        "allGood": "No problems detected.",
+        "availability": "Availability (7 days)",
+        "availabilityValue": "{percent} %",
+        "readings": "{count, plural, one {# reading} other {# readings}}",
+        "battery": "Battery",
+        "batteryTrend": "{from} % 7 days ago",
+        "signal": "Signal",
+        "signalValue": "{dbm} dBm ({quality})",
+        "longestGap": "Longest gap (7 days)",
+        "interval": "Reporting interval",
+        "intervalValue": "Every {minutes} min",
+        "firmware": "Firmware",
+        "noData": "No data"
+      },
+      "context": {
+        "title": "Around the sensor",
+        "reports": "{count, plural, =0 {No open reports within ~500 m} one {# open report within ~500 m} other {# open reports within ~500 m}}",
+        "risk": "Area risk",
+        "riskValue": "{level} · {score}/100",
+        "noRisk": "We haven't scored this area yet.",
+        "viewReport": "View report"
+      },
+      "history": {
+        "title": "Change history",
+        "empty": "Nobody has changed this sensor from the portal.",
+        "by": "{actor} · {time}",
+        "system": "System",
+        "actions": {
+          "update": "Edited the sensor",
+          "status_change": "Changed the status",
+          "visibility_change": "Changed the visibility",
+          "key_rotation": "Generated a new key"
+        },
+        "change": "{field}: {from} → {to}",
+        "empty_value": "—",
+        "fields": {
+          "name": "Name",
+          "siteType": "Site type",
+          "status": "Status",
+          "visibility": "Visibility",
+          "lat": "Latitude",
+          "lng": "Longitude",
+          "mountHeightCm": "Mount height (cm)",
+          "warningCm": "Warning threshold (cm)",
+          "criticalCm": "Critical threshold (cm)",
+          "reportingIntervalS": "Interval (s)",
+          "apiKeyPrefix": "Key"
+        }
+      }
+    },
+    "edit": {
+      "title": "Edit sensor",
+      "readOnly": "Your role is read only: you can see the sensor but not change it.",
+      "name": "Name",
+      "nameHelp": "How your team and, if public, residents will see it.",
+      "siteType": "Site type",
+      "status": "Status",
+      "statusHelp": {
+        "active": "Accepts readings and shows on the map.",
+        "maintenance": "Rejects readings; use it while you repair or recalibrate.",
+        "retired": "Leaves the map and stops accepting readings."
+      },
+      "visibility": "Visibility",
+      "visibilityHelp": {
+        "public": "Shows on Cauce's public map.",
+        "private": "Only your organization and authorities see it. It still counts toward the area's risk."
+      },
+      "location": "Location",
+      "locationValue": "{lat}, {lng}",
+      "changeLocation": "Change location",
+      "locationHelp": "Move the map to put the pin exactly where the sensor is.",
+      "locationDone": "Use this location",
+      "locationAriaLabel": "Map to place the sensor",
+      "thresholds": "Thresholds",
+      "thresholdsHelp": "Centimeters of water above the site's zero level.",
+      "warningCm": "Warning from (cm)",
+      "criticalCm": "Critical from (cm)",
+      "preview": "With these thresholds, the current level ({cm} cm) would be {level}.",
+      "previewNoData": "The sensor has no readings to compare yet.",
+      "mountHeightCm": "Mount height (cm, optional)",
+      "mountHeightHelp": "Distance from the sensor to the zero level. Lets us recompute the level without touching the firmware.",
+      "reportingInterval": "Reports every (minutes)",
+      "reportingIntervalHelp": "With water above the warning threshold, the sensor reports every minute.",
+      "save": "Save changes",
+      "saving": "Saving…",
+      "saved": "Changes saved.",
+      "noChanges": "Nothing changed.",
+      "errors": {
+        "name": "Enter a name of 3 to 80 characters.",
+        "siteType": "Choose a site type.",
+        "status": "Choose a status.",
+        "visibility": "Choose the visibility.",
+        "location": "The location must be inside Matamoros.",
+        "mountHeightCm": "Enter a height between 1 and 2000 cm, or leave it empty.",
+        "warningCm": "Enter a threshold between 0 and 1000 cm.",
+        "criticalCm": "Must be above the warning threshold (1000 cm max).",
+        "reportingIntervalS": "Enter between 1 and 1440 minutes.",
+        "summary": "Check the highlighted fields."
+      }
+    },
+    "key": {
+      "title": "Device key",
+      "body": "The current key starts with {prefix}…",
+      "rotate": "Generate a new key",
+      "confirmTitle": "Generate a new key?",
+      "confirmBody": "The current key stops working right away. The sensor can't report until you load the new one into its firmware.",
+      "confirm": "Generate key",
+      "cancel": "Cancel",
+      "generating": "Generating…",
+      "newKey": "New key",
+      "newKeyHelp": "Copy it now: it's shown only once.",
+      "copy": "Copy",
+      "copied": "Key copied.",
+      "done": "Done, I saved it"
+    },
+    "events": {
+      "title": "Events",
+      "subtitle": "Warnings, critical levels and signal outages in the last 30 days.",
+      "filterSensor": "Sensor",
+      "allSensors": "All sensors",
+      "filterLevel": "Type",
+      "allLevels": "All",
+      "levels": {
+        "warning": "Warning",
+        "critical": "Critical",
+        "offline": "No signal"
+      },
+      "apply": "Filter",
+      "empty": "No events match these filters in the last 30 days.",
+      "ongoing": "Ongoing",
+      "since": "Since {time}",
+      "range": "{start} – {end}",
+      "duration": "Lasted {duration}",
+      "peak": "Peak {cm} cm",
+      "download": "Download CSV",
+      "csv": {
+        "sensor": "Sensor",
+        "sensorId": "Sensor ID",
+        "level": "Type",
+        "start": "Start",
+        "end": "End",
+        "durationMinutes": "Duration (min)",
+        "peakCm": "Peak level (cm)",
+        "filename": "cauce-events"
+      }
+    },
+    "errors": {
+      "forbidden": "Your role can't make this change.",
+      "notFound": "This sensor is no longer in your organization.",
+      "generic": "We couldn't save. Try again."
+    },
+    "refreshing": "Refreshing…"
   }
 }
