@@ -130,7 +130,15 @@ export function reportLayers(theme: "light" | "dark"): LayerSpecification[] {
           17,
           15,
         ],
-        "circle-opacity": ["case", ["==", ["get", "s"], "expired"], 0.4, 1],
+        // Expired reports fade; reports waiting in the offline outbox are half-transparent.
+        "circle-opacity": [
+          "case",
+          ["==", ["get", "s"], "expired"],
+          0.4,
+          ["has", "p"],
+          0.55,
+          1,
+        ],
         "circle-stroke-width": [
           "case",
           ["boolean", ["feature-state", "selected"], false],
