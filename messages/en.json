@@ -188,6 +188,8 @@
     "locationDenied": "We don't have permission to use your location. Move the map to mark the spot.",
     "locating": "Finding your location…",
     "outsideArea": "Cauce works within Mexico. Move the pin to a place in the country.",
+    "zoomCloser": "Zoom in on the map to mark the exact spot.",
+    "searchPlace": "Find my city or town",
     "verificationFailed": "We couldn't check that you're a person. Try sending again.",
     "contentRejected": "We can't publish this photo or note. Take a photo of the problem only, without people or sensitive content.",
     "confirmLocation": "Confirm location",

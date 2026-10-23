@@ -7,6 +7,7 @@ import {
   ImageIcon,
   LoaderCircle,
   MapPin,
+  Search,
   Sparkles,
   X,
 } from "lucide-react";
@@ -64,19 +65,26 @@ export type FlowMapControls = {
 
 /** Moving the pin farther than this turns a GPS/EXIF location into a manual one. */
 const MANUAL_THRESHOLD_M = 15;
+/** The map starts country-wide without GPS; a pin needs at least street-level zoom. */
+const MIN_PIN_ZOOM = 15;
 
 export function ReportFlow({
   map,
   viewCenter,
+  viewZoom,
   aiEnabled,
+  onSearch,
   onActiveChange,
   onCreated,
   onQueued,
 }: {
   map: FlowMapControls;
   aiEnabled: boolean;
-  /** Latest map center (updates on moveend) for live pilot-area checks. */
+  /** Latest map center and zoom (update on moveend) for live placement checks. */
   viewCenter: LngLat | null;
+  viewZoom: number | null;
+  /** Opens the place search so people without GPS can jump to their town. */
+  onSearch: () => void;
   onActiveChange: (step: Step) => void;
   onCreated: (created: CreatedReport) => void;
   onQueued: (draft: ReportDraft) => void;
@@ -317,6 +325,7 @@ export function ReportFlow({
 
   const center = viewCenter;
   const outside = center ? !isInsideServiceArea(center[0], center[1]) : false;
+  const tooFar = viewZoom !== null && viewZoom < MIN_PIN_ZOOM;
 
   const confirmLocation = () => {
     const current = map.getCenter();
@@ -549,17 +558,23 @@ export function ReportFlow({
                 <p className="text-sm text-muted-foreground" aria-live="polite">
                   {outside
                     ? t("flow.outsideArea")
-                    : anchor?.source === "gps"
-                      ? anchor.accuracyM
-                        ? t("flow.locationGps", { meters: anchor.accuracyM })
-                        : t("flow.locationGpsNoAccuracy")
-                      : anchor?.source === "exif"
-                        ? t("flow.locationExif")
-                        : gps.status === "locating"
-                          ? t("flow.locating")
-                          : gps.status === "denied"
-                            ? t("flow.locationDenied")
-                            : t("flow.locationManual")}
+                    : gps.status === "locating" && tooFar
+                      ? t("flow.locating")
+                      : tooFar
+                        ? t("flow.zoomCloser")
+                        : anchor?.source === "gps"
+                          ? anchor.accuracyM
+                            ? t("flow.locationGps", {
+                                meters: anchor.accuracyM,
+                              })
+                            : t("flow.locationGpsNoAccuracy")
+                          : anchor?.source === "exif"
+                            ? t("flow.locationExif")
+                            : gps.status === "locating"
+                              ? t("flow.locating")
+                              : gps.status === "denied"
+                                ? t("flow.locationDenied")
+                                : t("flow.locationManual")}
                 </p>
               </div>
             </div>
@@ -575,8 +590,18 @@ export function ReportFlow({
                 {t("flow.analyzing")}
               </p>
             ) : null}
+            {tooFar && gps.status !== "locating" ? (
+              <Button
+                variant="outline"
+                onClick={onSearch}
+                className="h-12 w-full rounded-2xl text-base font-bold"
+              >
+                <Search className="size-5" />
+                {t("flow.searchPlace")}
+              </Button>
+            ) : null}
             <Button
-              disabled={outside}
+              disabled={outside || tooFar}
               onClick={confirmLocation}
               className="h-14 w-full rounded-2xl text-lg font-extrabold"
             >

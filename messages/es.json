@@ -188,6 +188,8 @@
     "locationDenied": "No tenemos permiso para usar tu ubicación. Mueve el mapa para marcar el lugar.",
     "locating": "Buscando tu ubicación…",
     "outsideArea": "Cauce funciona dentro de México. Mueve el pin a un punto del país.",
+    "zoomCloser": "Acércate más en el mapa para marcar el lugar exacto.",
+    "searchPlace": "Buscar mi ciudad o pueblo",
     "verificationFailed": "No pudimos comprobar que eres una persona. Intenta enviar de nuevo.",
     "contentRejected": "No podemos publicar esta foto o nota. Toma una foto solo del problema, sin personas ni contenido sensible.",
     "confirmLocation": "Confirmar ubicación",

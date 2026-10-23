@@ -535,6 +535,8 @@ export function MapScreen({
         map={flowMap}
         aiEnabled={aiEnabled}
         viewCenter={view?.center ?? null}
+        viewZoom={view?.zoom ?? null}
+        onSearch={() => setSearchOpen(true)}
         onActiveChange={(step) => {
           setFlowStep(step);
           if (step !== "closed" && selectedId) closeSheet();
