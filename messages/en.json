@@ -320,5 +320,114 @@
     "description": "Reports visible on the map, newest first.",
     "empty": "No reports visible with these filters.",
     "more": "Showing {shown} of {total}. Zoom in on the map to see others."
+  },
+  "panel": {
+    "metaTitle": "Risk dashboard",
+    "title": "Flood risk dashboard",
+    "subtitle": "For the water utility (JAD), Civil Protection and Matamoros authorities.",
+    "nav": {
+      "overview": "Overview",
+      "moderation": "Moderation",
+      "map": "Public map",
+      "logout": "Sign out"
+    },
+    "login": {
+      "title": "Authorities access",
+      "body": "Dashboard for JAD, Civil Protection and authorities. Enter the shared password.",
+      "password": "Password",
+      "submit": "Sign in",
+      "invalid": "Wrong password.",
+      "rateLimited": "Too many attempts. Please wait a few minutes.",
+      "disabled": "The dashboard isn't configured (PANEL_PASSWORD is missing)."
+    },
+    "updated": "Risk computed {time}",
+    "notComputed": "No risk computation yet.",
+    "refresh": "Refresh forecast",
+    "refreshing": "Refreshing…",
+    "refreshed": "Forecast and risk updated.",
+    "refreshFailed": "We couldn't refresh the forecast.",
+    "scenario": {
+      "run": "Simulate rain like October 4",
+      "real": "Use real forecast",
+      "banner": "Simulated scenario: rain like the October 4 cold front. This is not a real forecast.",
+      "ran": "Storm scenario applied."
+    },
+    "forecast": {
+      "title": "Rain in the next 48 h",
+      "openMeteo": "Open-Meteo (by area)",
+      "smn": "SMN · CONAGUA (official, municipality)",
+      "upTo": "Up to {mm} mm",
+      "next24": "{mm} mm in 24 h",
+      "probability": "{percent}% chance",
+      "peak": "Heaviest rain {time}",
+      "noRain": "No significant rain",
+      "age": "Forecast {time}",
+      "stale": "The forecast is more than 6 h old; the service didn't respond.",
+      "unavailable": "No data from this service right now.",
+      "day": "{date}: {mm} mm · {percent}%"
+    },
+    "kpis": {
+      "openBlockages": "Open blocked drains or broken covers",
+      "newReports": "New reports in 7 days",
+      "resolution": "Median time to resolve (30 days)",
+      "resolutionValue": "{hours, plural, one {# hour} other {# hours}}",
+      "resolutionDays": "{days, plural, one {# day} other {# days}}",
+      "noData": "No data",
+      "sensors": "Sensors in alert",
+      "sensorsValue": "{alert} of {total}"
+    },
+    "drains": {
+      "title": "Clear these drains before the rain",
+      "body": "Ranked by the risk of their area, severity and how many neighbors confirmed them.",
+      "empty": "No open blocked drains. Nice work!",
+      "baselineNote": "No significant rain expected in 48 h: a good time for preventive maintenance.",
+      "confirmations": "{count, plural, =0 {no confirmations} one {# confirmation} other {# confirmations}}",
+      "view": "View report"
+    },
+    "levels": {
+      "low": "Low",
+      "moderate": "Moderate",
+      "high": "High",
+      "very_high": "Very high"
+    },
+    "baseline": "Baseline risk",
+    "reasons": {
+      "rain": "{mm} mm expected in 48 h",
+      "blockages": "{count, plural, =0 {Blocked drains in nearby areas} one {# blocked drain or broken cover in the area} other {# blocked drains or broken covers in the area}}",
+      "history": "{count, plural, one {# flood recorded in the last year} other {# floods recorded in the last year}}",
+      "sensors": "Sensor at {percent}% of the warning level",
+      "terrain": "Low-lying: {meters} m below its surroundings (Copernicus satellite, approx.)"
+    },
+    "map": {
+      "title": "Risk map by area",
+      "hint": "Each hexagon is about 1 km across. Tap one to see why it has that risk.",
+      "ariaLabel": "Flood risk map by area in Matamoros"
+    },
+    "cell": {
+      "title": "Area {colonia}",
+      "unnamed": "Unnamed area",
+      "score": "Risk {score}/100",
+      "factors": "Why",
+      "factorNames": {
+        "rain": "Expected rain",
+        "blockages": "Blocked drains",
+        "history": "Flood history",
+        "sensors": "Sensors",
+        "terrain": "Low terrain (satellite)"
+      },
+      "noValue": "No data",
+      "model": "Model {version}: weighted sum of factors. Rain 35 · Drains 25 · History 20 · Sensors 10 · Terrain 10.",
+      "close": "Close"
+    },
+    "moderation": {
+      "title": "Moderation",
+      "body": "Reports hidden automatically (3 flags) or flagged by neighbors.",
+      "empty": "Nothing to review.",
+      "flags": "{count, plural, one {# flag} other {# flags}}",
+      "hide": "Hide",
+      "restore": "Restore",
+      "hidden": "Hidden",
+      "visible": "Visible"
+    }
   }
 }

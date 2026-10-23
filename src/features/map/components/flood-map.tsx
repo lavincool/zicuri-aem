@@ -20,6 +20,13 @@ import {
   reportsSource,
 } from "../lib/report-layers";
 import {
+  RISK_LAYERS,
+  RISK_SOURCE,
+  type RiskCellInput,
+  riskData,
+  riskLayers,
+} from "../lib/risk-layers";
+import {
   ensureSensorImages,
   SENSOR_LAYERS,
   SENSORS_SOURCE,
@@ -59,10 +66,13 @@ type FloodMapProps = {
   selectedReportId?: string | null;
   sensors?: DeviceFeatureCollection;
   selectedSensorId?: string | null;
+  riskCells?: RiskCellInput[];
+  selectedRiskCell?: string | null;
   userLocation?: UserLocation | null;
   onViewChange?: (view: MapView) => void;
   onReportClick?: (id: string, center: LngLat) => void;
   onSensorClick?: (id: string, center: LngLat) => void;
+  onRiskCellClick?: (h3r8: string) => void;
   onLoad?: () => void;
   onError?: (error: Error) => void;
   ariaLabel: string;
@@ -88,10 +98,13 @@ export function FloodMap({
   selectedReportId = null,
   sensors = EMPTY_SENSORS,
   selectedSensorId = null,
+  riskCells,
+  selectedRiskCell = null,
   userLocation = null,
   onViewChange,
   onReportClick,
   onSensorClick,
+  onRiskCellClick,
   onLoad,
   onError,
   ariaLabel,
@@ -108,9 +121,12 @@ export function FloodMap({
     userLocation,
     selectedReportId,
     selectedSensorId,
+    riskCells,
+    selectedRiskCell,
     onViewChange,
     onReportClick,
     onSensorClick,
+    onRiskCellClick,
     onLoad,
     onError,
   };
@@ -119,6 +135,7 @@ export function FloodMap({
   const appliedStyle = useRef(styleUrl);
   const selected = useRef<string | null>(null);
   const selectedSensor = useRef<string | null>(null);
+  const selectedRisk = useRef<string | null>(null);
 
   useImperativeHandle(ref, () => ({
     flyTo(center, zoom) {
@@ -224,7 +241,15 @@ export function FloodMap({
           },
         );
         const hit = nearest(instance, features, event.point);
-        if (!hit) return;
+        if (!hit) {
+          if (!instance.getLayer(RISK_LAYERS.fill)) return;
+          const [cell] = instance.queryRenderedFeatures(event.point, {
+            layers: [RISK_LAYERS.fill],
+          });
+          const id = cell?.properties?.id;
+          if (typeof id === "string") latest.current.onRiskCellClick?.(id);
+          return;
+        }
         if (hit.layer.id === SENSOR_LAYERS.icons) {
           const id = hit.properties?.id;
           if (typeof id === "string" && hit.geometry.type === "Point") {
@@ -286,6 +311,26 @@ export function FloodMap({
   }, [reports]);
 
   useEffect(() => {
+    if (!riskCells) return;
+    const source = mapRef.current?.getSource(RISK_SOURCE) as
+      | GeoJSONSource
+      | undefined;
+    source?.setData(riskData(riskCells));
+  }, [riskCells]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (map) {
+      selectedRisk.current = setSelection(
+        map,
+        RISK_SOURCE,
+        selectedRisk.current,
+        selectedRiskCell,
+      );
+    }
+  }, [selectedRiskCell]);
+
+  useEffect(() => {
     const source = mapRef.current?.getSource(SENSORS_SOURCE) as
       | GeoJSONSource
       | undefined;
@@ -336,6 +381,17 @@ export function FloodMap({
     await Promise.all([ensureCategoryImages(map), ensureSensorImages(map)]);
     // Read props after the await: data may have arrived while images loaded.
     const current = latest.current;
+    // Risk hexagons sit under every pin.
+    if (current.riskCells && !map.getSource(RISK_SOURCE)) {
+      map.addSource(RISK_SOURCE, {
+        type: "geojson",
+        data: riskData(current.riskCells),
+        promoteId: "id",
+      });
+      for (const layer of riskLayers()) {
+        if (!map.getLayer(layer.id)) map.addLayer(layer);
+      }
+    }
     if (!map.getSource(REPORTS_SOURCE)) {
       map.addSource(REPORTS_SOURCE, reportsSource(current.reports));
     }
@@ -368,6 +424,12 @@ export function FloodMap({
       SENSORS_SOURCE,
       null,
       current.selectedSensorId,
+    );
+    selectedRisk.current = setSelection(
+      map,
+      RISK_SOURCE,
+      null,
+      current.selectedRiskCell,
     );
   }
 

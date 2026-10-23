@@ -320,5 +320,114 @@
     "description": "Los reportes visibles en el mapa, del más reciente al más antiguo.",
     "empty": "No hay reportes visibles con estos filtros.",
     "more": "Mostrando {shown} de {total}. Acércate en el mapa para ver otros."
+  },
+  "panel": {
+    "metaTitle": "Panel de riesgo",
+    "title": "Panel de riesgo de inundación",
+    "subtitle": "Para la Junta de Aguas y Drenaje, Protección Civil y autoridades de Matamoros.",
+    "nav": {
+      "overview": "Resumen",
+      "moderation": "Moderación",
+      "map": "Mapa público",
+      "logout": "Salir"
+    },
+    "login": {
+      "title": "Acceso para autoridades",
+      "body": "Panel para JAD, Protección Civil y autoridades. Escribe la contraseña compartida.",
+      "password": "Contraseña",
+      "submit": "Entrar",
+      "invalid": "Contraseña incorrecta.",
+      "rateLimited": "Demasiados intentos. Espera unos minutos.",
+      "disabled": "El panel no está configurado (falta PANEL_PASSWORD)."
+    },
+    "updated": "Riesgo calculado {time}",
+    "notComputed": "Aún no hay un cálculo de riesgo.",
+    "refresh": "Actualizar pronóstico",
+    "refreshing": "Actualizando…",
+    "refreshed": "Pronóstico y riesgo actualizados.",
+    "refreshFailed": "No pudimos actualizar el pronóstico.",
+    "scenario": {
+      "run": "Simular lluvia como el 4 de octubre",
+      "real": "Usar pronóstico real",
+      "banner": "Escenario simulado: lluvia como la del frente frío del 4 de octubre. No es un pronóstico real.",
+      "ran": "Escenario de tormenta aplicado."
+    },
+    "forecast": {
+      "title": "Lluvia en las próximas 48 h",
+      "openMeteo": "Open-Meteo (por zona)",
+      "smn": "SMN · CONAGUA (oficial, municipio)",
+      "upTo": "Hasta {mm} mm",
+      "next24": "{mm} mm en 24 h",
+      "probability": "{percent} % de probabilidad",
+      "peak": "Lluvia más fuerte {time}",
+      "noRain": "Sin lluvia importante",
+      "age": "Pronóstico {time}",
+      "stale": "El pronóstico tiene más de 6 h; el servicio no respondió.",
+      "unavailable": "Sin datos de este servicio por ahora.",
+      "day": "{date}: {mm} mm · {percent} %"
+    },
+    "kpis": {
+      "openBlockages": "Alcantarillas tapadas o tapas rotas abiertas",
+      "newReports": "Reportes nuevos en 7 días",
+      "resolution": "Tiempo medio para resolver (30 días)",
+      "resolutionValue": "{hours, plural, one {# hora} other {# horas}}",
+      "resolutionDays": "{days, plural, one {# día} other {# días}}",
+      "noData": "Sin datos",
+      "sensors": "Sensores en alerta",
+      "sensorsValue": "{alert} de {total}"
+    },
+    "drains": {
+      "title": "Limpia estos drenes antes de la lluvia",
+      "body": "Ordenados por el riesgo de su zona, la gravedad y cuántos vecinos lo confirmaron.",
+      "empty": "No hay alcantarillas tapadas abiertas. ¡Buen trabajo!",
+      "baselineNote": "No se espera lluvia importante en 48 h: buen momento para mantenimiento preventivo.",
+      "confirmations": "{count, plural, =0 {sin confirmaciones} one {# confirmación} other {# confirmaciones}}",
+      "view": "Ver reporte"
+    },
+    "levels": {
+      "low": "Bajo",
+      "moderate": "Moderado",
+      "high": "Alto",
+      "very_high": "Muy alto"
+    },
+    "baseline": "Riesgo base",
+    "reasons": {
+      "rain": "{mm} mm esperados en 48 h",
+      "blockages": "{count, plural, =0 {Alcantarillas tapadas en zonas vecinas} one {# alcantarilla tapada o tapa rota en la zona} other {# alcantarillas tapadas o tapas rotas en la zona}}",
+      "history": "{count, plural, one {# inundación registrada en el último año} other {# inundaciones registradas en el último año}}",
+      "sensors": "Sensor al {percent} % del nivel de alerta",
+      "terrain": "Zona baja: {meters} m bajo su alrededor (satélite Copernicus, aprox.)"
+    },
+    "map": {
+      "title": "Mapa de riesgo por zona",
+      "hint": "Cada hexágono mide cerca de 1 km. Tócalo para ver por qué tiene ese riesgo.",
+      "ariaLabel": "Mapa de riesgo de inundación por zona en Matamoros"
+    },
+    "cell": {
+      "title": "Zona {colonia}",
+      "unnamed": "Zona sin nombre",
+      "score": "Riesgo {score}/100",
+      "factors": "Por qué",
+      "factorNames": {
+        "rain": "Lluvia esperada",
+        "blockages": "Alcantarillas tapadas",
+        "history": "Historial de inundaciones",
+        "sensors": "Sensores",
+        "terrain": "Terreno bajo (satélite)"
+      },
+      "noValue": "Sin datos",
+      "model": "Modelo {version}: suma ponderada de factores. Lluvia 35 · Alcantarillas 25 · Historial 20 · Sensores 10 · Terreno 10.",
+      "close": "Cerrar"
+    },
+    "moderation": {
+      "title": "Moderación",
+      "body": "Reportes ocultos automáticamente (3 avisos) o con avisos de vecinos.",
+      "empty": "No hay reportes por revisar.",
+      "flags": "{count, plural, one {# aviso} other {# avisos}}",
+      "hide": "Ocultar",
+      "restore": "Restaurar",
+      "hidden": "Oculto",
+      "visible": "Visible"
+    }
   }
 }

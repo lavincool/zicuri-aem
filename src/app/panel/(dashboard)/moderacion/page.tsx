@@ -1,0 +1,32 @@
+import type { Metadata } from "next";
+import { connection } from "next/server";
+import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ModerationQueue } from "@/features/insights/components/moderation-queue";
+import { getModerationQueue } from "@/features/insights/server/panel-data";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("panel.moderation");
+  return { title: t("title"), robots: { index: false } };
+}
+
+export default async function ModerationPage() {
+  const t = await getTranslations("panel.moderation");
+  return (
+    <div className="space-y-4">
+      <header className="space-y-1">
+        <h1 className="text-3xl font-extrabold">{t("title")}</h1>
+        <p className="text-muted-foreground">{t("body")}</p>
+      </header>
+      <Suspense fallback={<Skeleton className="h-64 rounded-2xl" />}>
+        <QueueContent />
+      </Suspense>
+    </div>
+  );
+}
+
+async function QueueContent() {
+  await connection();
+  return <ModerationQueue items={await getModerationQueue()} />;
+}
