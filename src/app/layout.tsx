@@ -6,6 +6,7 @@ import {
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { Providers } from "@/components/providers";
+import { appUrl } from "@/lib/env";
 import "./globals.css";
 
 const display = Bricolage_Grotesque({
@@ -26,6 +27,7 @@ const body = Atkinson_Hyperlegible_Next({
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("common");
   return {
+    metadataBase: new URL(appUrl()),
     title: { default: t("appName"), template: `%s · ${t("appName")}` },
     description: t("description"),
     applicationName: t("appName"),
