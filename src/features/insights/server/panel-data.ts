@@ -1,21 +1,11 @@
 import "server-only";
-import {
-  and,
-  count,
-  desc,
-  eq,
-  gt,
-  gte,
-  inArray,
-  isNull,
-  ne,
-  or,
-} from "drizzle-orm";
+import { and, desc, eq, gt, gte, inArray, isNull, ne, or } from "drizzle-orm";
 import type { ReportCategory } from "@/config/categories";
 import { deviceLevel } from "@/features/devices/rules";
 import { db } from "@/lib/db/client";
 import { devices, h3Cells, reports } from "@/lib/db/schema";
 import { photoUrl } from "@/lib/storage/urls";
+import { ACTIVITY_DAYS, countByCategory, dailyCounts } from "../activity";
 import { drainPriority, type RiskFactor, type RiskLevel } from "../risk/model";
 import { latestSnapshots, SCENARIO_MODEL } from "./refresh";
 import { latestRunId, scoresForRun } from "./risk";
@@ -38,6 +28,8 @@ export type DrainItem = {
   category: ReportCategory;
   colonia: string | null;
   address: string | null;
+  lat: number;
+  lng: number;
   thumbUrl: string;
   photoColor: string | null;
   severity: number | null;
@@ -60,6 +52,12 @@ export type PanelData = {
     sensorsInAlert: number;
     sensorsTotal: number;
   };
+  /** Non-hidden reports created per day over the last `ACTIVITY_DAYS`, oldest first. */
+  activity: {
+    reportsByDay: number[];
+    blockagesByDay: number[];
+    byCategory7d: Record<ReportCategory, number>;
+  };
   drains: DrainItem[];
   cells: RiskCell[];
 };
@@ -81,7 +79,7 @@ export async function getPanelData(now = new Date()): Promise<PanelData> {
     scores,
     cellRows,
     blockageRows,
-    newReports,
+    recentReports,
     resolved,
     deviceRows,
   ] = await Promise.all([
@@ -101,12 +99,15 @@ export async function getPanelData(now = new Date()): Promise<PanelData> {
         ),
       ),
     database
-      .select({ total: count() })
+      .select({ category: reports.category, createdAt: reports.createdAt })
       .from(reports)
       .where(
         and(
           ne(reports.status, "hidden"),
-          gte(reports.createdAt, new Date(now.getTime() - 7 * DAY_MS)),
+          gte(
+            reports.createdAt,
+            new Date(now.getTime() - ACTIVITY_DAYS * DAY_MS),
+          ),
         ),
       ),
     database
@@ -137,6 +138,8 @@ export async function getPanelData(now = new Date()): Promise<PanelData> {
         category: report.category,
         colonia: report.colonia ?? cell?.colonia ?? null,
         address: report.address,
+        lat: report.lat,
+        lng: report.lng,
         thumbUrl: photoUrl(report.photoThumbKey),
         photoColor: report.photoColor,
         severity: report.severity,
@@ -151,6 +154,11 @@ export async function getPanelData(now = new Date()): Promise<PanelData> {
 
   const levels = deviceRows.map((d) => deviceLevel(d, now));
   const latestScore = scores[0];
+  const lastWeek = recentReports.filter(
+    (r) => r.createdAt.getTime() >= now.getTime() - 7 * DAY_MS,
+  );
+  const isBlockage = (category: ReportCategory) =>
+    (BLOCKAGES as readonly ReportCategory[]).includes(category);
 
   return {
     renderedAt: now.getTime(),
@@ -159,7 +167,7 @@ export async function getPanelData(now = new Date()): Promise<PanelData> {
     computedAt: latestScore ? latestScore.computedAt.toISOString() : null,
     kpis: {
       openBlockages: blockageRows.length,
-      newReports7d: newReports[0]?.total ?? 0,
+      newReports7d: lastWeek.length,
       medianResolutionHours: median(
         resolved
           .filter((r) => r.resolvedAt)
@@ -172,6 +180,19 @@ export async function getPanelData(now = new Date()): Promise<PanelData> {
       sensorsInAlert: levels.filter((l) => l === "warning" || l === "critical")
         .length,
       sensorsTotal: deviceRows.length,
+    },
+    activity: {
+      reportsByDay: dailyCounts(
+        recentReports.map((r) => r.createdAt),
+        now,
+      ),
+      blockagesByDay: dailyCounts(
+        recentReports
+          .filter((r) => isBlockage(r.category))
+          .map((r) => r.createdAt),
+        now,
+      ),
+      byCategory7d: countByCategory(lastWeek.map((r) => r.category)),
     },
     drains,
     cells,
