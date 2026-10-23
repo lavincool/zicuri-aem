@@ -66,7 +66,7 @@ export type FlowMapControls = {
 /** Moving the pin farther than this turns a GPS/EXIF location into a manual one. */
 const MANUAL_THRESHOLD_M = 15;
 /** The map starts country-wide without GPS; a pin needs at least street-level zoom. */
-const MIN_PIN_ZOOM = 15;
+const MIN_PIN_ZOOM = 14;
 
 export function ReportFlow({
   map,
