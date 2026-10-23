@@ -29,18 +29,20 @@ export function offsetMeters(
 
 /**
  * Snaps a bbox outward to a zoom-dependent grid so nearby viewers share
- * CDN cache entries for the same area.
+ * CDN cache entries for the same area. The result stays within valid
+ * coordinates, which matters at country-wide zooms.
  */
 export function snapBbox(bbox: Bbox, zoom: number): Bbox {
   const step = 360 / 2 ** Math.max(0, Math.floor(zoom) - 1);
   const down = (v: number) => Math.floor(v / step) * step;
   const up = (v: number) => Math.ceil(v / step) * step;
-  const round = (v: number) => Number(v.toFixed(5));
+  const round = (v: number, limit: number) =>
+    Number(Math.min(Math.max(v, -limit), limit).toFixed(5));
   return [
-    round(down(bbox[0])),
-    round(down(bbox[1])),
-    round(up(bbox[2])),
-    round(up(bbox[3])),
+    round(down(bbox[0]), 180),
+    round(down(bbox[1]), 90),
+    round(up(bbox[2]), 180),
+    round(up(bbox[3]), 90),
   ];
 }
 
