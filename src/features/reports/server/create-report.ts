@@ -4,6 +4,7 @@ import { gridDisk } from "h3-js";
 import { normalizeSeverity } from "@/config/categories";
 import { isInsideServiceArea } from "@/config/service-area";
 import { MAX_PHOTO_BYTES, UPLOAD_MAX_AGE_MS } from "@/config/uploads";
+import { isContentFlagged } from "@/features/ai/server/moderate";
 import { db } from "@/lib/db/client";
 import {
   aiSuggestions,
@@ -119,6 +120,18 @@ export async function createReport(
       storage().delete(upload.thumbKey),
     ]);
     throw new DomainError("FILE_TOO_LARGE", 413, "Photo is too large");
+  }
+  if (
+    await isContentFlagged({
+      thumbKey: upload.thumbKey,
+      note: input.note || null,
+    })
+  ) {
+    throw new DomainError(
+      "CONTENT_REJECTED",
+      422,
+      "The photo or note can't be published",
+    );
   }
 
   const severityDetail = input.severityDetail ?? null;

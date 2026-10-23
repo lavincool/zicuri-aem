@@ -48,7 +48,7 @@ export function aiEnabled(): boolean {
 }
 
 /** Public R2 URL in production; a data URL from the local dev store otherwise. */
-async function imageInput(thumbKey: string): Promise<string> {
+export async function imageInput(thumbKey: string): Promise<string> {
   if (env().STORAGE_DRIVER === "r2") return photoUrl(thumbKey);
   const file = await readLocal(thumbKey);
   if (!file)

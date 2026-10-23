@@ -383,7 +383,11 @@ export function ReportFlow({
         return;
       }
       if (code === "RATE_LIMITED") toast.error(t("flow.rateLimited"));
-      else if (code === "OUTSIDE_SERVICE_AREA") {
+      else if (code === "VERIFICATION_FAILED") {
+        toast.error(t("flow.verificationFailed"));
+      } else if (code === "CONTENT_REJECTED") {
+        toast.error(t("flow.contentRejected"));
+      } else if (code === "OUTSIDE_SERVICE_AREA") {
         toast.error(t("flow.outsideArea"));
         setStep("location");
         return;

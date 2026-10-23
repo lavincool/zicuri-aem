@@ -17,6 +17,11 @@ import { reverseGeocode } from "@/lib/geocode";
 import { jsonError, zodDetails } from "@/lib/http";
 import { getBrowserHash, getIpHash } from "@/lib/identity";
 import { rateLimit } from "@/lib/rate-limit";
+import {
+  TURNSTILE_HEADER,
+  turnstileEnabled,
+  verifyTurnstile,
+} from "@/lib/turnstile";
 
 export async function GET(request: NextRequest) {
   const parsed = reportsQuerySchema.safeParse(
@@ -61,6 +66,23 @@ export async function POST(request: Request) {
     parsed.data.clientRequestId,
   );
   if (existing) return NextResponse.json(await toCreatedReport(existing));
+
+  if (turnstileEnabled()) {
+    const outcome = await verifyTurnstile(
+      request.headers.get(TURNSTILE_HEADER),
+      {
+        action: "report",
+        remoteIp:
+          request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null,
+      },
+    );
+    if (outcome === "unavailable") {
+      return jsonError(503, "VERIFICATION_UNAVAILABLE", "Try again later");
+    }
+    if (outcome === "invalid") {
+      return jsonError(403, "VERIFICATION_FAILED", "Verification failed");
+    }
+  }
 
   const limit = await rateLimit(
     [`report:ip:${await getIpHash()}`, `report:browser:${browserHash}`],

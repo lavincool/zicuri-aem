@@ -35,6 +35,23 @@ const serverEnvSchema = z
     RATE_LIMIT_REPORTS_PER_HOUR: z.coerce.number().int().positive().default(10),
     GEOCODER_CONTACT_EMAIL: optionalString,
 
+    /** Cloudflare Turnstile on report creation; off while the secret is unset. */
+    TURNSTILE_SECRET: optionalString,
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: optionalString,
+    /** Frontend hostnames siteverify must report, comma-separated (never localhost in production). */
+    TURNSTILE_HOSTNAMES: z
+      .string()
+      .optional()
+      .transform(
+        (value) =>
+          new Set(
+            (value ?? "")
+              .split(",")
+              .map((hostname) => hostname.trim())
+              .filter(Boolean),
+          ),
+      ),
+
     PANEL_PASSWORD: optionalString,
     CRON_SECRET: optionalString,
 
@@ -42,6 +59,8 @@ const serverEnvSchema = z
     SMN_ENABLED: booleanFromString,
 
     AI_SUGGESTIONS_ENABLED: booleanFromString,
+    /** Free OpenAI moderation of report photos and notes before publishing. */
+    PHOTO_MODERATION_ENABLED: booleanFromString,
     OPENAI_API_KEY: optionalString,
     OPENAI_MODEL: z.string().default("gpt-6-luna"),
 
@@ -65,6 +84,23 @@ const serverEnvSchema = z
             message: `${key} is required when STORAGE_DRIVER=r2`,
           });
         }
+      }
+    }
+    if (env.TURNSTILE_SECRET) {
+      if (!env.NEXT_PUBLIC_TURNSTILE_SITE_KEY) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["NEXT_PUBLIC_TURNSTILE_SITE_KEY"],
+          message:
+            "NEXT_PUBLIC_TURNSTILE_SITE_KEY is required with TURNSTILE_SECRET",
+        });
+      }
+      if (env.TURNSTILE_HOSTNAMES.size === 0) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["TURNSTILE_HOSTNAMES"],
+          message: "TURNSTILE_HOSTNAMES is required with TURNSTILE_SECRET",
+        });
       }
     }
     if (

@@ -1,5 +1,6 @@
 import type { CreatedReport, UploadTicket } from "../schema";
 import { ApiRequestError } from "./api";
+import { turnstileToken } from "./turnstile";
 
 /** PUT with upload progress (fetch has no upload progress events). */
 function putWithProgress(
@@ -46,12 +47,16 @@ export async function withRetry<T>(task: () => Promise<T>): Promise<T> {
   }
 }
 
-async function postJson<T>(url: string, body: unknown): Promise<T> {
+async function postJson<T>(
+  url: string,
+  body: unknown,
+  headers: Record<string, string> = {},
+): Promise<T> {
   let response: Response;
   try {
     response = await fetch(url, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", ...headers },
       body: JSON.stringify(body),
     });
   } catch {
@@ -134,11 +139,26 @@ export type ReportDraft = {
   aiSuggestionId?: string | null;
 };
 
+/** Turnstile tokens are single-use, so every attempt asks for a fresh one. */
+async function verificationHeaders(): Promise<Record<string, string>> {
+  let token: string | null;
+  try {
+    token = await turnstileToken("report");
+  } catch {
+    throw new ApiRequestError(0, "VERIFICATION_UNAVAILABLE", "Turnstile");
+  }
+  return token ? { "x-turnstile-token": token } : {};
+}
+
 export function submitReport(
   draft: ReportDraft,
   uploadId: string,
 ): Promise<CreatedReport> {
-  return withRetry(() =>
-    postJson<CreatedReport>("/api/reports", { ...draft, uploadId }),
+  return withRetry(async () =>
+    postJson<CreatedReport>(
+      "/api/reports",
+      { ...draft, uploadId },
+      await verificationHeaders(),
+    ),
   );
 }

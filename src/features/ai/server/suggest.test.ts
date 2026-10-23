@@ -38,11 +38,15 @@ const config: ServerEnv = {
   R2_PUBLIC_BASE_URL: undefined,
   RATE_LIMIT_REPORTS_PER_HOUR: 10,
   GEOCODER_CONTACT_EMAIL: undefined,
+  TURNSTILE_SECRET: undefined,
+  NEXT_PUBLIC_TURNSTILE_SITE_KEY: undefined,
+  TURNSTILE_HOSTNAMES: new Set(),
   PANEL_PASSWORD: undefined,
   CRON_SECRET: undefined,
   OPEN_METEO_API_KEY: undefined,
   SMN_ENABLED: false,
   AI_SUGGESTIONS_ENABLED: true,
+  PHOTO_MODERATION_ENABLED: false,
   OPENAI_API_KEY: "m7-test-key-only",
   OPENAI_MODEL: "gpt-6-luna",
   EMAIL_DRIVER: "console",
@@ -164,6 +168,7 @@ beforeEach(async () => {
     browserHash: "browser-test",
   });
   config.AI_SUGGESTIONS_ENABLED = true;
+  config.PHOTO_MODERATION_ENABLED = false;
   config.OPENAI_API_KEY = "m7-test-key-only";
   config.STORAGE_DRIVER = "local";
   browserHash = "browser-test";
@@ -443,5 +448,43 @@ describe("suggestion acceptance on report submission", () => {
     );
     const [row] = await database.select().from(schema.aiSuggestions);
     expect(row?.accepted).toBeNull();
+  });
+});
+
+describe("photo moderation on report submission", () => {
+  const moderation = (flagged: boolean) => ({
+    id: "modr_test",
+    model: "omni-moderation-latest",
+    results: [{ flagged, categories: {}, category_scores: {} }],
+  });
+
+  test("flagged photos or notes are rejected before the report exists", async () => {
+    config.PHOTO_MODERATION_ENABLED = true;
+    modelResponse = moderation(true);
+    await expect(
+      createReport(reportInput({ note: "nota" }), "browser-test"),
+    ).rejects.toMatchObject({ code: "CONTENT_REJECTED", status: 422 });
+    expect(await database.select().from(schema.reports)).toHaveLength(0);
+    const body = JSON.parse(String(apiFetch.mock.calls[0]?.[1]?.body));
+    expect(body.input).toHaveLength(2);
+  });
+
+  test("clean content and moderation outages publish the report", async () => {
+    config.PHOTO_MODERATION_ENABLED = true;
+    modelResponse = moderation(false);
+    expect((await createReport(reportInput(), "browser-test")).id).toBeTruthy();
+    await database.update(schema.uploads).set({ consumedAt: null });
+    apiFetch.mockImplementation(async () =>
+      Response.json({ error: { message: "down" } }, { status: 500 }),
+    );
+    const error = spyOn(console, "error").mockImplementation(() => {});
+    expect((await createReport(reportInput(), "browser-test")).id).toBeTruthy();
+    error.mockRestore();
+  });
+
+  test("moderation stays off unless enabled", async () => {
+    modelResponse = moderation(true);
+    expect((await createReport(reportInput(), "browser-test")).id).toBeTruthy();
+    expect(apiFetch).not.toHaveBeenCalled();
   });
 });

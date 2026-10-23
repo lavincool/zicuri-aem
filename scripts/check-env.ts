@@ -48,6 +48,20 @@ info(
 info(
   `AI suggestions: ${config.AI_SUGGESTIONS_ENABLED && config.OPENAI_API_KEY ? `on (${config.OPENAI_MODEL})` : "off"}`,
 );
+info(
+  `Photo moderation: ${config.PHOTO_MODERATION_ENABLED && config.OPENAI_API_KEY ? "on" : "off (set PHOTO_MODERATION_ENABLED and OPENAI_API_KEY)"}`,
+);
+info(
+  `Turnstile on reports: ${config.TURNSTILE_SECRET ? `on (${[...config.TURNSTILE_HOSTNAMES].join(", ")})` : "off (set TURNSTILE_SECRET)"}`,
+);
+if (
+  config.NODE_ENV === "production" &&
+  [...config.TURNSTILE_HOSTNAMES].some((h) =>
+    ["localhost", "127.0.0.1"].includes(h),
+  )
+) {
+  fail("TURNSTILE_HOSTNAMES must not include localhost in production");
+}
 
 console.log("\nDatabase");
 try {

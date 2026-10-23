@@ -68,6 +68,13 @@ export function flushOutbox(): Promise<FlushResult> {
       } catch (error) {
         const status = error instanceof ApiRequestError ? error.status : 0;
         if (status === 0 || status >= 500 || status === 429) break; // still offline: retry later
+        // A failed human check is not the report's fault; try again next time.
+        if (
+          error instanceof ApiRequestError &&
+          error.code === "VERIFICATION_FAILED"
+        ) {
+          break;
+        }
         // Expired upload: retry once with a fresh one next time.
         if (
           error instanceof ApiRequestError &&
