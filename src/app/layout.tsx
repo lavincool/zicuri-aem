@@ -5,6 +5,7 @@ import {
 } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { LocalTimeZone } from "@/components/local-time-zone";
 import { Providers } from "@/components/providers";
 import { appUrl } from "@/lib/env";
 import "./globals.css";
@@ -53,7 +54,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="flex min-h-full flex-col">
         <NextIntlClientProvider>
-          <Providers>{children}</Providers>
+          <LocalTimeZone>
+            <Providers>{children}</Providers>
+          </LocalTimeZone>
         </NextIntlClientProvider>
       </body>
     </html>

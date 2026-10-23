@@ -2,7 +2,7 @@
   "common": {
     "appName": "Cauce",
     "tagline": "Reporta lo que inunda tu calle.",
-    "description": "Reporta lo que inunda tu calle en Matamoros.",
+    "description": "Reporta lo que inunda tu calle, en cualquier parte de México.",
     "report": "Reportar",
     "retry": "Reintentar",
     "close": "Cerrar",
@@ -12,7 +12,7 @@
     "blocked_drain": "Alcantarilla tapada",
     "broken_cover": "Tapa rota o faltante",
     "flooded_street": "Calle inundada",
-    "overflowing_canal": "Dren o canal desbordado",
+    "overflowing_canal": "Canal, dren o arroyo desbordado",
     "sewage_backflow": "Brota el drenaje",
     "other": "Otro problema"
   },
@@ -20,7 +20,7 @@
     "blocked_drain": "Basura o lodo tapan la entrada del agua",
     "broken_cover": "Peligro: registro o alcantarilla abierta",
     "flooded_street": "El agua no deja pasar a peatones o autos",
-    "overflowing_canal": "El agua se sale del dren o canal",
+    "overflowing_canal": "El agua se sale del canal, dren o arroyo",
     "sewage_backflow": "Aguas negras saliendo de registros",
     "other": "Algo más que causa o indica inundación"
   },
@@ -31,7 +31,7 @@
     "hidden": "En revisión"
   },
   "map": {
-    "ariaLabel": "Mapa de reportes de inundación en Matamoros",
+    "ariaLabel": "Mapa de reportes de inundación en México",
     "loading": "Cargando el mapa…",
     "error": "No pudimos cargar el mapa. Revisa tu conexión.",
     "emptyTitle": "Aún no hay reportes por aquí.",
@@ -112,7 +112,7 @@
     "openPhoto": "Ver foto completa",
     "reportedAgo": "Reportado {time}",
     "location": "Ubicación",
-    "unknownPlace": "Matamoros",
+    "unknownPlace": "México",
     "note": "Nota",
     "stillThereCount": "{count, plural, =0 {Nadie ha confirmado aún} one {# vecino dice que sigue ahí} other {# vecinos dicen que sigue ahí}}",
     "fixedCount": "{count, plural, =0 {} one {# dice que ya se arregló} other {# dicen que ya se arregló}}",
@@ -155,7 +155,7 @@
       "80": "A la cintura o más (80+ cm)"
     },
     "metaTitle": "{category} en {place}",
-    "metaDescription": "Reporte ciudadano en Cauce, el mapa de inundaciones de Matamoros."
+    "metaDescription": "Reporte ciudadano en Cauce, el mapa ciudadano de inundaciones de México."
   },
   "notFound": {
     "title": "No encontramos esta página.",
@@ -163,7 +163,7 @@
     "back": "Ir al mapa"
   },
   "og": {
-    "kicker": "Reporte ciudadano · Matamoros",
+    "kicker": "Reporte ciudadano · México",
     "cta": "Míralo en el mapa de Cauce"
   },
   "flow": {
@@ -298,8 +298,8 @@
     "metaDescription": "Qué es Cauce, cómo funciona y quién lo hizo.",
     "back": "Volver al mapa",
     "hackathon": "Proyecto para el Hackathon de la Agencia Espacial Mexicana (AEM)",
-    "heroTitle": "Un mapa vivo de lo que inunda Matamoros.",
-    "heroBody": "Cauce reúne en un solo lugar los reportes de los vecinos, las lecturas de sensores de nivel de agua y el pronóstico de lluvia, para actuar antes de la siguiente tormenta.",
+    "heroTitle": "Un mapa vivo de lo que inunda México.",
+    "heroBody": "Cauce reúne en un solo lugar los reportes de los vecinos, las lecturas de sensores de nivel de agua y el pronóstico de lluvia, para actuar antes de la siguiente tormenta. Funciona en todo México y empezó en Matamoros, Tamaulipas.",
     "problemTitle": "El problema",
     "problemBody": "El 4 de octubre de 2026, el frente frío número 1 dejó 215.9 mm de lluvia en Matamoros. Colonias como Buenavista, San Francisco y Los Sauces quedaron incomunicadas. Muchas inundaciones empiezan con algo pequeño: una alcantarilla tapada con basura que nadie reportó a tiempo.",
     "howTitle": "Cómo funciona",
@@ -324,14 +324,14 @@
     "sensorsTitle": "Sensores",
     "sensorsBody": "Diseñamos sensores de bajo costo (ESP32 con sensor ultrasónico) que miden la altura del agua y la envían cada pocos minutos. Cuando el nivel pasa del límite de alerta, reportan cada minuto.",
     "authoritiesTitle": "Para autoridades",
-    "authoritiesBody": "La Junta de Aguas y Drenaje y Protección Civil tienen un panel con el riesgo por zona, las razones detrás de cada puntuación y la lista de drenes a limpiar antes de la lluvia.",
+    "authoritiesBody": "Los organismos de agua y drenaje y Protección Civil tienen un panel con el riesgo por zona, las razones detrás de cada puntuación y la lista de drenes a limpiar antes de la lluvia. Por ahora el panel cubre el piloto de Matamoros.",
     "authoritiesLink": "Ir al panel",
     "privacyTitle": "Privacidad",
     "privacyBody": "No pedimos cuenta ni datos personales. Las fotos se comprimen en tu celular y se les quitan los metadatos antes de subirse. Te pedimos evitar caras y placas de autos.",
     "privacyLink": "Aviso de privacidad",
     "termsLink": "Términos de uso",
     "demoTitle": "Datos de demostración",
-    "demoBody": "Para esta presentación, el mapa incluye reportes y sensores simulados a partir de inundaciones reales de 2024 a 2026 en Matamoros. Las imágenes ilustrativas lo indican.",
+    "demoBody": "Para esta presentación, el mapa incluye en Matamoros reportes y sensores simulados a partir de inundaciones reales de 2024 a 2026. Están marcados como demostración y puedes ocultarlos; los reportes del resto del país son reales.",
     "creditsTitle": "Datos y créditos",
     "credits": {
       "osm": "Mapa base: © colaboradores de OpenStreetMap, © OpenMapTiles, servido por OpenFreeMap.",
@@ -343,11 +343,11 @@
   },
   "info": {
     "metaTitle": "Información del proyecto",
-    "metaDescription": "Qué es Cauce, para quién es, qué incluye el piloto en Matamoros y qué sigue.",
+    "metaDescription": "Qué es Cauce, para quién es, qué funciona en todo México, qué incluye el piloto en Matamoros y qué sigue.",
     "back": "Volver al mapa",
     "title": "De la alcantarilla al satélite.",
-    "lede": "Cauce es una app web donde los vecinos de Matamoros reportan con una foto lo que inunda su calle. Junto con sensores de nivel de agua, el pronóstico de lluvia y datos satelitales del terreno, ayuda a las autoridades a decidir qué drenes limpiar antes de la siguiente tormenta.",
-    "context": "Piloto en Matamoros, Tamaulipas. Proyecto para el Hackathon de la Agencia Espacial Mexicana (AEM).",
+    "lede": "Cauce es una app web donde cualquier persona en México reporta con una foto lo que inunda su calle. Junto con sensores de nivel de agua, el pronóstico de lluvia y datos satelitales del terreno, ayuda a las autoridades a decidir qué drenes limpiar antes de la siguiente tormenta.",
+    "context": "Los reportes funcionan en todo México; el piloto con sensores y panel de riesgo está en Matamoros, Tamaulipas. Proyecto para el Hackathon de la Agencia Espacial Mexicana (AEM).",
     "diagram": {
       "alt": "Corte de una calle de Matamoros: un satélite observa el terreno y la lluvia, un vecino reporta una alcantarilla tapada, un sensor dentro del registro mide cómo sube el agua y el agua sigue por un tubo hasta el dren.",
       "satellite": "Satélite: terreno y lluvia",
@@ -356,7 +356,7 @@
       "canal": "Dren"
     },
     "why": {
-      "title": "Por qué Matamoros",
+      "title": "Por qué empezamos en Matamoros",
       "body": "La ciudad es casi plana: en la zona piloto el terreno está entre 3 y 21 metros sobre el nivel del mar, y el drenaje se satura con cada tormenta fuerte. Muchas inundaciones empiezan con algo pequeño, como basura que tapa una alcantarilla y que nadie reportó a tiempo.",
       "events": {
         "drain2022": {
@@ -395,19 +395,19 @@
       },
       "authorities": {
         "name": "Autoridades",
-        "body": "La Junta de Aguas y Drenaje y Protección Civil ven el riesgo por zona, por qué es alto y qué drenes conviene limpiar primero.",
+        "body": "Los organismos de agua y drenaje y Protección Civil ven el riesgo por zona, por qué es alto y qué drenes conviene limpiar primero. Por ahora, en el piloto de Matamoros.",
         "link": "Ir al panel"
       }
     },
     "scope": {
-      "title": "Alcance del piloto",
+      "title": "Alcance de esta versión",
       "intro": "Lo que esta versión ya hace y lo que queda fuera, para que nadie espere de Cauce algo que todavía no es.",
       "inTitle": "Incluido",
       "outTitle": "Fuera de alcance",
       "in": {
         "reports": {
           "title": "Reportes con una foto",
-          "body": "Seis tipos de problema y ubicación automática. Si no hay señal, el reporte se guarda y se envía al volver la conexión."
+          "body": "Seis tipos de problema y ubicación automática, en cualquier parte de México. Si no hay señal, el reporte se guarda y se envía al volver la conexión."
         },
         "signals": {
           "title": "Confirmación de vecinos",
@@ -452,8 +452,8 @@
           "body": "Reportar es anónimo. Los avisos por colonia llegan en una siguiente etapa."
         },
         "area": {
-          "title": "Solo Matamoros",
-          "body": "Los reportes fuera de la zona piloto se rechazan."
+          "title": "Riesgo y sensores, solo en Matamoros",
+          "body": "Los reportes funcionan en todo el país. El pronóstico, el riesgo por zona y los sensores cubren por ahora el piloto de Matamoros."
         },
         "demo": {
           "title": "Con datos de demostración",

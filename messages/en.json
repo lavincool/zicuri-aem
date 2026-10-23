@@ -2,7 +2,7 @@
   "common": {
     "appName": "Cauce",
     "tagline": "Report what floods your street.",
-    "description": "Report what floods your street in Matamoros.",
+    "description": "Report what floods your street, anywhere in Mexico.",
     "report": "Report",
     "retry": "Try again",
     "close": "Close",
@@ -12,7 +12,7 @@
     "blocked_drain": "Blocked drain",
     "broken_cover": "Broken or missing cover",
     "flooded_street": "Flooded street",
-    "overflowing_canal": "Overflowing canal",
+    "overflowing_canal": "Overflowing canal, drain or creek",
     "sewage_backflow": "Sewage backflow",
     "other": "Other problem"
   },
@@ -20,7 +20,7 @@
     "blocked_drain": "Trash or mud is blocking the drain inlet",
     "broken_cover": "Danger: open manhole or drain",
     "flooded_street": "Water blocks people or cars",
-    "overflowing_canal": "Water is spilling out of a canal",
+    "overflowing_canal": "Water is spilling out of a canal, drain or creek",
     "sewage_backflow": "Sewage coming up from manholes",
     "other": "Something else that causes or signals flooding"
   },
@@ -31,7 +31,7 @@
     "hidden": "Under review"
   },
   "map": {
-    "ariaLabel": "Map of flood reports in Matamoros",
+    "ariaLabel": "Map of flood reports in Mexico",
     "loading": "Loading the map…",
     "error": "We couldn't load the map. Check your connection.",
     "emptyTitle": "No reports around here yet.",
@@ -112,7 +112,7 @@
     "openPhoto": "View full photo",
     "reportedAgo": "Reported {time}",
     "location": "Location",
-    "unknownPlace": "Matamoros",
+    "unknownPlace": "Mexico",
     "note": "Note",
     "stillThereCount": "{count, plural, =0 {Nobody has confirmed yet} one {# neighbor says it's still there} other {# neighbors say it's still there}}",
     "fixedCount": "{count, plural, =0 {} one {# says it's fixed} other {# say it's fixed}}",
@@ -155,7 +155,7 @@
       "80": "Waist-deep or more (80+ cm)"
     },
     "metaTitle": "{category} in {place}",
-    "metaDescription": "Community report on Cauce, the Matamoros flood map."
+    "metaDescription": "Community report on Cauce, Mexico's community flood map."
   },
   "notFound": {
     "title": "We couldn't find this page.",
@@ -163,7 +163,7 @@
     "back": "Go to the map"
   },
   "og": {
-    "kicker": "Community report · Matamoros",
+    "kicker": "Community report · Mexico",
     "cta": "See it on the Cauce map"
   },
   "flow": {
@@ -298,8 +298,8 @@
     "metaDescription": "What Cauce is, how it works and who made it.",
     "back": "Back to the map",
     "hackathon": "Project for the Mexican Space Agency (AEM) Hackathon",
-    "heroTitle": "A live map of what floods Matamoros.",
-    "heroBody": "Cauce brings together neighbors' reports, water-level sensor readings and the rain forecast in one place, so action happens before the next storm.",
+    "heroTitle": "A live map of what floods Mexico.",
+    "heroBody": "Cauce brings together neighbors' reports, water-level sensor readings and the rain forecast in one place, so action happens before the next storm. It works across Mexico and started in Matamoros, Tamaulipas.",
     "problemTitle": "The problem",
     "problemBody": "On October 4, 2026, cold front No. 1 dropped 215.9 mm of rain on Matamoros. Neighborhoods like Buenavista, San Francisco and Los Sauces were cut off. Many floods start with something small: a drain clogged with trash that nobody reported in time.",
     "howTitle": "How it works",
@@ -324,14 +324,14 @@
     "sensorsTitle": "Sensors",
     "sensorsBody": "We designed low-cost sensors (ESP32 with an ultrasonic sensor) that measure water height and send it every few minutes. Above the warning level, they report every minute.",
     "authoritiesTitle": "For authorities",
-    "authoritiesBody": "The water utility (JAD) and Civil Protection get a dashboard with risk by area, the reasons behind each score, and the list of drains to clean before the rain.",
+    "authoritiesBody": "Water and drainage agencies and Civil Protection get a dashboard with risk by area, the reasons behind each score, and the list of drains to clean before the rain. For now the dashboard covers the Matamoros pilot.",
     "authoritiesLink": "Go to the dashboard",
     "privacyTitle": "Privacy",
     "privacyBody": "We don't ask for an account or personal data. Photos are compressed on your phone and their metadata is removed before upload. Please avoid faces and license plates.",
     "privacyLink": "Privacy notice",
     "termsLink": "Terms of use",
     "demoTitle": "Demo data",
-    "demoBody": "For this presentation, the map includes reports and sensors simulated from real floods in Matamoros between 2024 and 2026. Illustrations are labeled.",
+    "demoBody": "For this presentation, the map includes reports and sensors in Matamoros simulated from real floods between 2024 and 2026. They are labeled as demo data and you can hide them; reports elsewhere in the country are real.",
     "creditsTitle": "Data and credits",
     "credits": {
       "osm": "Base map: © OpenStreetMap contributors, © OpenMapTiles, served by OpenFreeMap.",
@@ -343,11 +343,11 @@
   },
   "info": {
     "metaTitle": "Project information",
-    "metaDescription": "What Cauce is, who it is for, what the Matamoros pilot includes and what comes next.",
+    "metaDescription": "What Cauce is, who it is for, what works across Mexico, what the Matamoros pilot includes and what comes next.",
     "back": "Back to the map",
     "title": "From the storm drain to the satellite.",
-    "lede": "Cauce is a web app where residents of Matamoros report what floods their street with one photo. Together with water-level sensors, the rain forecast and satellite terrain data, it helps the authorities decide which drains to clear before the next storm.",
-    "context": "Pilot in Matamoros, Tamaulipas. Project for the Mexican Space Agency (AEM) Hackathon.",
+    "lede": "Cauce is a web app where anyone in Mexico reports what floods their street with one photo. Together with water-level sensors, the rain forecast and satellite terrain data, it helps the authorities decide which drains to clear before the next storm.",
+    "context": "Reports work across Mexico; the pilot with sensors and the risk dashboard is in Matamoros, Tamaulipas. Project for the Mexican Space Agency (AEM) Hackathon.",
     "diagram": {
       "alt": "Cross-section of a street in Matamoros: a satellite observes the terrain and the rain, a resident reports a blocked storm drain, a sensor inside the drain measures the rising water, and the water flows through a pipe to the canal.",
       "satellite": "Satellite: terrain and rain",
@@ -356,7 +356,7 @@
       "canal": "Canal"
     },
     "why": {
-      "title": "Why Matamoros",
+      "title": "Why we started in Matamoros",
       "body": "The city is almost flat: in the pilot area the ground sits between 3 and 21 meters above sea level, and the drainage saturates with every heavy storm. Many floods start with something small, like trash blocking a storm drain that nobody reported in time.",
       "events": {
         "drain2022": {
@@ -395,19 +395,19 @@
       },
       "authorities": {
         "name": "Authorities",
-        "body": "The water and drainage board and Civil Protection see the risk by area, why it is high and which drains to clear first.",
+        "body": "Water and drainage agencies and Civil Protection see the risk by area, why it is high and which drains to clear first. For now, in the Matamoros pilot.",
         "link": "Go to the panel"
       }
     },
     "scope": {
-      "title": "Pilot scope",
+      "title": "Scope of this version",
       "intro": "What this version already does and what it leaves out, so nobody expects Cauce to be something it is not yet.",
       "inTitle": "Included",
       "outTitle": "Out of scope",
       "in": {
         "reports": {
           "title": "One-photo reports",
-          "body": "Six problem types and automatic location. Without signal, the report is saved and sent once the connection is back."
+          "body": "Six problem types and automatic location, anywhere in Mexico. Without signal, the report is saved and sent once the connection is back."
         },
         "signals": {
           "title": "Resident confirmations",
@@ -452,8 +452,8 @@
           "body": "Reporting is anonymous. Neighborhood alerts come in a later stage."
         },
         "area": {
-          "title": "Matamoros only",
-          "body": "Reports outside the pilot area are rejected."
+          "title": "Risk and sensors in Matamoros only",
+          "body": "Reports work across the country. The forecast, risk by area and sensors cover the Matamoros pilot for now."
         },
         "demo": {
           "title": "Includes demo data",
