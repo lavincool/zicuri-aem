@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import {
   useCallback,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -18,7 +19,6 @@ import {
   isInsideServiceArea,
   type LngLat,
   MAP_ZOOM,
-  MEXICO_VIEW,
 } from "@/config/service-area";
 import { SensorSheet } from "@/features/devices/components/sensor-sheet";
 import { FirstRun } from "@/features/onboarding/first-run";
@@ -36,6 +36,7 @@ import type {
 import { useOnline } from "@/hooks/use-online";
 import { type ReportFilters, useReportsFeed } from "../hooks/use-reports-feed";
 import { useSensorsFeed } from "../hooks/use-sensors-feed";
+import { saveView, useStartView } from "../hooks/use-start-view";
 import { FilterBar } from "./filter-bar";
 import {
   FloodMap,
@@ -129,6 +130,7 @@ export function MapScreen({
     "loading",
   );
   const [view, setView] = useState<MapView | null>(null);
+  const startView = useStartView(initialFocus?.center ?? null);
   const [filters, setFilters] = useState<ReportFilters>(DEFAULT_FILTERS);
   const [selectedId, setSelectedId] = useState<string | null>(
     initialFocus?.kind === "report" ? initialFocus.id : null,
@@ -142,6 +144,13 @@ export function MapScreen({
   const [locating, setLocating] = useState(false);
   const [flowStep, setFlowStep] = useState("closed");
   const flowActive = flowStep !== "closed";
+
+  // Remember where the person was looking, so the next visit opens there.
+  useEffect(() => {
+    if (!view) return;
+    const timer = window.setTimeout(() => saveView(view), 1000);
+    return () => window.clearTimeout(timer);
+  }, [view]);
 
   const feed = useReportsFeed(view, filters);
   const sensors = useSensorsFeed(view);
@@ -321,15 +330,15 @@ export function MapScreen({
 
   return (
     <div className="relative h-dvh w-full overflow-hidden bg-background">
-      {mounted && resolvedTheme ? (
+      {mounted && resolvedTheme && startView ? (
         <FloodMap
           key={mapKey}
           ref={mapRef}
           className="absolute inset-0"
           styleUrl={STYLE_URLS[theme]}
           theme={theme}
-          initialCenter={initialFocus?.center ?? MEXICO_VIEW.center}
-          initialZoom={initialFocus ? 16 : MEXICO_VIEW.zoom}
+          initialCenter={startView.center}
+          initialZoom={startView.zoom}
           minZoom={MAP_ZOOM.min}
           maxZoom={MAP_ZOOM.max}
           reports={mapReports}
