@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { OPERATOR_COOKIE } from "@/config/operators";
 import { isValidPanelToken, PANEL_COOKIE } from "@/lib/panel-auth";
 import {
   BROWSER_COOKIE,
@@ -10,12 +11,32 @@ import {
 const ONE_YEAR_S = 60 * 60 * 24 * 365;
 
 /**
- * Guards the authorities panel and gives every browser a signed anonymous ID
- * (one signal per browser per report, rate limits). A new ID is also forwarded as a
- * request header so the first request can use it before the cookie round-trips.
+ * Guards the authorities panel and the operator portal, and gives every browser a
+ * signed anonymous ID (one signal per browser per report, rate limits). A new ID is
+ * also forwarded as a request header so the first request can use it before the
+ * cookie round-trips.
  */
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Optimistic check only: pages and actions validate the session in the database.
+  const operatorArea =
+    ((pathname === "/operador" || pathname.startsWith("/operador/")) &&
+      !pathname.startsWith("/operador/entrar")) ||
+    pathname.startsWith("/api/operator/");
+  if (operatorArea && !request.cookies.get(OPERATOR_COOKIE)?.value) {
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json(
+        { error: { code: "UNAUTHORIZED", message: "Sign-in required" } },
+        { status: 401 },
+      );
+    }
+    const login = request.nextUrl.clone();
+    login.pathname = "/operador/entrar";
+    login.search = "";
+    return NextResponse.redirect(login);
+  }
+
   const protectedPanel =
     (pathname.startsWith("/panel") && pathname !== "/panel/entrar") ||
     pathname.startsWith("/api/insights");

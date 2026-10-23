@@ -432,5 +432,50 @@
       "hidden": "Oculto",
       "visible": "Visible"
     }
+  },
+  "operator": {
+    "metaTitle": "Portal de operadores",
+    "nav": {
+      "label": "Secciones del portal",
+      "overview": "Resumen",
+      "sensors": "Sensores",
+      "events": "Eventos",
+      "map": "Mapa público",
+      "signOut": "Salir",
+      "roles": {
+        "owner": "Propietario",
+        "admin": "Administrador",
+        "viewer": "Solo consulta"
+      }
+    },
+    "login": {
+      "title": "Portal de operadores",
+      "body": "Para empresas y dependencias con sensores de nivel de agua en Cauce. Te enviamos un enlace para entrar, sin contraseña.",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@empresa.mx",
+      "submit": "Recibe un enlace para entrar",
+      "sent": "Si tu correo está registrado, te enviamos un enlace. Revisa tu bandeja: vence en 15 minutos y solo sirve una vez.",
+      "invalidEmail": "Escribe un correo válido.",
+      "rateLimited": "Demasiadas solicitudes. Espera unos minutos.",
+      "or": "o",
+      "demo": "Entrar con cuenta de demostración",
+      "demoHint": "Explora el portal con los sensores de demostración de Matamoros.",
+      "demoMissing": "La cuenta de demostración aún no existe en esta base de datos.",
+      "demoDisabled": "La cuenta de demostración no está disponible.",
+      "inviteOnly": "El acceso es por invitación: verificamos cada organización antes de darle acceso."
+    },
+    "link": {
+      "title": "Entrar a Cauce",
+      "body": "Toca «Continuar» para abrir tu sesión en este dispositivo.",
+      "continue": "Continuar",
+      "used": "Este enlace ya se usó. Pide uno nuevo.",
+      "expired": "Este enlace venció. Pide uno nuevo.",
+      "unknown": "Este enlace no es válido. Pide uno nuevo.",
+      "requestNew": "Pedir otro enlace"
+    },
+    "email": {
+      "subject": "Tu enlace para entrar a Cauce",
+      "body": "Hola, {name}:\n\nUsa este enlace para entrar al portal de operadores de Cauce:\n{link}\n\nVence en {minutes} minutos y solo funciona una vez. Si no lo pediste, ignora este correo."
+    }
   }
 }

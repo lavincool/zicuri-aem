@@ -432,5 +432,50 @@
       "hidden": "Hidden",
       "visible": "Visible"
     }
+  },
+  "operator": {
+    "metaTitle": "Operator portal",
+    "nav": {
+      "label": "Portal sections",
+      "overview": "Overview",
+      "sensors": "Sensors",
+      "events": "Events",
+      "map": "Public map",
+      "signOut": "Sign out",
+      "roles": {
+        "owner": "Owner",
+        "admin": "Admin",
+        "viewer": "Read only"
+      }
+    },
+    "login": {
+      "title": "Operator portal",
+      "body": "For companies and agencies with water-level sensors on Cauce. We email you a sign-in link, no password needed.",
+      "email": "Email",
+      "emailPlaceholder": "you@company.com",
+      "submit": "Email me a sign-in link",
+      "sent": "If your email is registered, we sent you a link. Check your inbox: it expires in 15 minutes and works once.",
+      "invalidEmail": "Enter a valid email.",
+      "rateLimited": "Too many requests. Wait a few minutes.",
+      "or": "or",
+      "demo": "Sign in with the demo account",
+      "demoHint": "Explore the portal with the Matamoros demo sensors.",
+      "demoMissing": "The demo account doesn't exist in this database yet.",
+      "demoDisabled": "The demo account is not available.",
+      "inviteOnly": "Access is by invitation: we verify each organization before it gets access."
+    },
+    "link": {
+      "title": "Sign in to Cauce",
+      "body": "Tap “Continue” to start your session on this device.",
+      "continue": "Continue",
+      "used": "This link was already used. Request a new one.",
+      "expired": "This link expired. Request a new one.",
+      "unknown": "This link is not valid. Request a new one.",
+      "requestNew": "Request another link"
+    },
+    "email": {
+      "subject": "Your Cauce sign-in link",
+      "body": "Hi {name},\n\nUse this link to sign in to the Cauce operator portal:\n{link}\n\nIt expires in {minutes} minutes and works once. If you didn't ask for it, ignore this email."
+    }
   }
 }

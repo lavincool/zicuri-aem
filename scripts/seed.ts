@@ -34,6 +34,7 @@ import {
   illustrationKey,
   writeIllustrations,
 } from "./lib/illustrations";
+import { seedDemoOperator } from "./lib/operators";
 import { seedDevices } from "./lib/seed-devices";
 import { seedInsights } from "./lib/seed-insights";
 
@@ -432,6 +433,11 @@ async function main() {
   const sensors = await seedDevices();
   console.log(
     `Seeded ${sensors} sensors with 7 days of readings; keys saved to .simulator-devices.json`,
+  );
+
+  const operator = await seedDemoOperator();
+  console.log(
+    `Seeded the demo operator ${operator.email} ("Entrar con cuenta de demostración" with DEMO_MODE)`,
   );
 
   const insights = await seedInsights();

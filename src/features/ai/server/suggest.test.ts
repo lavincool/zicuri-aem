@@ -45,6 +45,8 @@ const config: ServerEnv = {
   AI_SUGGESTIONS_ENABLED: true,
   OPENAI_API_KEY: "m7-test-key-only",
   OPENAI_MODEL: "gpt-6-luna",
+  EMAIL_DRIVER: "console",
+  EMAIL_FROM: "Cauce <test@cauce.example>",
 };
 const head = mock(
   async (_key: string): Promise<StoredObject | null> => ({

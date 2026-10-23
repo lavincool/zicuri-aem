@@ -13,11 +13,16 @@ export {
 } from "./simulator-file";
 
 export const DEMO_ORG_ID = "org_demo";
+const DEMO_ORG_NAME = "Operador demo";
+/** Owns the seeded sensors; the demo operator account belongs to it. */
 export async function ensureDemoOrganization(): Promise<void> {
   await db()
     .insert(organizations)
-    .values({ id: DEMO_ORG_ID, name: "Cauce (demo)", kind: "operator" })
-    .onConflictDoNothing();
+    .values({ id: DEMO_ORG_ID, name: DEMO_ORG_NAME, kind: "operator" })
+    .onConflictDoUpdate({
+      target: organizations.id,
+      set: { name: DEMO_ORG_NAME },
+    });
 }
 
 export async function registerDevice(input: {

@@ -43,6 +43,9 @@ info(
   `Forecast cron secret: ${config.CRON_SECRET ? "set" : "missing (set CRON_SECRET)"}`,
 );
 info(
+  `Operator sign-in email: ${config.EMAIL_DRIVER} (magic links are printed to the server log)`,
+);
+info(
   `AI suggestions: ${config.AI_SUGGESTIONS_ENABLED && config.OPENAI_API_KEY ? `on (${config.OPENAI_MODEL})` : "off"}`,
 );
 

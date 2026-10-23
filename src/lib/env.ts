@@ -44,6 +44,10 @@ const serverEnvSchema = z
     AI_SUGGESTIONS_ENABLED: booleanFromString,
     OPENAI_API_KEY: optionalString,
     OPENAI_MODEL: z.string().default("gpt-6-luna"),
+
+    /** Only `console` (prints magic links to the server log) until a provider is chosen. */
+    EMAIL_DRIVER: z.enum(["console"]).default("console"),
+    EMAIL_FROM: z.string().default("Cauce <no-reply@cauce.example>"),
   })
   .superRefine((env, ctx) => {
     if (env.STORAGE_DRIVER === "r2") {
