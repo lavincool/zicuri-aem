@@ -267,5 +267,51 @@
     "installTitle": "Instala Cauce en tu celular",
     "installBody": "Toca Compartir y luego “Agregar a inicio”.",
     "dismiss": "Cerrar"
+  },
+  "about": {
+    "metaTitle": "Acerca de",
+    "metaDescription": "Qué es Cauce, cómo funciona y quién lo hizo.",
+    "back": "Volver al mapa",
+    "hackathon": "Proyecto para el Hackathon de la Agencia Espacial Mexicana (AEM)",
+    "heroTitle": "Un mapa vivo de lo que inunda Matamoros.",
+    "heroBody": "Cauce reúne en un solo lugar los reportes de los vecinos, las lecturas de sensores de nivel de agua y el pronóstico de lluvia, para actuar antes de la siguiente tormenta.",
+    "problemTitle": "El problema",
+    "problemBody": "El 4 de octubre de 2026, el frente frío número 1 dejó 215.9 mm de lluvia en Matamoros. Colonias como Buenavista, San Francisco y Los Sauces quedaron incomunicadas. Muchas inundaciones empiezan con algo pequeño: una alcantarilla tapada con basura que nadie reportó a tiempo.",
+    "howTitle": "Cómo funciona",
+    "how": {
+      "report": {
+        "title": "Reporta",
+        "body": "Toma una foto, confirma la ubicación y elige qué está pasando. Toma menos de 30 segundos y no necesitas cuenta."
+      },
+      "confirm": {
+        "title": "Confirma",
+        "body": "Los vecinos dicen si el problema sigue ahí o ya se arregló. Así el mapa se mantiene al día sin moderadores."
+      },
+      "measure": {
+        "title": "Mide",
+        "body": "Sensores de nivel de agua en alcantarillas y drenes avisan en tiempo real cuando el agua sube."
+      },
+      "anticipate": {
+        "title": "Anticipa",
+        "body": "Con el pronóstico de lluvia, el historial y datos satelitales del terreno, las autoridades saben qué drenes limpiar primero."
+      }
+    },
+    "sensorsTitle": "Sensores",
+    "sensorsBody": "Diseñamos sensores de bajo costo (ESP32 con sensor ultrasónico) que miden la altura del agua y la envían cada pocos minutos. Cuando el nivel pasa del límite de alerta, reportan cada minuto.",
+    "authoritiesTitle": "Para autoridades",
+    "authoritiesBody": "La Junta de Aguas y Drenaje y Protección Civil tienen un panel con el riesgo por zona, las razones detrás de cada puntuación y la lista de drenes a limpiar antes de la lluvia.",
+    "authoritiesLink": "Ir al panel",
+    "privacyTitle": "Privacidad",
+    "privacyBody": "No pedimos cuenta ni datos personales. Las fotos se comprimen en tu celular y se les quitan los metadatos antes de subirse. Te pedimos evitar caras y placas de autos.",
+    "demoTitle": "Datos de demostración",
+    "demoBody": "Para esta presentación, el mapa incluye reportes y sensores simulados a partir de inundaciones reales de 2024 a 2026 en Matamoros. Las imágenes ilustrativas lo indican.",
+    "creditsTitle": "Datos y créditos",
+    "credits": {
+      "osm": "Mapa base: © colaboradores de OpenStreetMap, © OpenMapTiles, servido por OpenFreeMap.",
+      "geocoding": "Direcciones: Nominatim (OpenStreetMap).",
+      "weather": "Pronóstico: Open-Meteo y Servicio Meteorológico Nacional (CONAGUA).",
+      "elevation": "Elevación del terreno: Copernicus DEM GLO-90 (ESA), vía Open-Meteo.",
+      "news": "Historial de inundaciones: notas de Plano Informativo, Posta, N+, Excélsior y El Imparcial."
+    }
   }
 }
