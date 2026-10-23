@@ -155,7 +155,11 @@ async function main() {
       name: palette.name,
       sources,
       layers: base.layers
-        .filter((layer) => layer.source !== "ne2_shaded")
+        // Shaded relief is unused; road shields use legacy expressions and US-only shields.
+        .filter(
+          (layer) =>
+            layer.source !== "ne2_shaded" && !layer.id.includes("shield"),
+        )
         .map((layer) => recolor(layer, palette)),
     };
     await writeFile(

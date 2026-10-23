@@ -11,7 +11,7 @@ export const PILOT = {
   timeZone: "America/Matamoros",
   /** Default map view: the west/southwest flood belt plus downtown. */
   center: [-97.54, 25.84] as LngLat,
-  zoom: 13.5,
+  zoom: 13,
   minZoom: 10,
   maxZoom: 19,
   /** Reports outside these bounds are rejected (west, south, east, north). */

@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "bun scripts/copy-map-worker.ts",
     "dev": "next dev",
+    "prebuild": "bun scripts/copy-map-worker.ts",
     "build": "next build",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
