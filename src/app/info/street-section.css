@@ -1,0 +1,38 @@
+/*
+ * The one orchestrated moment on /info: the report pin drops, water rises through the
+ * drain chamber, pipe and canal, and the sensor turns from normal to warning.
+ */
+@keyframes street-section-rise {
+  from {
+    transform: translateY(44px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes street-section-alert {
+  from,
+  60% {
+    fill: var(--sensor-normal);
+  }
+  to {
+    fill: var(--sensor-warning);
+  }
+}
+
+.street-section-water {
+  animation: street-section-rise 2.6s cubic-bezier(0.25, 0.6, 0.3, 1) 0.7s both;
+}
+
+.street-section-sensor {
+  fill: var(--sensor-warning);
+  animation: street-section-alert 3.3s linear both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .street-section-water,
+  .street-section-sensor {
+    animation: none;
+  }
+}

@@ -82,6 +82,7 @@
   "menu": {
     "open": "Menu",
     "about": "About Cauce",
+    "info": "Project information",
     "theme": "Theme",
     "themeLight": "Light",
     "themeDark": "Dark",
@@ -316,6 +317,183 @@
       "weather": "Forecast: Open-Meteo and Mexico's National Weather Service (SMN, CONAGUA).",
       "elevation": "Terrain elevation: Copernicus DEM GLO-90 (ESA), via Open-Meteo.",
       "news": "Flood history: reporting by Plano Informativo, Posta, N+, Excélsior and El Imparcial."
+    }
+  },
+  "info": {
+    "metaTitle": "Project information",
+    "metaDescription": "What Cauce is, who it is for, what the Matamoros pilot includes and what comes next.",
+    "back": "Back to the map",
+    "title": "From the storm drain to the satellite.",
+    "lede": "Cauce is a web app where residents of Matamoros report what floods their street with one photo. Together with water-level sensors, the rain forecast and satellite terrain data, it helps the authorities decide which drains to clear before the next storm.",
+    "context": "Pilot in Matamoros, Tamaulipas. Project for the Mexican Space Agency (AEM) Hackathon.",
+    "diagram": {
+      "alt": "Cross-section of a street in Matamoros: a satellite observes the terrain and the rain, a resident reports a blocked storm drain, a sensor inside the drain measures the rising water, and the water flows through a pipe to the canal.",
+      "satellite": "Satellite: terrain and rain",
+      "resident": "Resident: reports with a photo",
+      "sensor": "Sensor: water level",
+      "canal": "Canal"
+    },
+    "why": {
+      "title": "Why Matamoros",
+      "body": "The city is almost flat: in the pilot area the ground sits between 3 and 21 meters above sea level, and the drainage saturates with every heavy storm. Many floods start with something small, like trash blocking a storm drain that nobody reported in time.",
+      "events": {
+        "drain2022": {
+          "date": "May 2022",
+          "body": "The 20 de Noviembre canal overflows, mainly because of trash thrown into streets and canals."
+        },
+        "storm2024": {
+          "date": "September 2024",
+          "body": "A storm affects 155 neighborhoods, according to the water and drainage board."
+        },
+        "francine2024": {
+          "date": "September 2024",
+          "body": "Hurricane Francine floods streets across the city."
+        },
+        "storm2025": {
+          "date": "March 2025",
+          "body": "A cloudburst floods hundreds of neighborhoods in Reynosa and Matamoros."
+        },
+        "front2026": {
+          "date": "October 2–4, 2026",
+          "body": "Cold front No. 1 drops 215.9 mm of rain. Buenavista, San Francisco, Los Sauces and Paseo Residencial are cut off."
+        }
+      }
+    },
+    "audiences": {
+      "title": "Who it is for",
+      "residents": {
+        "name": "Residents",
+        "body": "They report from their phone in under 30 seconds, without an account, and confirm whether a problem is still there or has been fixed.",
+        "link": "Open the map"
+      },
+      "operators": {
+        "name": "Sensor operators",
+        "body": "They install water-level sensors in storm drains and canals, and check their status, alerts and history in their own portal.",
+        "link": "Go to the portal"
+      },
+      "authorities": {
+        "name": "Authorities",
+        "body": "The water and drainage board and Civil Protection see the risk by area, why it is high and which drains to clear first.",
+        "link": "Go to the panel"
+      }
+    },
+    "scope": {
+      "title": "Pilot scope",
+      "intro": "What this version already does and what it leaves out, so nobody expects Cauce to be something it is not yet.",
+      "inTitle": "Included",
+      "outTitle": "Out of scope",
+      "in": {
+        "reports": {
+          "title": "One-photo reports",
+          "body": "Six problem types and automatic location. Without signal, the report is saved and sent once the connection is back."
+        },
+        "signals": {
+          "title": "Resident confirmations",
+          "body": "“Still there” and “Fixed” keep the map up to date. Water reports expire after 24 hours unless someone confirms them."
+        },
+        "sensors": {
+          "title": "Water-level sensors",
+          "body": "Each sensor has its own warning and critical limits, and its status shows on the map."
+        },
+        "panel": {
+          "title": "Risk panel",
+          "body": "Rain forecast, risk by area with its reasons, a list of drains to clear and report moderation."
+        },
+        "operators": {
+          "title": "Operator portal",
+          "body": "Health of every sensor, alert history, configuration changes and CSV export."
+        },
+        "ai": {
+          "title": "Category suggestion",
+          "body": "When enabled, an AI proposes the problem type from the photo. The resident decides."
+        },
+        "pwa": {
+          "title": "Works on any phone",
+          "body": "It opens in the browser and can be installed, without an app store."
+        }
+      },
+      "out": {
+        "alerts": {
+          "title": "Not an official warning system",
+          "body": "It does not replace Civil Protection alerts. In an emergency, call 911."
+        },
+        "prediction": {
+          "title": "No street-by-street flood prediction",
+          "body": "Risk is a priority by area, in hexagons under 1 km², to decide where to act first."
+        },
+        "hardware": {
+          "title": "No sensors installed yet",
+          "body": "The readings in this demo come from a simulator that sends the same data as a real sensor."
+        },
+        "accounts": {
+          "title": "No accounts or alerts for residents",
+          "body": "Reporting is anonymous. Neighborhood alerts come in a later stage."
+        },
+        "area": {
+          "title": "Matamoros only",
+          "body": "Reports outside the pilot area are rejected."
+        },
+        "demo": {
+          "title": "Includes demo data",
+          "body": "The map includes simulated reports and sensors based on real floods, labeled as such."
+        }
+      }
+    },
+    "risk": {
+      "title": "How risk is calculated",
+      "body": "Each area gets a score from 0 to 100. It is a sum of five factors with fixed weights, and the panel always shows the reason and the number behind each one.",
+      "caption": "Weight of each factor in the score",
+      "weight": "{weight}%",
+      "factors": {
+        "rain": "Rain expected in 48 hours",
+        "blockages": "Blocked drains and broken covers",
+        "history": "Floods in the past year",
+        "sensors": "Current sensor levels",
+        "terrain": "Low-lying ground, measured by satellite"
+      },
+      "baseline": "When the forecast brings no rain, the score shows as “baseline risk”: a preventive priority, not the absence of problems."
+    },
+    "space": {
+      "title": "Space data",
+      "body": "The terrain factor uses the Copernicus DEM GLO-90 elevation model from the European Space Agency, with 90-meter cells. In such a flat city, a few meters of difference decide where the water runs.",
+      "nextTitle": "Sources coming next",
+      "next": {
+        "imerg": {
+          "name": "NASA GPM IMERG",
+          "body": "Satellite-observed rainfall, to compare with what was forecast."
+        },
+        "sentinel": {
+          "name": "Copernicus Sentinel-1",
+          "body": "Radar images that show where water remained after a storm, even under clouds."
+        },
+        "inegi": {
+          "name": "INEGI CEM 15 m",
+          "body": "More detailed elevation of Mexican territory to refine the terrain factor."
+        },
+        "smap": {
+          "name": "NASA SMAP",
+          "body": "Soil moisture: saturated ground absorbs less rain."
+        }
+      }
+    },
+    "next": {
+      "title": "Next steps",
+      "items": {
+        "pilot": "Install the first sensors in Buenavista, San Francisco and Los Sauces, the neighborhoods that flood the most.",
+        "alerts": "Alert the water board and Civil Protection by email or WhatsApp when a sensor reaches a critical level.",
+        "push": "Alerts for residents about what is happening in their neighborhood.",
+        "accounts": "Accounts and permissions for each agency, instead of the panel's shared password.",
+        "openData": "Export reports and risk so other agencies can use them."
+      }
+    },
+    "built": {
+      "title": "How it is built",
+      "body": "Cauce is a progressive web app: it opens in the browser, can be installed and keeps reports even without signal. It asks for no personal data and strips photo metadata before uploading.",
+      "stack": "Next.js and React, MapLibre maps with OpenFreeMap and OpenStreetMap, a Turso database, photos on Cloudflare R2, H3 hexagons and forecasts from Open-Meteo and Mexico's National Weather Service."
+    },
+    "footer": {
+      "about": "About Cauce and data credits",
+      "map": "Back to the map"
     }
   },
   "list": {

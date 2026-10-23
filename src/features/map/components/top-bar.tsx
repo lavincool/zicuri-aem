@@ -73,6 +73,12 @@ export function TopBar({
             >
               {t("menu.about")}
             </DropdownMenuItem>
+            <DropdownMenuItem
+              render={<Link href="/info" />}
+              className="min-h-11 text-base"
+            >
+              {t("menu.info")}
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuLabel>{t("menu.theme")}</DropdownMenuLabel>

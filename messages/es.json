@@ -82,6 +82,7 @@
   "menu": {
     "open": "Menú",
     "about": "Acerca de Cauce",
+    "info": "Información del proyecto",
     "theme": "Tema",
     "themeLight": "Claro",
     "themeDark": "Oscuro",
@@ -316,6 +317,183 @@
       "weather": "Pronóstico: Open-Meteo y Servicio Meteorológico Nacional (CONAGUA).",
       "elevation": "Elevación del terreno: Copernicus DEM GLO-90 (ESA), vía Open-Meteo.",
       "news": "Historial de inundaciones: notas de Plano Informativo, Posta, N+, Excélsior y El Imparcial."
+    }
+  },
+  "info": {
+    "metaTitle": "Información del proyecto",
+    "metaDescription": "Qué es Cauce, para quién es, qué incluye el piloto en Matamoros y qué sigue.",
+    "back": "Volver al mapa",
+    "title": "De la alcantarilla al satélite.",
+    "lede": "Cauce es una app web donde los vecinos de Matamoros reportan con una foto lo que inunda su calle. Junto con sensores de nivel de agua, el pronóstico de lluvia y datos satelitales del terreno, ayuda a las autoridades a decidir qué drenes limpiar antes de la siguiente tormenta.",
+    "context": "Piloto en Matamoros, Tamaulipas. Proyecto para el Hackathon de la Agencia Espacial Mexicana (AEM).",
+    "diagram": {
+      "alt": "Corte de una calle de Matamoros: un satélite observa el terreno y la lluvia, un vecino reporta una alcantarilla tapada, un sensor dentro del registro mide cómo sube el agua y el agua sigue por un tubo hasta el dren.",
+      "satellite": "Satélite: terreno y lluvia",
+      "resident": "Vecino: reporta con una foto",
+      "sensor": "Sensor: nivel del agua",
+      "canal": "Dren"
+    },
+    "why": {
+      "title": "Por qué Matamoros",
+      "body": "La ciudad es casi plana: en la zona piloto el terreno está entre 3 y 21 metros sobre el nivel del mar, y el drenaje se satura con cada tormenta fuerte. Muchas inundaciones empiezan con algo pequeño, como basura que tapa una alcantarilla y que nadie reportó a tiempo.",
+      "events": {
+        "drain2022": {
+          "date": "Mayo de 2022",
+          "body": "El dren 20 de Noviembre se desborda, sobre todo por basura tirada en calles y canales."
+        },
+        "storm2024": {
+          "date": "Septiembre de 2024",
+          "body": "Una tormenta deja 155 colonias afectadas, según la Junta de Aguas y Drenaje."
+        },
+        "francine2024": {
+          "date": "Septiembre de 2024",
+          "body": "El huracán Francine inunda calles de la ciudad."
+        },
+        "storm2025": {
+          "date": "Marzo de 2025",
+          "body": "Una tromba inunda cientos de colonias en Reynosa y Matamoros."
+        },
+        "front2026": {
+          "date": "2 al 4 de octubre de 2026",
+          "body": "El frente frío número 1 deja 215.9 mm de lluvia. Buenavista, San Francisco, Los Sauces y Paseo Residencial quedan incomunicadas."
+        }
+      }
+    },
+    "audiences": {
+      "title": "Para quién es",
+      "residents": {
+        "name": "Vecinos",
+        "body": "Reportan desde el celular en menos de 30 segundos, sin crear cuenta, y confirman si un problema sigue ahí o ya se arregló.",
+        "link": "Abrir el mapa"
+      },
+      "operators": {
+        "name": "Operadores de sensores",
+        "body": "Instalan sensores de nivel de agua en alcantarillas y drenes, y revisan su estado, sus alertas y su historial en un portal propio.",
+        "link": "Entrar al portal"
+      },
+      "authorities": {
+        "name": "Autoridades",
+        "body": "La Junta de Aguas y Drenaje y Protección Civil ven el riesgo por zona, por qué es alto y qué drenes conviene limpiar primero.",
+        "link": "Ir al panel"
+      }
+    },
+    "scope": {
+      "title": "Alcance del piloto",
+      "intro": "Lo que esta versión ya hace y lo que queda fuera, para que nadie espere de Cauce algo que todavía no es.",
+      "inTitle": "Incluido",
+      "outTitle": "Fuera de alcance",
+      "in": {
+        "reports": {
+          "title": "Reportes con una foto",
+          "body": "Seis tipos de problema y ubicación automática. Si no hay señal, el reporte se guarda y se envía al volver la conexión."
+        },
+        "signals": {
+          "title": "Confirmación de vecinos",
+          "body": "“Sigue ahí” y “Ya se arregló” mantienen el mapa al día. Los reportes de agua vencen a las 24 horas si nadie los confirma."
+        },
+        "sensors": {
+          "title": "Sensores de nivel de agua",
+          "body": "Cada sensor tiene sus propios límites de alerta y crítico, y su estado se ve en el mapa."
+        },
+        "panel": {
+          "title": "Panel de riesgo",
+          "body": "Pronóstico de lluvia, riesgo por zona con sus razones, lista de drenes por limpiar y moderación de reportes."
+        },
+        "operators": {
+          "title": "Portal de operadores",
+          "body": "Salud de cada sensor, historial de alertas, cambios de configuración y exportación a CSV."
+        },
+        "ai": {
+          "title": "Sugerencia de categoría",
+          "body": "Si está activada, una IA propone el tipo de problema a partir de la foto. El vecino decide."
+        },
+        "pwa": {
+          "title": "Funciona en cualquier celular",
+          "body": "Se abre en el navegador y se puede instalar, sin pasar por una tienda de apps."
+        }
+      },
+      "out": {
+        "alerts": {
+          "title": "No es un sistema oficial de alerta",
+          "body": "No sustituye los avisos de Protección Civil. En una emergencia, llama al 911."
+        },
+        "prediction": {
+          "title": "No predice inundaciones calle por calle",
+          "body": "El riesgo es una prioridad por zona, en hexágonos de menos de 1 km², para decidir dónde actuar primero."
+        },
+        "hardware": {
+          "title": "Aún no hay sensores instalados",
+          "body": "Las lecturas de esta demostración vienen de un simulador que envía los mismos datos que un sensor real."
+        },
+        "accounts": {
+          "title": "Sin cuentas ni avisos para vecinos",
+          "body": "Reportar es anónimo. Los avisos por colonia llegan en una siguiente etapa."
+        },
+        "area": {
+          "title": "Solo Matamoros",
+          "body": "Los reportes fuera de la zona piloto se rechazan."
+        },
+        "demo": {
+          "title": "Con datos de demostración",
+          "body": "El mapa incluye reportes y sensores simulados a partir de inundaciones reales, marcados como tales."
+        }
+      }
+    },
+    "risk": {
+      "title": "Cómo se calcula el riesgo",
+      "body": "Cada zona recibe una puntuación de 0 a 100. Es una suma de cinco factores con pesos fijos, y el panel siempre muestra la razón y el dato detrás de cada uno.",
+      "caption": "Peso de cada factor en la puntuación",
+      "weight": "{weight} %",
+      "factors": {
+        "rain": "Lluvia esperada en 48 horas",
+        "blockages": "Alcantarillas tapadas y tapas rotas",
+        "history": "Inundaciones en el último año",
+        "sensors": "Nivel actual de los sensores",
+        "terrain": "Terreno bajo, medido por satélite"
+      },
+      "baseline": "Si el pronóstico no trae lluvia, la puntuación se muestra como “riesgo base”: una prioridad preventiva, no la ausencia de problemas."
+    },
+    "space": {
+      "title": "Datos espaciales",
+      "body": "El factor de terreno usa el modelo de elevación Copernicus DEM GLO-90 de la Agencia Espacial Europea, con celdas de 90 metros. En una ciudad tan plana, unos pocos metros de diferencia deciden hacia dónde corre el agua.",
+      "nextTitle": "Fuentes que vienen",
+      "next": {
+        "imerg": {
+          "name": "NASA GPM IMERG",
+          "body": "Lluvia observada por satélite, para compararla con la que se pronosticó."
+        },
+        "sentinel": {
+          "name": "Copernicus Sentinel-1",
+          "body": "Imágenes de radar que muestran dónde quedó agua después de una tormenta, aun con nubes."
+        },
+        "inegi": {
+          "name": "INEGI CEM 15 m",
+          "body": "Elevación más detallada del territorio mexicano para afinar el factor de terreno."
+        },
+        "smap": {
+          "name": "NASA SMAP",
+          "body": "Humedad del suelo: un suelo saturado absorbe menos lluvia."
+        }
+      }
+    },
+    "next": {
+      "title": "Siguientes pasos",
+      "items": {
+        "pilot": "Instalar los primeros sensores en Buenavista, San Francisco y Los Sauces, las colonias que más se inundan.",
+        "alerts": "Avisar a la Junta de Aguas y a Protección Civil por correo o WhatsApp cuando un sensor llegue a nivel crítico.",
+        "push": "Avisos para vecinos sobre lo que pasa en su colonia.",
+        "accounts": "Cuentas y permisos para cada dependencia, en lugar de la contraseña compartida del panel.",
+        "openData": "Exportar reportes y riesgo para que otras dependencias los usen."
+      }
+    },
+    "built": {
+      "title": "Cómo está hecho",
+      "body": "Cauce es una app web progresiva: se abre desde el navegador, se puede instalar y guarda los reportes aunque no haya señal. No pide datos personales y quita los metadatos de las fotos antes de subirlas.",
+      "stack": "Next.js y React, mapas MapLibre con OpenFreeMap y OpenStreetMap, base de datos Turso, fotos en Cloudflare R2, hexágonos H3 y pronósticos de Open-Meteo y del Servicio Meteorológico Nacional."
+    },
+    "footer": {
+      "about": "Acerca de Cauce y créditos de datos",
+      "map": "Volver al mapa"
     }
   },
   "list": {
