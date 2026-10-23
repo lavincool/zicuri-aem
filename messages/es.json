@@ -38,7 +38,7 @@
     "emptyBody": "Si ves un problema, sé la primera persona en reportarlo.",
     "demoShown": "Datos de demostración · Ocultar",
     "demoHidden": "Demostración oculta · Mostrar",
-    "demoExample": "Ver el ejemplo en {city}",
+    "demoExample": "Ver ejemplo en {city}",
     "truncated": "Hay muchos reportes en esta zona. Acércate para verlos todos.",
     "nearMe": "Cerca de mí",
     "locating": "Buscando tu ubicación…",
@@ -109,6 +109,7 @@
     "sheetTitle": "Detalle del reporte",
     "photoAlt": "Foto del reporte: {category}",
     "illustrationNote": "Imagen ilustrativa · datos de demostración",
+    "photoCredit": "Foto: {author} · Wikimedia Commons",
     "openPhoto": "Ver foto completa",
     "reportedAgo": "Reportado {time}",
     "location": "Ubicación",
@@ -155,7 +156,8 @@
       "80": "A la cintura o más (80+ cm)"
     },
     "metaTitle": "{category} en {place}",
-    "metaDescription": "Reporte ciudadano en Cauce, el mapa ciudadano de inundaciones de México."
+    "metaDescription": "Reporte ciudadano en Cauce, el mapa ciudadano de inundaciones de México.",
+    "photoAdaptation": "Redimensionada y convertida"
   },
   "notFound": {
     "title": "No encontramos esta página.",
@@ -333,12 +335,13 @@
     "privacyLink": "Aviso de privacidad",
     "termsLink": "Términos de uso",
     "demoTitle": "Datos de demostración",
-    "demoBody": "Para esta presentación, el mapa incluye en Matamoros reportes y sensores simulados a partir de inundaciones reales de 2024 a 2026. Están marcados como demostración y puedes ocultarlos; los reportes del resto del país son reales.",
+    "demoBody": "Para esta presentación, el mapa incluye reportes simulados en Matamoros y Zacatecas, y sensores simulados en Matamoros, a partir de inundaciones reales de 2024 a 2026. Sus fotos son ilustrativas y pueden corresponder a otros lugares. Están marcados como demostración y puedes ocultarlos; los reportes del resto del país son reales.",
     "creditsTitle": "Datos y créditos",
     "credits": {
       "osm": "Mapa base: © colaboradores de OpenStreetMap, © OpenMapTiles, servido por OpenFreeMap.",
       "geocoding": "Direcciones: Nominatim (OpenStreetMap).",
       "places": "Búsqueda de lugares: GeoNames (CC BY 4.0).",
+      "photos": "Fotos de los datos de demostración: Wikimedia Commons; cada una indica su autor y licencia.",
       "boundary": "Contorno de México: Natural Earth (dominio público).",
       "weather": "Pronóstico: Open-Meteo y Servicio Meteorológico Nacional (CONAGUA).",
       "elevation": "Elevación del terreno: Copernicus DEM GLO-90 (ESA), vía Open-Meteo.",

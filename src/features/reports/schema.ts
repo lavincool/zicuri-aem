@@ -7,6 +7,7 @@ import {
   SEVERITY_DETAILS,
   WATER_DEPTHS_CM,
 } from "@/config/categories";
+import type { PhotoCredit } from "@/config/demo-photos";
 import {
   MAX_PHOTO_BYTES,
   MAX_THUMB_BYTES,
@@ -109,6 +110,8 @@ export type ReportDetail = {
     width: number;
     height: number;
     color: string | null;
+    /** Author and license of a seeded demo photo. */
+    credit: PhotoCredit | null;
   };
   stillThereCount: number;
   fixedCount: number;

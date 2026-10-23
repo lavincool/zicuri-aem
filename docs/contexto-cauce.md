@@ -272,7 +272,7 @@ Cada celda H3 r8 (~0.74 km², ~0.9 km de ancho) recibe una puntuación de 0 a 10
 - **El mapa abre en tu ciudad:** con la ubicación aproximada por IP (sin pedir permiso y sin guardarla), o en la última vista del dispositivo, o en todo México.
 - **Buscador de lugares:** 32 estados y ~4,100 localidades (GeoNames), sin conexión a servicios externos al escribir. También aparece en el paso de ubicación si no hay GPS; el punto se confirma desde zoom 14.
 - **Municipio y estado** en cada reporte (geocodificación inversa): "Colonia, Municipio" o "Municipio, Estado".
-- **Datos de demostración:** solo en Matamoros, marcados, se pueden ocultar y no cuentan como "vecinos que reportaron cerca". Botón "Ver el ejemplo en Matamoros" cuando no hay reportes en la zona.
+- **Datos de demostración:** reportes en Matamoros y Zacatecas–Guadalupe, marcados, se pueden ocultar y no cuentan como "vecinos que reportaron cerca". Hay accesos a ambas ciudades cuando no hay reportes en la zona. `bun run seed:scenario` permite elegir ciudad, escenario, densidad y modo en vivo; las fotos son ilustrativas, con autor y licencia.
 - **Jurado en el panel:** con `DEMO_MODE`, "Entrar como demostración" abre `/panel` en **solo lectura**.
 - **Contra abuso:** Cloudflare Turnstile invisible al enviar (se activa al configurar las llaves) y revisión automática de fotos y notas con la moderación gratuita de OpenAI (se activa con `PHOTO_MODERATION_ENABLED`), además de los límites por hora.
 - **Legal:** `/privacidad` (aviso de privacidad, derechos ARCO) y `/terminos` (no es servicio de emergencias: 911; los reportes son públicos).

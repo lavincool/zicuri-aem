@@ -17,13 +17,15 @@
     "db:studio": "drizzle-kit studio",
     "map:styles": "bun scripts/build-map-styles.ts",
     "seed": "bun --conditions=react-server scripts/seed.ts",
+    "seed:scenario": "bun --conditions=react-server scripts/seed-scenario.ts",
     "device:register": "bun --conditions=react-server scripts/register-device.ts",
     "operator:invite": "bun --conditions=react-server scripts/invite-operator.ts",
     "simulate": "bun scripts/simulate-sensors.ts",
     "check:env": "bun --conditions=react-server scripts/check-env.ts",
     "data:elevation": "bun scripts/fetch-elevation.ts",
     "data:service-area": "bun scripts/build-service-area.ts",
-    "data:places": "bun scripts/build-places.ts"
+    "data:places": "bun scripts/build-places.ts",
+    "data:scenario-places": "bun --conditions=react-server scripts/build-scenario-places.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.1156.0",

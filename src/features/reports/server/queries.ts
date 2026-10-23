@@ -14,6 +14,7 @@ import {
 } from "drizzle-orm";
 import { cacheLife, cacheTag } from "next/cache";
 import type { ReportStatus } from "@/config/categories";
+import { demoPhotoCredit } from "@/config/demo-photos";
 import { db } from "@/lib/db/client";
 import { reportFlags, reportSignals, reports } from "@/lib/db/schema";
 import { photoUrl } from "@/lib/storage/urls";
@@ -167,6 +168,7 @@ export async function getReportDetail(
       width: row.photoWidth,
       height: row.photoHeight,
       color: row.photoColor,
+      credit: row.source === "seed" ? demoPhotoCredit(row.photoFullKey) : null,
     },
     stillThereCount: row.stillThereCount,
     fixedCount: row.fixedCount,

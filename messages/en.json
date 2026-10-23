@@ -109,6 +109,7 @@
     "sheetTitle": "Report details",
     "photoAlt": "Report photo: {category}",
     "illustrationNote": "Illustration · demo data",
+    "photoCredit": "Photo: {author} · Wikimedia Commons",
     "openPhoto": "View full photo",
     "reportedAgo": "Reported {time}",
     "location": "Location",
@@ -155,7 +156,8 @@
       "80": "Waist-deep or more (80+ cm)"
     },
     "metaTitle": "{category} in {place}",
-    "metaDescription": "Community report on Cauce, Mexico's community flood map."
+    "metaDescription": "Community report on Cauce, Mexico's community flood map.",
+    "photoAdaptation": "Resized and converted"
   },
   "notFound": {
     "title": "We couldn't find this page.",
@@ -333,12 +335,13 @@
     "privacyLink": "Privacy notice",
     "termsLink": "Terms of use",
     "demoTitle": "Demo data",
-    "demoBody": "For this presentation, the map includes reports and sensors in Matamoros simulated from real floods between 2024 and 2026. They are labeled as demo data and you can hide them; reports elsewhere in the country are real.",
+    "demoBody": "For this presentation, the map includes simulated reports in Matamoros and Zacatecas, and simulated sensors in Matamoros, based on real floods between 2024 and 2026. Their photos are illustrative and may depict other places. They are labeled as demo data and you can hide them; reports elsewhere in the country are real.",
     "creditsTitle": "Data and credits",
     "credits": {
       "osm": "Base map: © OpenStreetMap contributors, © OpenMapTiles, served by OpenFreeMap.",
       "geocoding": "Addresses: Nominatim (OpenStreetMap).",
       "places": "Place search: GeoNames (CC BY 4.0).",
+      "photos": "Demo data photos: Wikimedia Commons; each one shows its author and license.",
       "boundary": "Outline of Mexico: Natural Earth (public domain).",
       "weather": "Forecast: Open-Meteo and Mexico's National Weather Service (SMN, CONAGUA).",
       "elevation": "Terrain elevation: Copernicus DEM GLO-90 (ESA), via Open-Meteo.",

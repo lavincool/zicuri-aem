@@ -33,6 +33,7 @@ const CREDITS = [
   "weather",
   "elevation",
   "news",
+  "photos",
 ] as const;
 
 export default function AboutPage() {

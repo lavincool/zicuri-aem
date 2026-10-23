@@ -59,6 +59,34 @@ Reports are accepted anywhere in Mexico. The rules and data behind that:
 - **Place names:** reverse geocoding (Nominatim, needs `GEOCODER_CONTACT_EMAIL`) now also stores the municipality and state of each report (`0006_report_municipality.sql`; run `bun run db:migrate`).
 - **Demo data:** seeded reports and the demo organization's sensors are flagged in the map feeds. People can hide them, and they never count as nearby neighbors. With `DEMO_MODE=true`, `/panel/entrar` also offers a read-only **Entrar como demostración** session for judges.
 
+### Demo scenarios (Matamoros and Zacatecas)
+
+`bun run seed:scenario` asks for a city (Matamoros, Zacatecas–Guadalupe or both), a scenario and how many reports, then writes them on real streets and drains:
+
+| Scenario     | What the map shows                                                                                              |
+| ------------ | --------------------------------------------------------------------------------------------------------------- |
+| `storm`      | It has rained for ~3 h and the water keeps rising, after days of clogged-drain reports nobody cleaned.          |
+| `aftermath`  | The storm was the night before last: water drained except in low spots; sewage, loose covers and debris remain. |
+| `prevention` | Two weeks of clogged drains, open manholes and trash in channels; crews already cleaned some.                   |
+| `season`     | 60 days with two storms, for history and trends.                                                                |
+
+Each report has a photo that matches the problem and its severity (Wikimedia Commons, credited on the report), a note like the ones residents write, "Sigue ahí" confirmations and fixes. Answer the last question with a number of seconds (or pass `--live 20`) to keep adding reports and confirmations while you present; the map picks them up on its own. Flags skip the questions: `--city zacatecas --scenario storm --density normal --live 20 --yes`. A new run replaces only scenario reports; `--clear` removes them, and Matamoros' `bun run seed` data stays unless you choose to clear it.
+
+For a local presentation, run these commands in the same terminal (the database otherwise comes from `.env.local`):
+
+```sh
+export TURSO_DATABASE_URL=file:local.db
+export TURSO_AUTH_TOKEN=
+bun run db:migrate
+bun run seed:scenario --city both --scenario storm --live 20 --yes
+```
+
+Run `bun run dev` in another terminal with the same database settings. The map refreshes every 15 seconds; Ctrl+C stops live mode immediately. Without `--live`, the script exits after seeding. `--clear --city zacatecas --yes` clears only that city's scenarios; `--clear-base` explicitly removes the historical Matamoros reports. Replacements are atomic and preserve real reports and the other city's data; the historical seed also preserves scenario reports. `--help` lists every option. The empty map offers shortcuts to both cities.
+
+The 58 photos illustrate similar problems and may come from other places; they are not evidence of actual incidents at these coordinates. Original authors, sources and license links are in `src/config/demo-photos.json` and shown under each report photo, including the resizing/conversion notice. The image derivatives retain their original licenses (see `public/seed/photos/README.md`).
+
+The 342 points (198 in Matamoros, 144 in Zacatecas–Guadalupe) come from `data/scenario-places.json`: streets and drains from OpenStreetMap, with the address and municipio that reverse geocoding gives a real report there. Seeding works offline. Rebuild the points after changing `scripts/lib/scenario-cities.ts` with `bun run data:scenario-places --osm-dir /tmp/cauce-scenario-osm` (needs `GEOCODER_CONTACT_EMAIL`; several minutes). That directory caches Overpass and Nominatim results so interrupted builds can resume. Missing geocoder settings or incomplete data fail without replacing the committed file.
+
 ### Before sharing the link
 
 1. Deploy (Vercel + Turso + R2, as in `.env.example`), run `bun run db:migrate` against Turso and `bun run check:env`.

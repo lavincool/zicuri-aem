@@ -267,6 +267,35 @@ function ReportBody({
           </span>
         ) : null}
       </button>
+      {report.photo.credit ? (
+        <p className="-mt-3 text-xs text-muted-foreground">
+          <a
+            href={report.photo.credit.source}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2"
+          >
+            {t("report.photoCredit", {
+              author: report.photo.credit.author,
+            })}
+          </a>
+          {" · "}
+          {report.photo.credit.licenseUrl ? (
+            <a
+              href={report.photo.credit.licenseUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2"
+            >
+              {report.photo.credit.license}
+            </a>
+          ) : (
+            report.photo.credit.license
+          )}
+          {" · "}
+          {t("report.photoAdaptation")}
+        </p>
+      ) : null}
 
       <header className="space-y-2">
         <div className="flex items-center gap-2">

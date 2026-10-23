@@ -6,11 +6,8 @@
  *   bun run seed                 # replace seeded rows (source = 'seed')
  *   bun run seed -- --stress 5000  # also add N random reports for performance checks
  */
-import { readdir } from "node:fs/promises";
-import path from "node:path";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, notLike } from "drizzle-orm";
 import {
-  CATEGORY_COLORS,
   isTransientCategory,
   normalizeSeverity,
   type ReportCategory,
@@ -29,12 +26,10 @@ import {
 import { offsetMeters } from "@/lib/geo";
 import { h3Cells } from "@/lib/h3";
 import { prefixedId, reportId } from "@/lib/ids";
-import {
-  ILLUSTRATION_VARIANTS,
-  illustrationKey,
-  writeIllustrations,
-} from "./lib/illustrations";
+import { writeIllustrations } from "./lib/illustrations";
 import { seedDemoOperator } from "./lib/operators";
+import { matchingPhoto, type PhotoSet, photosFor } from "./lib/photos";
+import { createRandom } from "./lib/random";
 import { seedDevices } from "./lib/seed-devices";
 import { seedInsights } from "./lib/seed-insights";
 
@@ -46,34 +41,8 @@ const EVENT_START = Date.UTC(2026, 9, 3, 4);
 const EVENT_END = Date.UTC(2026, 9, 4, 20);
 const URBAN_BBOX = { west: -97.585, south: 25.8, east: -97.455, north: 25.9 };
 
-// Deterministic PRNG so every seed run produces the same city.
-let state = 0x5eed_cafe;
-function random(): number {
-  state |= 0;
-  state = (state + 0x6d2b79f5) | 0;
-  let t = Math.imul(state ^ (state >>> 15), 1 | state);
-  t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-  return ((t ^ (t >>> 14)) >>> 0) / 4_294_967_296;
-}
-const between = (min: number, max: number) => min + random() * (max - min);
-const int = (min: number, max: number) => Math.floor(between(min, max + 1));
-const chance = (p: number) => random() < p;
-function pick<T>(items: readonly T[]): T {
-  return items[Math.floor(random() * items.length)] as T;
-}
-function weighted<T>(entries: readonly (readonly [T, number])[]): T {
-  const total = entries.reduce((sum, [, w]) => sum + w, 0);
-  let roll = random() * total;
-  for (const [value, weight] of entries) {
-    roll -= weight;
-    if (roll <= 0) return value;
-  }
-  return entries[entries.length - 1]?.[0] as T;
-}
-const hex = (bytes: number) =>
-  Array.from({ length: bytes }, () =>
-    int(0, 255).toString(16).padStart(2, "0"),
-  ).join("");
+const { random, between, int, chance, pick, weighted, hex } =
+  createRandom(0x5eed_cafe);
 
 function pointInColonia(colonia: Colonia) {
   const r = colonia.radiusM * Math.sqrt(random());
@@ -87,25 +56,6 @@ function pointInCity() {
     lat: between(URBAN_BBOX.south, URBAN_BBOX.north),
     lng: between(URBAN_BBOX.west, URBAN_BBOX.east),
   };
-}
-
-type PhotoSet = Record<ReportCategory, string[]>;
-
-async function loadPhotos(): Promise<PhotoSet> {
-  const set = {} as PhotoSet;
-  for (const category of Object.keys(CATEGORY_COLORS) as ReportCategory[]) {
-    const dir = path.join(process.cwd(), "public/seed/photos", category);
-    const files = await readdir(dir).catch(() => [] as string[]);
-    const real = files
-      .filter((f) => /\.(jpe?g|webp|png)$/i.test(f))
-      .map((f) => `seed/photos/${category}/${f}`);
-    set[category] = real.length
-      ? real
-      : Array.from({ length: ILLUSTRATION_VARIANTS }, (_, v) =>
-          illustrationKey(category, v),
-        );
-  }
-  return set;
 }
 
 type Draft = {
@@ -180,7 +130,11 @@ function build(draft: Draft, photos: PhotoSet) {
     }
   }
 
-  const photoKey = pick(photos[category]);
+  const photo = matchingPhoto(
+    photos[category],
+    { waterDepthCm, severityDetail },
+    pick,
+  );
   const row: NewReport = {
     id,
     category,
@@ -198,11 +152,11 @@ function build(draft: Draft, photos: PhotoSet) {
     colonia: draft.colonia,
     municipality: PILOT.city,
     state: PILOT.state,
-    photoFullKey: photoKey,
-    photoThumbKey: photoKey,
-    photoWidth: 1600,
-    photoHeight: 1200,
-    photoColor: CATEGORY_COLORS[category],
+    photoFullKey: photo.key,
+    photoThumbKey: photo.thumbKey,
+    photoWidth: photo.width,
+    photoHeight: photo.height,
+    photoColor: photo.color,
     stillThereCount: stillThere,
     fixedCount: fixed,
     flagCount: 0,
@@ -383,14 +337,19 @@ async function main() {
   const stress = stressIndex >= 0 ? Number(args[stressIndex + 1] ?? 0) : 0;
 
   await writeIllustrations();
-  const photos = await loadPhotos();
+  const photos = photosFor("matamoros");
   const database = db();
 
   // Replace previously seeded rows (child rows first: SQLite FKs may be off).
   const old = await database
     .select({ id: reports.id })
     .from(reports)
-    .where(eq(reports.source, "seed"));
+    .where(
+      and(
+        eq(reports.source, "seed"),
+        notLike(reports.clientRequestId, "scenario:%"),
+      ),
+    );
   const oldIds = old.map((r) => r.id);
   await chunked(oldIds, 500, async (ids) => {
     await database

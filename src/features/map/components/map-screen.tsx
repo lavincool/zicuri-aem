@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { DESKTOP_SHEET_QUERY } from "@/components/detail-sheet";
 import { Button } from "@/components/ui/button";
 import { CATEGORY_COLORS, type ReportCategory } from "@/config/categories";
-import { PILOT } from "@/config/pilot";
+import { DEMO_CITIES } from "@/config/demo-cities";
 import {
   isInsideServiceArea,
   type LngLat,
@@ -499,15 +499,20 @@ export function MapScreen({
                 {t("map.emptyBody")}
               </p>
               {demoMode && !hideDemo ? (
-                <Button
-                  variant="outline"
-                  onClick={() =>
-                    mapRef.current?.flyTo(PILOT.center, PILOT.zoom)
-                  }
-                  className="mt-3 h-11 rounded-full px-4 font-semibold"
-                >
-                  {t("map.demoExample", { city: PILOT.city })}
-                </Button>
+                <div className="mt-3 flex flex-wrap justify-center gap-2">
+                  {DEMO_CITIES.map((city) => (
+                    <Button
+                      key={city.id}
+                      variant="outline"
+                      onClick={() =>
+                        mapRef.current?.flyTo(city.center, city.zoom)
+                      }
+                      className="h-11 rounded-full px-4 font-semibold"
+                    >
+                      {t("map.demoExample", { city: city.city })}
+                    </Button>
+                  ))}
+                </div>
               ) : null}
             </div>
           ) : null}
