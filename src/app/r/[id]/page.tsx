@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { aiEnabled } from "@/features/ai/server/suggest";
 import { MapScreen } from "@/features/map/components/map-screen";
+import { placeLabel } from "@/features/reports/place";
 import { getReportSummary } from "@/features/reports/server/queries";
 import { env } from "@/lib/env";
 
@@ -18,7 +19,7 @@ export async function generateMetadata({
   if (!summary || summary.hidden) return { title: t("report.notFound") };
   const title = t("report.metaTitle", {
     category: t(`categories.${summary.category}`),
-    place: summary.colonia ?? t("report.unknownPlace"),
+    place: placeLabel(summary) ?? t("report.unknownPlace"),
   });
   const description = t("report.metaDescription");
   return {

@@ -43,6 +43,13 @@
       "when": 1792755514102,
       "tag": "0005_device_visibility",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1792767189055,
+      "tag": "0006_report_municipality",
+      "breakpoints": true
     }
   ]
 }

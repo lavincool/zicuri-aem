@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { getTranslations } from "next-intl/server";
 import { CATEGORY_COLORS } from "@/config/categories";
 import { CATEGORY_ICON_PATHS } from "@/config/category-icons";
+import { placeLabel } from "@/features/reports/place";
 import { getReportSummary } from "@/features/reports/server/queries";
 import { appUrl } from "@/lib/env";
 import { photoUrl } from "@/lib/storage/urls";
@@ -23,7 +24,7 @@ export default async function OpenGraphImage({
   const category = summary?.category ?? "other";
   const color = CATEGORY_COLORS[category];
   const label = summary ? t(`categories.${category}`) : t("common.appName");
-  const place = summary?.colonia ?? t("report.unknownPlace");
+  const place = (summary && placeLabel(summary)) ?? t("report.unknownPlace");
   // Satori renders JPEG/PNG photos; seed illustrations (SVG) fall back to category art.
   const thumb =
     summary && !summary.thumbKey.endsWith(".svg")

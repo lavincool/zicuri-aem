@@ -99,6 +99,8 @@ export type ReportDetail = {
   accuracyM: number | null;
   address: string | null;
   colonia: string | null;
+  municipality: string | null;
+  state: string | null;
   photo: {
     fullUrl: string;
     thumbUrl: string;

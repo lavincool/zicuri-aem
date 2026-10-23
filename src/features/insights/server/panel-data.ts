@@ -2,6 +2,7 @@ import "server-only";
 import { and, desc, eq, gt, gte, inArray, isNull, ne, or } from "drizzle-orm";
 import type { ReportCategory } from "@/config/categories";
 import { deviceLevel } from "@/features/devices/rules";
+import { placeLabel } from "@/features/reports/place";
 import { db } from "@/lib/db/client";
 import { devices, h3Cells, reports } from "@/lib/db/schema";
 import { photoUrl } from "@/lib/storage/urls";
@@ -212,7 +213,7 @@ export async function getModerationQueue() {
     category: r.category,
     status: r.status,
     flagCount: r.flagCount,
-    colonia: r.colonia,
+    place: placeLabel(r),
     note: r.note,
     thumbUrl: photoUrl(r.photoThumbKey),
     createdAt: r.createdAt.toISOString(),

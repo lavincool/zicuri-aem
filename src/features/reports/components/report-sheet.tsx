@@ -39,6 +39,7 @@ import {
   postFlag,
   postSignal,
 } from "../client/api";
+import { placeLabel } from "../place";
 import type { SignalKind } from "../rules";
 import { FLAG_REASONS, type ReportDetail } from "../schema";
 import { CategoryIcon } from "./category-icon";
@@ -160,7 +161,7 @@ function ReportBody({
   const [thumbLoaded, setThumbLoaded] = useState(false);
 
   const categoryLabel = t(`categories.${report.category}`);
-  const place = report.colonia ?? t("report.unknownPlace");
+  const place = placeLabel(report) ?? t("report.unknownPlace");
   const isOpen = report.status === "open";
 
   const severityLabel =

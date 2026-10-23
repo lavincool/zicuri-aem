@@ -14,6 +14,7 @@ import {
 } from "@/lib/db/schema";
 import { appUrl } from "@/lib/env";
 import { DomainError } from "@/lib/errors";
+import type { ReverseGeocode } from "@/lib/geocode";
 import { h3Cells } from "@/lib/h3";
 import { prefixedId, reportId } from "@/lib/ids";
 import { storage } from "@/lib/storage";
@@ -199,10 +200,15 @@ export async function createReport(
 
 export async function updateReportPlace(
   id: string,
-  place: { address: string | null; colonia: string | null },
+  place: ReverseGeocode,
 ): Promise<void> {
   await db()
     .update(reports)
-    .set({ address: place.address, colonia: place.colonia })
+    .set({
+      address: place.address,
+      colonia: place.colonia,
+      municipality: place.municipality,
+      state: place.state,
+    })
     .where(eq(reports.id, id));
 }

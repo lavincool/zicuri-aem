@@ -157,6 +157,8 @@ export async function getReportDetail(
     accuracyM: row.accuracyM,
     address: row.address,
     colonia: row.colonia,
+    municipality: row.municipality,
+    state: row.state,
     photo: {
       fullUrl: photoUrl(row.photoFullKey),
       thumbUrl: photoUrl(row.photoThumbKey),
@@ -178,7 +180,15 @@ export async function getReportDetail(
 
 export type ReportSummary = Pick<
   ReportDetail,
-  "id" | "category" | "colonia" | "address" | "lat" | "lng" | "isDemo"
+  | "id"
+  | "category"
+  | "colonia"
+  | "municipality"
+  | "state"
+  | "address"
+  | "lat"
+  | "lng"
+  | "isDemo"
 > & { thumbKey: string; createdAt: string; hidden: boolean };
 
 /** Public, cacheable summary used by deep links and Open Graph images. */
@@ -193,6 +203,8 @@ export async function getReportSummary(
       id: reports.id,
       category: reports.category,
       colonia: reports.colonia,
+      municipality: reports.municipality,
+      state: reports.state,
       address: reports.address,
       lat: reports.lat,
       lng: reports.lng,
@@ -209,6 +221,8 @@ export async function getReportSummary(
     id: row.id,
     category: row.category,
     colonia: row.colonia,
+    municipality: row.municipality,
+    state: row.state,
     address: row.address,
     lat: row.lat,
     lng: row.lng,

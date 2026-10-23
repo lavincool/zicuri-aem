@@ -5,14 +5,19 @@ type NominatimResponse = {
   address?: Record<string, string | undefined>;
 };
 
-export type ReverseGeocode = { address: string | null; colonia: string | null };
+export type ReverseGeocode = {
+  address: string | null;
+  colonia: string | null;
+  municipality: string | null;
+  state: string | null;
+};
 
 const MIN_INTERVAL_MS = 1100;
 let queue: Promise<unknown> = Promise.resolve();
 let last = 0;
 
 /**
- * Street and colonia for a point, from OpenStreetMap Nominatim. Calls are spaced
+ * Street, colonia, municipio and state for a point, from OpenStreetMap Nominatim. Calls are spaced
  * ≥ 1 s apart per instance (Nominatim usage policy) and identify the app.
  * Returns null when geocoding is disabled or fails; reports work without it.
  */
@@ -58,7 +63,10 @@ export function reverseGeocode(
       a.residential ??
       a.city_district ??
       null;
-    return { address, colonia };
+    // In Mexico, OSM tags the municipio as county (alcaldías as borough).
+    const municipality =
+      a.county ?? a.borough ?? a.municipality ?? a.city ?? a.town ?? null;
+    return { address, colonia, municipality, state: a.state ?? null };
   };
 
   const result = queue.then(run, run).catch(() => null);

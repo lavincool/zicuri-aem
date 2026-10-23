@@ -65,6 +65,9 @@ export const reports = sqliteTable(
     h3r9: text("h3_r9").notNull(),
     address: text("address"),
     colonia: text("colonia"),
+    /** Municipio (alcaldía in Mexico City) and state, from reverse geocoding. */
+    municipality: text("municipality"),
+    state: text("state"),
     photoFullKey: text("photo_full_key").notNull(),
     photoThumbKey: text("photo_thumb_key").notNull(),
     photoWidth: integer("photo_width").notNull(),

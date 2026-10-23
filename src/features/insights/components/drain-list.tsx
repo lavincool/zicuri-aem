@@ -130,8 +130,9 @@ function DrainCard({
 }) {
   const t = useTranslations("panel");
   const tc = useTranslations("categories");
+  const tr = useTranslations("report");
   const format = useFormatter();
-  const title = drain.address || drain.colonia || "Matamoros";
+  const title = drain.address || drain.colonia || tr("unknownPlace");
   const detailsId = `drain-${drain.id}`;
 
   return (

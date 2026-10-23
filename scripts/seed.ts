@@ -17,7 +17,7 @@ import {
   type ReportStatus,
   type SeverityDetail,
 } from "@/config/categories";
-import { COLONIAS, type Colonia } from "@/config/pilot";
+import { COLONIAS, type Colonia, PILOT } from "@/config/pilot";
 import { db } from "@/lib/db/client";
 import {
   type NewReport,
@@ -196,6 +196,8 @@ function build(draft: Draft, photos: PhotoSet) {
     ...h3Cells(point.lat, point.lng),
     address: null,
     colonia: draft.colonia,
+    municipality: PILOT.city,
+    state: PILOT.state,
     photoFullKey: photoKey,
     photoThumbKey: photoKey,
     photoWidth: 1600,

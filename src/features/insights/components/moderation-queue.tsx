@@ -14,7 +14,7 @@ type Item = {
   category: ReportCategory;
   status: ReportStatus;
   flagCount: number;
-  colonia: string | null;
+  place: string | null;
   note: string | null;
   thumbUrl: string;
   createdAt: string;
@@ -23,6 +23,7 @@ type Item = {
 export function ModerationQueue({ items }: { items: Item[] }) {
   const t = useTranslations("panel");
   const tc = useTranslations("categories");
+  const tr = useTranslations("report");
   const [pending, startTransition] = useTransition();
 
   if (items.length === 0) {
@@ -51,7 +52,7 @@ export function ModerationQueue({ items }: { items: Item[] }) {
                     {tc(item.category)}
                   </p>
                   <p className="truncate text-sm text-muted-foreground">
-                    {item.colonia ?? "Matamoros"} · {item.id}
+                    {item.place ?? tr("unknownPlace")} · {item.id}
                   </p>
                 </div>
                 <span
