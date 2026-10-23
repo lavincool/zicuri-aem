@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { CATEGORY_COLORS, type ReportCategory } from "@/config/categories";
 import { isInsidePilot, type LngLat, PILOT } from "@/config/pilot";
+import { SensorSheet } from "@/features/devices/components/sensor-sheet";
 import {
   type FlowMapControls,
   ReportFlow,
@@ -27,6 +28,7 @@ import type {
 } from "@/features/reports/schema";
 import { useOnline } from "@/hooks/use-online";
 import { type ReportFilters, useReportsFeed } from "../hooks/use-reports-feed";
+import { useSensorsFeed } from "../hooks/use-sensors-feed";
 import { FilterBar } from "./filter-bar";
 import {
   FloodMap,
@@ -54,12 +56,18 @@ const noopSubscribe = () => () => {};
 /** Keeps a focused pin visible above the report sheet's first snap point. */
 const sheetPadding = () => Math.round(window.innerHeight * 0.6);
 
-export type InitialReport = { id: string; center: LngLat };
+export type InitialFocus = {
+  kind: "report" | "sensor";
+  id: string;
+  center: LngLat;
+};
 
-/** Keeps the address bar shareable (`/r/[id]`) without a navigation. */
-function setReportUrl(id: string | null) {
-  window.history.replaceState(window.history.state, "", id ? `/r/${id}` : "/");
+/** Keeps the address bar shareable (`/r/[id]`, `/s/[id]`) without a navigation. */
+function setFocusUrl(path: string | null) {
+  window.history.replaceState(window.history.state, "", path ?? "/");
 }
+const setReportUrl = (id: string | null) => setFocusUrl(id ? `/r/${id}` : null);
+const setSensorUrl = (id: string | null) => setFocusUrl(id ? `/s/${id}` : null);
 
 function localFeature(
   id: string,
@@ -84,10 +92,10 @@ function localFeature(
 
 export function MapScreen({
   demoMode,
-  initialReport,
+  initialFocus,
 }: {
   demoMode: boolean;
-  initialReport?: InitialReport;
+  initialFocus?: InitialFocus;
 }) {
   const t = useTranslations();
   const online = useOnline();
@@ -107,7 +115,10 @@ export function MapScreen({
   const [view, setView] = useState<MapView | null>(null);
   const [filters, setFilters] = useState<ReportFilters>(DEFAULT_FILTERS);
   const [selectedId, setSelectedId] = useState<string | null>(
-    initialReport?.id ?? null,
+    initialFocus?.kind === "report" ? initialFocus.id : null,
+  );
+  const [sensorId, setSensorId] = useState<string | null>(
+    initialFocus?.kind === "sensor" ? initialFocus.id : null,
   );
   const [legendOpen, setLegendOpen] = useState(false);
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
@@ -116,6 +127,7 @@ export function MapScreen({
   const flowActive = flowStep !== "closed";
 
   const feed = useReportsFeed(view, filters);
+  const sensors = useSensorsFeed(view);
   const [pinned, setPinned] = useState<ReportFeature | null>(null);
   /** Reports created (or queued) on this device, shown before the feed catches up. */
   const [local, setLocal] = useState<ReportFeature[]>([]);
@@ -260,6 +272,18 @@ export function MapScreen({
     );
   }, [t]);
 
+  const closeSensor = useCallback(() => {
+    setSensorId(null);
+    setSensorUrl(null);
+    const current = mapRef.current?.getView();
+    if (current) {
+      mapRef.current?.focusOn(current.center, {
+        bottomPadding: 0,
+        zoom: current.zoom,
+      });
+    }
+  }, []);
+
   const closeSheet = useCallback(() => {
     setSelectedId(null);
     setPinned(null);
@@ -287,24 +311,35 @@ export function MapScreen({
           className="absolute inset-0"
           styleUrl={STYLE_URLS[theme]}
           theme={theme}
-          initialCenter={initialReport?.center ?? PILOT.center}
-          initialZoom={initialReport ? 16 : PILOT.zoom}
+          initialCenter={initialFocus?.center ?? PILOT.center}
+          initialZoom={initialFocus ? 16 : PILOT.zoom}
           minZoom={PILOT.minZoom}
           maxZoom={PILOT.maxZoom}
           reports={mapReports}
           selectedReportId={selectedId}
+          sensors={sensors}
+          selectedSensorId={sensorId}
           userLocation={userLocation}
           onViewChange={setView}
           onReportClick={(id, center) => {
             if (flowActive || id.startsWith("pending-")) return;
+            setSensorId(null);
             setSelectedId(id);
             setReportUrl(id);
             mapRef.current?.focusOn(center, { bottomPadding: sheetPadding() });
           }}
+          onSensorClick={(id, center) => {
+            if (flowActive) return;
+            setSelectedId(null);
+            setPinned(null);
+            setSensorId(id);
+            setSensorUrl(id);
+            mapRef.current?.focusOn(center, { bottomPadding: sheetPadding() });
+          }}
           onLoad={() => {
             setMapState("ready");
-            if (initialReport) {
-              mapRef.current?.focusOn(initialReport.center, {
+            if (initialFocus) {
+              mapRef.current?.focusOn(initialFocus.center, {
                 bottomPadding: sheetPadding(),
                 zoom: 16,
               });
@@ -415,6 +450,7 @@ export function MapScreen({
         onActiveChange={(step) => {
           setFlowStep(step);
           if (step !== "closed" && selectedId) closeSheet();
+          if (step !== "closed" && sensorId) closeSensor();
         }}
         onCreated={onCreated}
         onQueued={onQueued}
@@ -426,6 +462,10 @@ export function MapScreen({
         onClose={closeSheet}
         onResolved={feed.refresh}
         onLoaded={pinReport}
+      />
+      <SensorSheet
+        sensorId={flowActive ? null : sensorId}
+        onClose={closeSensor}
       />
     </div>
   );

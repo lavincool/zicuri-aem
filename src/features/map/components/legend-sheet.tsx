@@ -9,6 +9,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { CATEGORY_COLORS, REPORT_CATEGORIES } from "@/config/categories";
+import { DEVICE_LEVELS, LEVEL_COLORS } from "@/config/devices";
 import { CategoryIcon } from "@/features/reports/components/category-icon";
 
 export function LegendSheet({
@@ -75,6 +76,26 @@ export function LegendSheet({
                 <span className="size-6 shrink-0 rounded-full bg-cat-flooded-street opacity-40 ring-2 ring-card" />
                 {t("legend.stateExpired")}
               </li>
+            </ul>
+          </section>
+
+          <section>
+            <h3 className="mb-1 text-sm font-bold tracking-wide text-muted-foreground uppercase">
+              {t("legend.sensors")}
+            </h3>
+            <p className="mb-3 text-sm text-muted-foreground">
+              {t("legend.sensorsBody")}
+            </p>
+            <ul className="grid grid-cols-2 gap-3 text-base">
+              {DEVICE_LEVELS.map((level) => (
+                <li key={level} className="flex items-center gap-3">
+                  <span
+                    className={`size-7 shrink-0 rounded-lg ring-2 ring-card ${level === "offline" ? "border-2 border-dashed border-white" : ""}`}
+                    style={{ backgroundColor: LEVEL_COLORS[level] }}
+                  />
+                  {t(`sensors.levels.${level}`)}
+                </li>
+              ))}
             </ul>
           </section>
 

@@ -8,6 +8,7 @@ import type {
 } from "maplibre-gl";
 import { type Ref, useEffect, useImperativeHandle, useRef } from "react";
 import type { LngLat } from "@/config/pilot";
+import type { DeviceFeatureCollection } from "@/features/devices/schema";
 import type { ReportFeatureCollection } from "@/features/reports/schema";
 import type { Bbox } from "@/lib/geo";
 import { cn } from "@/lib/utils";
@@ -18,6 +19,13 @@ import {
   reportLayers,
   reportsSource,
 } from "../lib/report-layers";
+import {
+  ensureSensorImages,
+  SENSOR_LAYERS,
+  SENSORS_SOURCE,
+  sensorLayers,
+  sensorsSource,
+} from "../lib/sensor-layers";
 import {
   USER_SOURCE,
   type UserLocation,
@@ -49,9 +57,12 @@ type FloodMapProps = {
   maxZoom?: number;
   reports: ReportFeatureCollection;
   selectedReportId?: string | null;
+  sensors?: DeviceFeatureCollection;
+  selectedSensorId?: string | null;
   userLocation?: UserLocation | null;
   onViewChange?: (view: MapView) => void;
   onReportClick?: (id: string, center: LngLat) => void;
+  onSensorClick?: (id: string, center: LngLat) => void;
   onLoad?: () => void;
   onError?: (error: Error) => void;
   ariaLabel: string;
@@ -75,9 +86,12 @@ export function FloodMap({
   maxZoom,
   reports,
   selectedReportId = null,
+  sensors = EMPTY_SENSORS,
+  selectedSensorId = null,
   userLocation = null,
   onViewChange,
   onReportClick,
+  onSensorClick,
   onLoad,
   onError,
   ariaLabel,
@@ -87,28 +101,24 @@ export function FloodMap({
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const libRef = useRef<typeof import("maplibre-gl") | null>(null);
-  const latest = useRef({
+  const props = {
     theme,
     reports,
+    sensors,
     userLocation,
     selectedReportId,
+    selectedSensorId,
     onViewChange,
     onReportClick,
-    onLoad,
-    onError,
-  });
-  latest.current = {
-    theme,
-    reports,
-    userLocation,
-    selectedReportId,
-    onViewChange,
-    onReportClick,
+    onSensorClick,
     onLoad,
     onError,
   };
+  const latest = useRef(props);
+  latest.current = props;
   const appliedStyle = useRef(styleUrl);
   const selected = useRef<string | null>(null);
+  const selectedSensor = useRef<string | null>(null);
 
   useImperativeHandle(ref, () => ({
     flyTo(center, zoom) {
@@ -205,11 +215,25 @@ export function FloodMap({
             [x - HIT_TOLERANCE, y - HIT_TOLERANCE],
             [x + HIT_TOLERANCE, y + HIT_TOLERANCE],
           ],
-          { layers: [REPORT_LAYERS.points, REPORT_LAYERS.clusters] },
+          {
+            layers: [
+              SENSOR_LAYERS.icons,
+              REPORT_LAYERS.points,
+              REPORT_LAYERS.clusters,
+            ],
+          },
         );
         const hit = nearest(instance, features, event.point);
         if (!hit) return;
-        if (hit.layer.id === REPORT_LAYERS.clusters) {
+        if (hit.layer.id === SENSOR_LAYERS.icons) {
+          const id = hit.properties?.id;
+          if (typeof id === "string" && hit.geometry.type === "Point") {
+            latest.current.onSensorClick?.(
+              id,
+              hit.geometry.coordinates as [number, number],
+            );
+          }
+        } else if (hit.layer.id === REPORT_LAYERS.clusters) {
           void zoomIntoCluster(instance, hit);
         } else {
           const id = hit.properties?.id;
@@ -221,7 +245,11 @@ export function FloodMap({
           }
         }
       });
-      for (const layer of [REPORT_LAYERS.points, REPORT_LAYERS.clusters]) {
+      for (const layer of [
+        REPORT_LAYERS.points,
+        REPORT_LAYERS.clusters,
+        SENSOR_LAYERS.icons,
+      ]) {
         instance.on("mouseenter", layer, () => {
           instance.getCanvas().style.cursor = "pointer";
         });
@@ -258,6 +286,13 @@ export function FloodMap({
   }, [reports]);
 
   useEffect(() => {
+    const source = mapRef.current?.getSource(SENSORS_SOURCE) as
+      | GeoJSONSource
+      | undefined;
+    source?.setData(sensors);
+  }, [sensors]);
+
+  useEffect(() => {
     const map = mapRef.current;
     if (!map?.getSource(USER_SOURCE)) return;
     (map.getSource(USER_SOURCE) as GeoJSONSource).setData(
@@ -275,18 +310,42 @@ export function FloodMap({
 
   useEffect(() => {
     const map = mapRef.current;
-    if (map)
-      selected.current = setSelection(map, selected.current, selectedReportId);
+    if (map) {
+      selected.current = setSelection(
+        map,
+        REPORTS_SOURCE,
+        selected.current,
+        selectedReportId,
+      );
+    }
   }, [selectedReportId]);
 
+  useEffect(() => {
+    const map = mapRef.current;
+    if (map) {
+      selectedSensor.current = setSelection(
+        map,
+        SENSORS_SOURCE,
+        selectedSensor.current,
+        selectedSensorId,
+      );
+    }
+  }, [selectedSensorId]);
+
   async function installLayers(map: MapLibreMap) {
-    await ensureCategoryImages(map);
+    await Promise.all([ensureCategoryImages(map), ensureSensorImages(map)]);
     // Read props after the await: data may have arrived while images loaded.
     const current = latest.current;
     if (!map.getSource(REPORTS_SOURCE)) {
       map.addSource(REPORTS_SOURCE, reportsSource(current.reports));
     }
     for (const layer of reportLayers(current.theme)) {
+      if (!map.getLayer(layer.id)) map.addLayer(layer);
+    }
+    if (!map.getSource(SENSORS_SOURCE)) {
+      map.addSource(SENSORS_SOURCE, sensorsSource(current.sensors));
+    }
+    for (const layer of sensorLayers(current.theme)) {
       if (!map.getLayer(layer.id)) map.addLayer(layer);
     }
     if (!map.getSource(USER_SOURCE)) {
@@ -298,7 +357,18 @@ export function FloodMap({
     for (const layer of userLayers(current.userLocation)) {
       if (!map.getLayer(layer.id)) map.addLayer(layer);
     }
-    selected.current = setSelection(map, null, current.selectedReportId);
+    selected.current = setSelection(
+      map,
+      REPORTS_SOURCE,
+      null,
+      current.selectedReportId,
+    );
+    selectedSensor.current = setSelection(
+      map,
+      SENSORS_SOURCE,
+      null,
+      current.selectedSensorId,
+    );
   }
 
   return (
@@ -310,25 +380,23 @@ export function FloodMap({
   );
 }
 
-/** Highlights one report pin through feature state; returns the new selection. */
+const EMPTY_SENSORS: DeviceFeatureCollection = {
+  type: "FeatureCollection",
+  features: [],
+};
+
+/** Highlights one feature through feature state; returns the new selection. */
 function setSelection(
   map: MapLibreMap,
+  source: string,
   previous: string | null,
   next: string | null,
 ): string | null {
-  if (!map.getSource(REPORTS_SOURCE)) return previous;
+  if (!map.getSource(source)) return previous;
   if (previous) {
-    map.setFeatureState(
-      { source: REPORTS_SOURCE, id: previous },
-      { selected: false },
-    );
+    map.setFeatureState({ source, id: previous }, { selected: false });
   }
-  if (next) {
-    map.setFeatureState(
-      { source: REPORTS_SOURCE, id: next },
-      { selected: true },
-    );
-  }
+  if (next) map.setFeatureState({ source, id: next }, { selected: true });
   return next;
 }
 

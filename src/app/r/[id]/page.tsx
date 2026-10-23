@@ -49,7 +49,11 @@ async function ReportDeepLink({
   return (
     <MapScreen
       demoMode={env().DEMO_MODE}
-      initialReport={{ id: summary.id, center: [summary.lng, summary.lat] }}
+      initialFocus={{
+        kind: "report",
+        id: summary.id,
+        center: [summary.lng, summary.lat],
+      }}
     />
   );
 }

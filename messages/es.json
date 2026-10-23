@@ -75,7 +75,9 @@
     "clusters": "Grupos",
     "clustersBody": "El número indica cuántos reportes hay en la zona. Tócalo para acercarte.",
     "signals": "Sigue ahí / Ya se arregló",
-    "signalsBody": "Confirma lo que ves. Con dos avisos de “Ya se arregló” el reporte se marca como resuelto."
+    "signalsBody": "Confirma lo que ves. Con dos avisos de “Ya se arregló” el reporte se marca como resuelto.",
+    "sensors": "Sensores de nivel de agua",
+    "sensorsBody": "El color indica qué tan alta está el agua según los límites de cada sitio."
   },
   "menu": {
     "open": "Menú",
@@ -194,5 +196,46 @@
     "rateLimited": "Has enviado muchos reportes en poco tiempo. Intenta de nuevo en unos minutos.",
     "failed": "No pudimos enviar tu reporte. Intenta de nuevo.",
     "photoAlt": "Foto que vas a reportar"
+  },
+  "sensors": {
+    "sheetTitle": "Sensor de nivel de agua",
+    "levels": {
+      "normal": "Normal",
+      "warning": "Alerta",
+      "critical": "Crítico",
+      "offline": "Sin señal"
+    },
+    "sites": {
+      "street_drain": "Alcantarilla de calle",
+      "canal": "Dren o canal",
+      "river": "Río",
+      "other": "Otro sitio"
+    },
+    "current": "Nivel actual",
+    "updatedAgo": "Actualizado {time}",
+    "neverReported": "Este sensor aún no envía lecturas.",
+    "thresholds": "Alerta desde {warning} cm · Crítico desde {critical} cm",
+    "offlineNote": "Sin datos desde {time}: puede ser falta de energía o de señal.",
+    "ranges": {
+      "1h": "1 h",
+      "24h": "24 h",
+      "7d": "7 días"
+    },
+    "chartLabel": "Nivel del agua en {range}: máximo {max} cm",
+    "chartEmpty": "Aún no hay lecturas en este periodo.",
+    "battery": "Batería {percent} %",
+    "signal": "Señal {quality}",
+    "signalQuality": {
+      "good": "buena",
+      "fair": "regular",
+      "weak": "débil"
+    },
+    "interval": "Reporta cada {minutes} min",
+    "warningLine": "Alerta",
+    "criticalLine": "Crítico",
+    "loadError": "No pudimos cargar el sensor.",
+    "notFound": "No encontramos este sensor.",
+    "metaTitle": "Sensor {name}",
+    "metaDescription": "Nivel del agua en tiempo real, en Cauce."
   }
 }
