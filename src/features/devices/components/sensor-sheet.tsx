@@ -3,13 +3,8 @@
 import { BatteryMedium, Clock, Signal, WifiOff } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { DetailSheet } from "@/components/detail-sheet";
 import { Button } from "@/components/ui/button";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerTitle,
-} from "@/components/ui/drawer";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LEVEL_COLORS } from "@/config/devices";
 import { useLiveNow } from "@/hooks/use-live-now";
@@ -104,51 +99,42 @@ export function SensorSheet({
   }, [sensorId, range]);
 
   return (
-    <Drawer
+    <DetailSheet
       open={sensorId !== null}
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
-      modal={false}
+      onClose={onClose}
+      title={t("sensors.sheetTitle")}
       snapPoints={SNAP_POINTS}
       snapPoint={snapPoint}
       onSnapPointChange={setSnapPoint}
-      showSwipeHandle
     >
-      <DrawerContent className="shadow-[0_-8px_30px_rgba(11,31,51,0.18)]">
-        <DrawerTitle className="sr-only">{t("sensors.sheetTitle")}</DrawerTitle>
-        <DrawerDescription className="sr-only">
-          {t("sensors.sheetTitle")}
-        </DrawerDescription>
-        <div className="flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 pt-1 pb-[max(env(safe-area-inset-bottom),1.25rem)]">
-          {state.kind === "loading" ? (
-            <div className="space-y-3 py-2" aria-hidden="true">
-              <Skeleton className="h-8 w-2/3" />
-              <Skeleton className="h-16 w-1/2" />
-              <Skeleton className="h-40 w-full rounded-xl" />
-            </div>
-          ) : null}
-          {state.kind === "not_found" ? (
-            <p className="py-10 text-center text-lg font-semibold">
-              {t("sensors.notFound")}
-            </p>
-          ) : null}
-          {state.kind === "error" ? (
-            <p className="py-10 text-center text-lg font-semibold">
-              {t("sensors.loadError")}
-            </p>
-          ) : null}
-          {state.kind === "ready" ? (
-            <SensorBody
-              device={state.device}
-              series={state.series}
-              range={range}
-              onRangeChange={setRange}
-            />
-          ) : null}
-        </div>
-      </DrawerContent>
-    </Drawer>
+      <div className="space-y-4">
+        {state.kind === "loading" ? (
+          <div className="space-y-3 py-2" aria-hidden="true">
+            <Skeleton className="h-8 w-2/3" />
+            <Skeleton className="h-16 w-1/2" />
+            <Skeleton className="h-40 w-full rounded-xl" />
+          </div>
+        ) : null}
+        {state.kind === "not_found" ? (
+          <p className="py-10 text-center text-lg font-semibold">
+            {t("sensors.notFound")}
+          </p>
+        ) : null}
+        {state.kind === "error" ? (
+          <p className="py-10 text-center text-lg font-semibold">
+            {t("sensors.loadError")}
+          </p>
+        ) : null}
+        {state.kind === "ready" ? (
+          <SensorBody
+            device={state.device}
+            series={state.series}
+            range={range}
+            onRangeChange={setRange}
+          />
+        ) : null}
+      </div>
+    </DetailSheet>
   );
 }
 

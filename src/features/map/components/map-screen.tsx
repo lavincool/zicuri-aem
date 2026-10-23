@@ -11,6 +11,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import { toast } from "sonner";
+import { DESKTOP_SHEET_QUERY } from "@/components/detail-sheet";
 import { Button } from "@/components/ui/button";
 import { CATEGORY_COLORS, type ReportCategory } from "@/config/categories";
 import { isInsidePilot, type LngLat, PILOT } from "@/config/pilot";
@@ -55,8 +56,14 @@ const DEFAULT_FILTERS: ReportFilters = {
 
 const noopSubscribe = () => () => {};
 
-/** Keeps a focused pin visible above the report sheet's first snap point. */
-const sheetPadding = () => Math.round(window.innerHeight * 0.6);
+/**
+ * Keeps a focused pin visible above the detail sheet's first snap point. On desktop the
+ * sheet floats at the left, clear of the centered pin.
+ */
+const sheetPadding = () =>
+  window.matchMedia(DESKTOP_SHEET_QUERY).matches
+    ? 0
+    : Math.round(window.innerHeight * 0.6);
 
 export type InitialFocus = {
   kind: "report" | "sensor";

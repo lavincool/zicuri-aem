@@ -13,6 +13,7 @@ import {
 import { useFormatter, useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { DetailSheet } from "@/components/detail-sheet";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,12 +21,6 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerTitle,
-} from "@/components/ui/drawer";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -98,50 +93,39 @@ export function ReportSheet({
   }, [reportId, reload]);
 
   return (
-    <Drawer
+    <DetailSheet
       open={reportId !== null}
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
-      modal={false}
+      onClose={onClose}
+      title={t("report.sheetTitle")}
       snapPoints={SNAP_POINTS}
       snapPoint={snapPoint}
       onSnapPointChange={setSnapPoint}
-      showSwipeHandle
     >
-      <DrawerContent className="shadow-[0_-8px_30px_rgba(11,31,51,0.18)]">
-        <DrawerTitle className="sr-only">{t("report.sheetTitle")}</DrawerTitle>
-        <DrawerDescription className="sr-only">
-          {t("report.sheetTitle")}
-        </DrawerDescription>
-        <div className="flex-1 overflow-y-auto overscroll-contain px-4 pt-1 pb-[max(env(safe-area-inset-bottom),1.25rem)]">
-          {state.kind === "loading" ? <SheetSkeleton /> : null}
-          {state.kind === "not_found" ? (
-            <p className="py-10 text-center text-lg font-semibold">
-              {t("report.notFound")}
-            </p>
-          ) : null}
-          {state.kind === "error" ? (
-            <div className="flex flex-col items-center gap-3 py-10 text-center">
-              <p className="text-lg font-semibold">{t("report.loadError")}</p>
-              <Button
-                className="h-11 rounded-full px-5 font-bold"
-                onClick={() => setReload((n) => n + 1)}
-              >
-                {t("common.retry")}
-              </Button>
-            </div>
-          ) : null}
-          {state.kind === "ready" ? (
-            <ReportBody
-              report={state.report}
-              onChange={(report) => setState({ kind: "ready", report })}
-              onResolved={onResolved}
-            />
-          ) : null}
+      {state.kind === "loading" ? <SheetSkeleton /> : null}
+      {state.kind === "not_found" ? (
+        <p className="py-10 text-center text-lg font-semibold">
+          {t("report.notFound")}
+        </p>
+      ) : null}
+      {state.kind === "error" ? (
+        <div className="flex flex-col items-center gap-3 py-10 text-center">
+          <p className="text-lg font-semibold">{t("report.loadError")}</p>
+          <Button
+            className="h-11 rounded-full px-5 font-bold"
+            onClick={() => setReload((n) => n + 1)}
+          >
+            {t("common.retry")}
+          </Button>
         </div>
-      </DrawerContent>
-    </Drawer>
+      ) : null}
+      {state.kind === "ready" ? (
+        <ReportBody
+          report={state.report}
+          onChange={(report) => setState({ kind: "ready", report })}
+          onResolved={onResolved}
+        />
+      ) : null}
+    </DetailSheet>
   );
 }
 

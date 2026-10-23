@@ -30,8 +30,8 @@ export function ReportListSheet({
   const t = useTranslations();
   return (
     <Drawer open={open} onOpenChange={onOpenChange} showSwipeHandle>
-      <DrawerContent>
-        <DrawerHeader className="text-left">
+      <DrawerContent className="md:mx-auto md:max-w-lg">
+        <DrawerHeader>
           <DrawerTitle className="font-display text-2xl font-extrabold">
             {t("list.title")}
           </DrawerTitle>
