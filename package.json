@@ -9,13 +9,21 @@
     "typecheck": "next typegen && tsc --noEmit",
     "lint": "biome check",
     "format": "biome check --write",
-    "test": "bun test"
+    "test": "bun test",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
+    "@libsql/client": "0.18.0",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.5.0",
+    "drizzle-orm": "0.45.4",
+    "h3-js": "4.5.0",
     "lucide-react": "^1.61.0",
+    "maplibre-gl": "6.15.0",
+    "nanoid": "6.0.2",
     "next": "16.4.2",
     "next-intl": "4.14.9",
     "next-themes": "^0.4.6",
@@ -34,6 +42,7 @@
     "@types/node": "^24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "drizzle-kit": "0.31.11",
     "tailwindcss": "4.3.3",
     "typescript": "7.0.2"
   },
